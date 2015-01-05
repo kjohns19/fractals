@@ -12,7 +12,7 @@ Mandelbrot::Mandelbrot(const sf::Vector2u& size, const sf::Rect<double>& view):
     d_points(size.x * size.y),
     d_valid(size.x * size.y),
     d_done(),
-    d_hist(1),
+    d_hist(1, 0),
     d_size(size),
     d_view(view),
     d_iterations(0)
@@ -58,7 +58,7 @@ void Mandelbrot::iterate(int count)
     };
 
     thread_dones.resize(threadCount);
-    d_hist.resize(d_hist.size() + count);
+    d_hist.resize(d_hist.size() + count, 0);
 
     for(size_t i = 0; i < threadCount; i++)
         threads.push_back(std::thread(func, i));
@@ -147,22 +147,23 @@ void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t
 
 void Mandelbrot::getColors(const ColorScheme& cs, std::vector<sf::Color>& colors)
 {
-    for(int i = 0; i <= d_iterations; i++)
-        colors.push_back(cs.color(1.0 * i / d_iterations));
-    /*
-    size_t total = 0;
-    for(int i = 0; i < d_iterations; i++)
-        total+=d_hist[i];
-    d_hist[d_iterations] = d_points.size() - total;
-    total = d_points.size();
-
-    double hue = 0;
-    for(int i = 0; i <= d_iterations; i++)
+    bool histogram = false;
+    if (histogram)
     {
-        hue+=1.0 * d_hist[i] / total;
-        colors.push_back(cs.color(hue));
+        size_t total = d_points.size();
+        double hue = 0;
+        for(int i = 0; i <= d_iterations; i++)
+        {
+            hue = (i == d_iterations) ? 1 : (hue + 1.0 * d_hist[i] / total);
+            colors.push_back(cs.getColor(hue));
+        }
     }
-    */
+    else
+    {
+        for(int i = 0; i <= d_iterations; i++)
+            colors.push_back(cs.getColor(1.0 * i / d_iterations));
+    }
+
 }
 
 void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)

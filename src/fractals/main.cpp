@@ -1,6 +1,7 @@
 #include <fractals/color/GradientColorScheme.hpp>
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/fractal/Mandelbrot.hpp>
+#include <fractals/fractal/Julia.hpp>
 #include <fractals/ui/Menu.hpp>
 #include <fractals/ui/SFMLWidget.hpp>
 #include <fractals/ui/Application.hpp>
@@ -13,29 +14,28 @@
 #include <iomanip>
 #include <memory>
 
-void iterate(sf::Image& image, const sf::Rect<double>& bounds, double cx, double cy, int count);
+//static sf::Color colorHSV(float h, float s, float v);
 
-sf::Color colorHSV(float h, float s, float v);
-
-std::ostream& operator<<(std::ostream& out, const sf::Rect<double>& r)
-{
-    out << "[" << r.left << ", " << r.top << ", "
-        << r.width-r.left << ", " << r.height-r.top << "]";
-    return out;
-}
-
-Fractal* createFractal(const sf::Vector2u& size,
-                       const sf::Rect<double>& view);
-ColorScheme* createColorScheme();
-
-void save(const sf::Rect<double>& view, int current_it, const ColorScheme& colorScheme);
+static Fractal* createFractal(const sf::Vector2u& size,
+                              const sf::Rect<double>& view);
+static ColorScheme* createColorScheme();
 
 int main(int argc, char* argv[])
 {
     auto app = Gtk::Application::create(argc, argv, "mandelbrot.set");
 
-    sf::Vector2u wsize(1280, 720);
-    sf::Rect<double> view(-2, -1, 1.92, 1.08);
+    sf::Vector2u wsize(360*4, 240*4);
+    sf::Rect<double> view(-0.5, 0, 3, 2.5);
+    //sf::Rect<double> view(0, 0, 2, 2);
+
+    double ratio = 1.0 * wsize.x / wsize.y;
+    if (ratio < 1.0 * view.width / view.height)
+        view.height = view.width / ratio;
+    else
+        view.width = view.height * ratio;
+
+    view.left = -0.5 - view.width/2;
+    view.top = -view.height/2;
 
     Application application(wsize, view, createFractal(wsize, view), createColorScheme());
 
@@ -48,6 +48,7 @@ sf::Color colorRGB(float r, float g, float b)
     return sf::Color((int)(255*r), (int)(255*g), (int)(255*b));
 }
 
+/*
 sf::Color colorHSV(float h, float s, float v)
 {
     if (s == 0)
@@ -73,63 +74,28 @@ sf::Color colorHSV(float h, float s, float v)
     else
         return colorRGB(v, p, q);
 }
-
-void save(const sf::Rect<double>& view, int current_it, const ColorScheme& colorScheme)
-{
-    bool okay = false;
-    unsigned width, height;
-    int iteration;
-    int frames;
-    std::string filename;
-    while(!okay)
-    {
-        std::cout << "Enter dimensions: ";
-        std::cin >> width >> height;
-        std::cout << "Enter start iteration (" << current_it << " current): " << std::endl;
-        std::cin >> iteration;
-        std::cout << "Enter frame count: " << std::endl;
-        std::cin >> frames;
-        std::cout << "Enter filename base: ";
-        std::cin >> filename;
-
-        std::cout << "Will create " << frames << " mandelbrot set image(s) at "
-                  << view << " of size " << width << "x" << height
-                  << " starting at iteration " << iteration
-                  << " and save to " << filename << std::endl;
-        std::cout << "Is this correct? ";
-        std::cin >> okay;
-    }
-
-    std::cout << "Iterating..." << std::endl;
-
-    sf::Image image;
-    Mandelbrot fractal(sf::Vector2u(width, height), view);
-    fractal.iterate(iteration-1);
-
-    for(int i = 0; i < frames; i++)
-    {
-        std::stringstream ss;
-        ss << filename;
-        if (frames > 1)
-            ss << std::setfill('0') << std::setw(3) << i;
-        ss << ".png";
-
-        fractal.iterate();
-
-        std::cout << "Creating image " << i+1 << std::endl;
-        //fractal.toImage2(image, colorScheme);
-
-        std::cout << "Saving image " << i+1 << " to " << ss.str() << "..." << std::endl;
-        if (!image.saveToFile(ss.str()))
-            std::cout << "Failed to save" << std::endl;
-    }
-}
+*/
 
 Fractal* createFractal(const sf::Vector2u& size,
                                        const sf::Rect<double>& view)
 {
     Fractal* fractal = new Mandelbrot(size, view);
     //fractal->iterate(1000);
+    /*
+    double cx = -0.8;
+    double cy = 0.156;
+
+    Fractal* fractal = new Julia(size, view,
+        [cx, cy](double zx, double zy, double& nx, double& ny) {
+            if (zx*zx + zy*zy < 4)
+            {
+                nx = zx*zx - zy*zy + cx;
+                ny = 2*zx*zy + cy;
+                return true;
+            }
+            return false;
+        });
+    */
     return fractal;
 }
 ColorScheme* createColorScheme()

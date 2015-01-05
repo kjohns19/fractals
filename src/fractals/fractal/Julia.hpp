@@ -9,10 +9,15 @@
 #include <vector>
 #include <functional>
 
+namespace sf
+{
+    class Color;
+}
+
 class Julia : public Fractal
 {
 public:
-    using Func = std::function<bool(const std::complex<double>&, std::complex<double>&)>;
+    using Func = std::function<bool(double zx, double zy, double& nx, double& ny)>;
     Julia(const sf::Vector2u& size, const sf::Rect<double>& view, const Func& func);
 
     virtual void setView(const sf::Rect<double>& view);
@@ -25,9 +30,11 @@ public:
 private:
     struct Point
     {
-        std::complex<double> z;
+        double x, y;
         int value;
     };
+
+    void getColors(const ColorScheme& cs, std::vector<sf::Color>& colors);
 
     std::vector<Point> d_points;
     std::vector<size_t> d_valid;

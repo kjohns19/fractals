@@ -27,6 +27,12 @@ public:
 
     const sf::Vector2u& getWindowSize() const;
 
+    void setPaused(bool paused = true);
+    bool isPaused() const;
+
+    void setIterateAmount(int iterations);
+    int getIterateAmount() const;
+
     Gtk::Window& getWindow();
     const Gtk::Window& getWindow() const;
 
@@ -53,6 +59,9 @@ private:
 
     int d_lastIteration;
     bool d_redraw;
+
+    bool d_paused;
+    int d_iterateAmount;
 
     sf::RenderTexture d_fractalTexture;
     sf::Sprite d_fractalSprite;

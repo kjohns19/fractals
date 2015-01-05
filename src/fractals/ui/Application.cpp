@@ -19,7 +19,9 @@ Application::Application(const sf::Vector2u& windowSize,
     d_windowSize(windowSize),
     d_viewManager(*this, view),
     d_lastIteration(-1),
-    d_redraw(false)
+    d_redraw(false),
+    d_paused(false),
+    d_iterateAmount(1)
 {
     assert(fractal != nullptr);
     assert(colorScheme != nullptr);
@@ -47,11 +49,8 @@ Application::Application(const sf::Vector2u& windowSize,
 
     sfmlWindow->setFramerate(60);
     sfmlWindow->onDraw([this] (SFMLWidget& widget) {
-        bool paused = false;
-        int max_iterations = 20000;
-        int iterate_speed = 1;
-        if (!paused && d_fractal->iterations() < max_iterations)
-            d_fractal->iterate(iterate_speed);
+        if (!d_paused)
+            d_fractal->iterate(d_iterateAmount);
 
         if (d_redraw || d_fractal->iterations() != d_lastIteration)
         {
@@ -84,6 +83,25 @@ Gtk::Window& Application::getWindow()
 const Gtk::Window& Application::getWindow() const
 {
     return d_window;
+}
+
+void Application::setPaused(bool paused)
+{
+    d_paused = paused;
+}
+bool Application::isPaused() const
+{
+    return d_paused;
+}
+
+void Application::setIterateAmount(int iterations)
+{
+    if (iterations >= 0)
+        d_iterateAmount = iterations;
+}
+int Application::getIterateAmount() const
+{
+    return d_iterateAmount;
 }
 
 void Application::setFractal(Fractal* fractal)

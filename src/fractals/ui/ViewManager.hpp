@@ -4,6 +4,7 @@
 #include <fractals/util/Subject.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
+#include <vector>
 
 class Application;
 
@@ -11,6 +12,8 @@ class ViewManager : public Subject<ViewManager>
 {
 public:
     typedef sf::Rect<double> View;
+
+    static std::vector<View> path(const View& start, const View& end, int count);
 
     ViewManager(Application& app, const View& view);
 
@@ -21,6 +24,11 @@ public:
     void previousView();
     void firstView();
     void lastView();
+    void zoom(double amount);
+    void zoomIn();
+    void zoomOut();
+
+    void clearViews();
 
     bool hasNextView() const;
     bool hasPreviousView() const;

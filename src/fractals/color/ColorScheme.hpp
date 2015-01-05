@@ -8,7 +8,7 @@ class ColorScheme
 public:
     virtual ~ColorScheme() {}
 
-    virtual sf::Color color(double value) const = 0;
+    virtual sf::Color getColor(double value) const = 0;
 };
 
 #endif //INCLUDED_COLOR_SCHEME_HPP

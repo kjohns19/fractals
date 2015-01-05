@@ -1,8 +1,10 @@
 #include <fractals/color/ColorScheme.hpp>
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/ui/Menu.hpp>
+#include <fractals/ui/ColorSchemeMenu.hpp>
 #include <fractals/ui/Application.hpp>
 #include <fractals/ui/ViewManager.hpp>
+#include <fractals/ui/MenuUtils.hpp>
 #include <fractals/fractal/Mandelbrot.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -10,34 +12,37 @@
 #include <gtkmm.h>
 #include <iostream>
 
-template<typename ButtonType = Gtk::Button>
-ButtonType* createButton(const std::string& label, const std::string& stock);
-template<typename ButtonType = Gtk::Button>
-ButtonType* createButton(Gtk::Box* menu, const std::string& label, const std::string& stock, const std::function<void()>& func);
-
 void showSaveDialog(Application& app);
 
-struct ViewButtons : public Gtk::HBox, public Observer<ViewManager>
+struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
 {
-    ViewButtons(Application& app):
+    ViewButtons(Gtk::Toolbar* toolbar, Application& app):
         vm(app.getViewManager())
     {
-        firstButton = createButton(this, "First View",
-            "gtk-goto-first-ltr", [this]() {
-                vm.firstView();
-            });
-        prevButton = createButton(this, "Previous View",
-            "gtk-go-back-ltr", [this]() {
-                vm.previousView();
-            });
-        nextButton = createButton(this, "Next View",
+        signal_clicked().connect([this]() {
+            vm.previousView();
+        });
+        set_icon_name("gtk-go-back-ltr");
+        set_tooltip_text("Previous View");
+        toolbar->append(*this);
+
+        nextButton = createToolButton(toolbar, "Next View",
             "gtk-go-forward-ltr", [this]() {
                 vm.nextView();
             });
-        lastButton = createButton(this, "Last View",
-            "gtk-goto-last-ltr", [this]() {
-                vm.lastView();
+
+        prevButton = createToolButton(toolbar, "Reset View",
+            "gtk-zoom-fit", [this]() {
+                vm.firstView();
             });
+
+        createToolButton(toolbar, "Zoom In", "gtk-zoom-in", [this]() {
+            vm.zoomIn();
+        });
+
+        createToolButton(toolbar, "Zoom Out", "gtk-zoom-out", [this]() {
+            vm.zoomOut();
+        });
 
         vm.addObserver(*this);
         notify(vm);
@@ -50,63 +55,73 @@ struct ViewButtons : public Gtk::HBox, public Observer<ViewManager>
 
     void notify(ViewManager& vm)
     {
-        firstButton->set_sensitive(vm.hasPreviousView());
+        set_sensitive(vm.hasPreviousView());
         prevButton->set_sensitive(vm.hasPreviousView());
         nextButton->set_sensitive(vm.hasNextView());
-        lastButton->set_sensitive(vm.hasNextView());
     }
     ViewManager& vm;
-    Gtk::Button* firstButton;
-    Gtk::Button* prevButton;
-    Gtk::Button* nextButton;
-    Gtk::Button* lastButton;
+    Gtk::ToolButton* prevButton;
+    Gtk::ToolButton* nextButton;
 };
-
-
-template<typename ButtonType>
-ButtonType* createButton(const std::string& label, const std::string& stock)
-{
-    ButtonType* button;
-
-    button = Gtk::manage(new ButtonType());
-
-    button->set_image_from_icon_name(stock, Gtk::ICON_SIZE_BUTTON);
-    button->set_tooltip_text(label);
-
-    return button;
-}
-
-template<typename ButtonType>
-ButtonType* createButton(Gtk::Box* menu, const std::string& label, const std::string& stock, const std::function<void()>& func)
-{
-    ButtonType* button = createButton<ButtonType>(label, stock);
-    button->signal_clicked().connect(func);
-    menu->pack_start(*button);
-    return button;
-}
 
 Gtk::Widget* createMenu(Application& app)
 {
-    Gtk::Box* menu = Gtk::manage(new Gtk::ButtonBox());
+    Gtk::Toolbar* menu = Gtk::manage(new Gtk::Toolbar());
 
-    createButton(menu, "Save", "gtk-save", [&]() {
+    createToolButton(menu, "Save", "gtk-save", [&]() {
         showSaveDialog(app);
     });
 
-    createButton(menu, "Reset", "gtk-refresh", [&]() {
+    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+
+    createToolButton(menu, "Reset", "gtk-refresh", [&]() {
         app.getViewManager().resetView();
     });
 
-    ViewButtons* vbuttons = Gtk::manage(new ViewButtons(app));
-    menu->pack_start(*vbuttons);
+    Gtk::ToolButton* buttonPlay = createToolButton("Pause", "gtk-media-pause");
+    buttonPlay->signal_clicked().connect([buttonPlay, &app]() {
+        bool isPlaying = !app.isPaused();
+        buttonPlay->set_icon_name(isPlaying ? "gtk-media-play-ltr" : "gtk-media-pause");
+        buttonPlay->set_tooltip_text(isPlaying ? "Play" : "Pause");
+        app.setPaused(isPlaying);
+    });
+    menu->append(*buttonPlay);
 
-    Gtk::ToggleButton* button = createButton<Gtk::ToggleButton>("Fast Drawing", "gtk-edit");
-    button->set_active(true);
-    button->signal_clicked().connect([&]() {
+    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+
+    Gtk::manage(new ViewButtons(menu, app));
+
+    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+
+    Gtk::ToggleToolButton* buttonDraw = createToolButton<Gtk::ToggleToolButton>("Fast Drawing", "gtk-edit");
+    buttonDraw->set_active(true);
+    buttonDraw->signal_clicked().connect([&]() {
         app.getFractal().setDrawMode(!app.getFractal().getDrawMode());
         app.redrawFractal();
     });
-    menu->pack_start(*button);
+    menu->append(*buttonDraw);
+
+    createToolButton(menu, "Path", "gtk-leave-fullscreen", [&]() {
+        ViewManager& vm = app.getViewManager();
+
+        ViewManager::View start = vm.getView();
+        vm.nextView();
+        ViewManager::View end = vm.getView();
+        vm.firstView();
+
+        std::vector<ViewManager::View> path = ViewManager::path(start, end, 10);
+        for(auto& v: path)
+            vm.setView(v);
+        vm.firstView();
+    });
+
+    createToolButton(menu, "Color Scheme", "gtk-theme-config", [&]() {
+        showColorSchemeMenu(app);
+    });
+
+    createToolButton(menu, "Step", "gtk-media-forward-ltr", [&]() {
+        app.getFractal().iterate();
+    });
 
     menu->show_all();
     return menu;
@@ -152,6 +167,8 @@ void showSaveDialog(Application& app)
     row->pack_start(*entryHeight);
     content->pack_start(*row);
 
+
+    //Iterations
     row = Gtk::manage(new Gtk::HBox());
     row->pack_start(*Gtk::manage(new Gtk::Label("Iterations: ", Gtk::ALIGN_END)));
     entryIterations = Gtk::manage(new Gtk::SpinButton());
@@ -160,16 +177,6 @@ void showSaveDialog(Application& app)
     entryIterations->set_value(app.getFractal().iterations());
     row->pack_start(*entryIterations);
     content->pack_start(*row);
-
-
-    /*
-    //Height
-    row = Gtk::manage(new Gtk::HBox());
-    label = Gtk::manage(new Gtk::Label("Height:", Gtk::ALIGN_END));
-    row->pack_start(*label);
-    row->pack_start(*entryHeight);
-    content->pack_start(*row);
-    */
 
 
     //Filename
