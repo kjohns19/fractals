@@ -2,24 +2,23 @@
 #define INCLUDED_VIEW_MANAGER_HPP
 
 #include <fractals/util/Subject.hpp>
+#include <fractals/util/View.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <vector>
+#include <map>
 
 class Application;
 
 class ViewManager : public Subject<ViewManager>
 {
 public:
-    typedef sf::Rect<double> View;
-
-    static std::vector<View> path(const View& start, const View& end, int count);
-
     ViewManager(Application& app, const View& view);
+    ~ViewManager();
 
     const View& getView();
-    void setView(const View& view);
-    void resetView();
+    void setView(const View& view, int iterations = -1);
+    void resetView(int iterations = -1);
     void nextView();
     void previousView();
     void firstView();
@@ -32,12 +31,18 @@ public:
 
     bool hasNextView() const;
     bool hasPreviousView() const;
+
+    std::map<std::string, std::pair<View, int> >& getSavedViews();
+    void saveViews() const;
 private:
     Application& d_app;
 
     View d_view;
     std::vector<View> d_prev_views;
     std::vector<View> d_next_views;
+
+    std::map<std::string, std::pair<View, int> > d_saved_views;
+    bool d_loaded;
 };
 
 #endif //INCLUDED_VIEW_MANAGER_HPP

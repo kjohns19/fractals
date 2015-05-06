@@ -14,13 +14,15 @@ namespace sf
     class Color;
 }
 
+class View;
+
 class Julia : public Fractal
 {
 public:
     using Func = std::function<bool(double zx, double zy, double& nx, double& ny)>;
-    Julia(const sf::Vector2u& size, const sf::Rect<double>& view, const Func& func);
+    Julia(const sf::Vector2u& size, const View& view, const Func& func);
 
-    virtual void setView(const sf::Rect<double>& view);
+    virtual void setView(const View& view);
 
     virtual void iterate(int count = 1);
 

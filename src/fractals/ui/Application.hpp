@@ -18,8 +18,6 @@ class ViewChanger;
 class Application
 {
 public:
-    typedef sf::Rect<double> View;
-
     Application(const sf::Vector2u& windowSize,
                 const View& view,
                 Fractal* fractal,

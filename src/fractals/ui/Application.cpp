@@ -55,6 +55,7 @@ Application::Application(const sf::Vector2u& windowSize,
         if (d_redraw || d_fractal->iterations() != d_lastIteration)
         {
             d_lastIteration = d_fractal->iterations();
+            d_fractalTexture.clear();
             d_fractal->draw(d_fractalTexture, *d_colorScheme);
             d_fractalTexture.display();
             d_redraw = false;

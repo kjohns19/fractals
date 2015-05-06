@@ -11,6 +11,8 @@ namespace sf
 
 class ColorScheme;
 
+class View;
+
 class Fractal
 {
 public:
@@ -18,7 +20,7 @@ public:
         d_fastDraw(true) {}
     virtual ~Fractal() {}
 
-    virtual void setView(const sf::Rect<double>& view) = 0;
+    virtual void setView(const View& view) = 0;
 
     virtual void iterate(int count = 1) = 0;
 

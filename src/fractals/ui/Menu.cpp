@@ -1,18 +1,41 @@
 #include <fractals/color/ColorScheme.hpp>
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/ui/Menu.hpp>
+#include <fractals/util/View.hpp>
 #include <fractals/ui/ColorSchemeMenu.hpp>
 #include <fractals/ui/Application.hpp>
 #include <fractals/ui/ViewManager.hpp>
 #include <fractals/ui/MenuUtils.hpp>
 #include <fractals/fractal/Mandelbrot.hpp>
+#include <fractals/ui/SFMLWidget.hpp>
 
 #include <SFML/Graphics.hpp>
 
 #include <gtkmm.h>
 #include <iostream>
+#include <iomanip>
 
-void showSaveDialog(Application& app);
+static void showSaveDialog(Application& app);
+static void showIterateDialog(Application& app);
+static void showViewDialog(Application& app);
+
+static void save(const std::string& filename, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations);
+
+template<typename T>
+static std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
+{
+    return out << "(" << vec.x << ", " << vec.y << ")";
+}
+
+static std::ostream& operator<<(std::ostream& out, const View& view)
+{
+    return out << "("
+               << view.left << ", "
+               << view.top << ", "
+               << view.width << ", "
+               << view.height << ")";
+}
+
 
 struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
 {
@@ -31,7 +54,7 @@ struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
                 vm.nextView();
             });
 
-        prevButton = createToolButton(toolbar, "Reset View",
+        firstButton = createToolButton(toolbar, "Reset View",
             "gtk-zoom-fit", [this]() {
                 vm.firstView();
             });
@@ -56,11 +79,11 @@ struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
     void notify(ViewManager& vm)
     {
         set_sensitive(vm.hasPreviousView());
-        prevButton->set_sensitive(vm.hasPreviousView());
+        firstButton->set_sensitive(vm.hasPreviousView());
         nextButton->set_sensitive(vm.hasNextView());
     }
     ViewManager& vm;
-    Gtk::ToolButton* prevButton;
+    Gtk::ToolButton* firstButton;
     Gtk::ToolButton* nextButton;
 };
 
@@ -72,7 +95,9 @@ Gtk::Widget* createMenu(Application& app)
         showSaveDialog(app);
     });
 
-    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+    Gtk::SeparatorToolItem* separator = Gtk::manage(new Gtk::SeparatorToolItem());
+    separator->set_draw(true);
+    menu->append(*separator);
 
     createToolButton(menu, "Reset", "gtk-refresh", [&]() {
         app.getViewManager().resetView();
@@ -87,11 +112,15 @@ Gtk::Widget* createMenu(Application& app)
     });
     menu->append(*buttonPlay);
 
-    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+    separator = Gtk::manage(new Gtk::SeparatorToolItem());
+    separator->set_draw(true);
+    menu->append(*separator);
 
     Gtk::manage(new ViewButtons(menu, app));
 
-    menu->append(*Gtk::manage(new Gtk::SeparatorToolItem()));
+    separator = Gtk::manage(new Gtk::SeparatorToolItem());
+    separator->set_draw(true);
+    menu->append(*separator);
 
     Gtk::ToggleToolButton* buttonDraw = createToolButton<Gtk::ToggleToolButton>("Fast Drawing", "gtk-edit");
     buttonDraw->set_active(true);
@@ -102,17 +131,28 @@ Gtk::Widget* createMenu(Application& app)
     menu->append(*buttonDraw);
 
     createToolButton(menu, "Path", "gtk-leave-fullscreen", [&]() {
+        //Gtk::Dialog dialog("Save Path", app.getWindow(), true);
+
         ViewManager& vm = app.getViewManager();
+        int iterations = app.getFractal().iterations();
 
-        ViewManager::View start = vm.getView();
+        View start = vm.getView();
         vm.nextView();
-        ViewManager::View end = vm.getView();
+        View end = vm.getView();
         vm.firstView();
 
-        std::vector<ViewManager::View> path = ViewManager::path(start, end, 10);
+        std::vector<View> path = start.path(end, 1000);
+
         for(auto& v: path)
-            vm.setView(v);
-        vm.firstView();
+            std::cout << "View: " << v << "   Ratio: " << (v.width/v.height) << std::endl;
+        int i = 1;
+        for(auto& v: path)
+        {
+            std::cout << i << ":" << std::endl;
+            std::stringstream ss;
+            ss << "data/zoom/" << (i++) << ".jpg";
+            save(ss.str(), app.getColorScheme(), app.getWindowSize(), v, iterations);
+        }
     });
 
     createToolButton(menu, "Color Scheme", "gtk-theme-config", [&]() {
@@ -121,6 +161,23 @@ Gtk::Widget* createMenu(Application& app)
 
     createToolButton(menu, "Step", "gtk-media-forward-ltr", [&]() {
         app.getFractal().iterate();
+    });
+
+    createToolButton(menu, "Jump To Iteration", "gtk-jump-to-ltr", [&]() {
+        showIterateDialog(app);
+    });
+
+    createToolButton(menu, "Views", "gtk-find-and-replace", [&]() {
+        showViewDialog(app);
+    });
+
+    createToolButton(menu, "View", "gtk-find", [&]() {
+        View view = app.getViewManager().getView();
+        std::cout << std::setprecision(30) << std::scientific;
+        std::cout << "X: " << view.left + view.width/2 << std::endl;
+        std::cout << "Y: " << view.top + view.height/2 << std::endl;
+        std::cout << "W: " << view.width << std::endl;
+        std::cout << "H: " << view.height << std::endl;
     });
 
     menu->show_all();
@@ -210,22 +267,200 @@ void showSaveDialog(Application& app)
         sf::Vector2u size(entryWidth->get_value_as_int(),
                           entryHeight->get_value_as_int());
 
+        
+        save(entryFile->get_text(),
+             app.getColorScheme(),
+             size,
+             app.getViewManager().getView(),
+             entryIterations->get_value_as_int());
+    }
+}
+
+void showIterateDialog(Application& app)
+{
+    Gtk::Dialog dialog("Jump To Iteration", app.getWindow(), true);
+
+    dialog.add_button("Ok", Gtk::RESPONSE_ACCEPT);
+
+    Gtk::Box* content = dialog.get_content_area();
+
+    Fractal& fractal = app.getFractal();
+
+    int currentIterations = fractal.iterations();
+    Gtk::SpinButton iterationEntry;
+    iterationEntry.set_range(0, 99999);
+    iterationEntry.set_increments(1, 10);
+    iterationEntry.set_value(currentIterations);
+
+    content->pack_start(iterationEntry);
+    content->show_all();
+
+    int result = dialog.run();
+    if (result == Gtk::RESPONSE_ACCEPT)
+    {
+        int val = iterationEntry.get_value_as_int();
+        if (val > currentIterations)
+            fractal.iterate(val - currentIterations);
+        else if (val < currentIterations)
+        {
+            fractal.setView(app.getViewManager().getView());
+            fractal.iterate(val);
+        }
+        if (val != currentIterations)
+            app.redrawFractal();
+    }
+}
+
+static int view_sort_func(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2) {
+    Gtk::Label* label1 = dynamic_cast<Gtk::Label*>(row1->get_child());
+    Gtk::Label* label2 = dynamic_cast<Gtk::Label*>(row2->get_child());
+
+    return label1->get_text() < label2->get_text();
+}
+
+typedef std::pair<View, int> ViewPair;
+
+static void addViewRow(Gtk::ListBox& list, const std::string& name);
+
+void showViewDialog(Application& app)
+{
+
+    Gtk::Dialog dialog("View List", app.getWindow(), true);
+
+    dialog.add_button("Ok", Gtk::RESPONSE_ACCEPT);
+    dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
+    Gtk::Box* content = dialog.get_content_area();
+
+    ViewManager& vm = app.getViewManager();
+    Fractal& fractal = app.getFractal();
+
+    std::map<std::string, ViewPair>& views = vm.getSavedViews();
+    const std::string* viewName = nullptr;
+    ViewPair* viewView = nullptr;
+
+    Gtk::ListBox list;
+    list.set_sort_func(Gtk::ListBox::SlotSort(sigc::ptr_fun(view_sort_func)));
+
+    SFMLWidget previewWidget(sf::VideoMode(300, 200));
+
+    Gtk::HBox entryBox;
+    Gtk::Entry entryName;
+    entryBox.pack_start(entryName);
+    createButton(&entryBox, "Add", "gtk-add", [&]() {
+        const std::string& name = entryName.get_text();
+        const View& view = vm.getView();
+        int iteration = fractal.iterations();
+        views[name] = ViewPair(view, iteration);
+        addViewRow(list, name);
+        vm.saveViews();
+    });
+    Gtk::Button* removeButton = createButton(&entryBox, "Remove", "gtk-remove", [&]() {
+        Gtk::ListBoxRow* row = list.get_selected_row();
+        if (row)
+        {
+            views.erase(*viewName);
+            list.remove(*row);
+            viewName = nullptr;
+            viewView = nullptr;
+        }
+    });
+    removeButton->set_sensitive(false);
+
+    auto connection = list.signal_row_selected().connect([&, removeButton](Gtk::ListBoxRow* row) {
+        if (row)
+        {
+            Gtk::Label* label = dynamic_cast<Gtk::Label*>(row->get_child());
+            auto it = views.find(label->get_text());
+            if (it != views.end())
+            {
+                viewName = &it->first;
+                viewView = &it->second;
+                previewWidget.invalidate();
+                entryName.set_text(*viewName);
+                removeButton->set_sensitive(true);
+                //Update preview
+                return;
+            }
+        }
+        viewName = nullptr;
+        viewView = nullptr;
+        entryName.set_text("");
+        removeButton->set_sensitive(false);
+    });
+
+    for(auto& pair: views)
+        addViewRow(list, pair.first);
+
+    if (views.size() > 0)
+        list.select_row(*list.get_row_at_index(0));
+
+    Gtk::ScrolledWindow scroll;
+    scroll.add(list);
+    scroll.set_size_request(300, 200);
+    scroll.set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS);
+
+    previewWidget.onDraw([&](SFMLWidget& widget) {
+        if (viewView)
+        {
+            Mandelbrot fractal(sf::Vector2u(300, 200), viewView->first);
+            fractal.iterate(viewView->second);
+            fractal.draw(widget.window(), app.getColorScheme());
+        }
+        widget.display();
+    });
+
+    Gtk::HBox hbox;
+    hbox.pack_start(scroll);
+    hbox.pack_start(previewWidget);
+
+    content->pack_start(hbox);
+    content->pack_start(entryBox);
+
+    content->show_all();
+
+    int result = dialog.run();
+
+    connection.disconnect();
+
+    if (result == Gtk::RESPONSE_ACCEPT)
+    {
+        if (viewView)
+            vm.setView(viewView->first, viewView->second);
+    }
+}
+
+static void addViewRow(Gtk::ListBox& list, const std::string& name)
+{
+    Gtk::Label* label = Gtk::manage(new Gtk::Label(name));
+    list.append(*label);
+    list.show_all();
+    list.invalidate_sort();
+}
+
+static void save(const std::string& filename, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations)
+{
+        std::cout << "Saving " << size << " size image of " << view << " at " << iterations << " iterations to " << filename << std::endl;
         std::cout << "Creating fractal..." << std::endl;
-        Mandelbrot fractal(size, app.getViewManager().getView());
-        fractal.iterate(entryIterations->get_value_as_int());
+        Mandelbrot fractal(size, view);
+        fractal.iterate(iterations);
         fractal.setDrawMode(false);
 
         std::cout << "Creating image..." << std::endl;
         sf::RenderTexture texture;
-        texture.create(size.x, size.y);
+        if (texture.create(size.x, size.y))
+        {
+            fractal.draw(texture, cs);
+            texture.display();
 
-        fractal.draw(texture, app.getColorScheme());
-        texture.display();
+            sf::Image image = texture.getTexture().copyToImage();
 
-        sf::Image image = texture.getTexture().copyToImage();
-
-        std::cout << "Saving image..." << std::endl;
-        image.saveToFile(entryFile->get_text());
-        std::cout << "Done!" << std::endl;
-    }
+            std::cout << "Saving image..." << std::endl;
+            image.saveToFile(filename);
+            std::cout << "Done!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to create image!" << std::endl;
+        }
 }

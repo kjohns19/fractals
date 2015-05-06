@@ -24,8 +24,10 @@ private:
 
     Application& d_app;
     sf::RectangleShape d_bounds;
+    sf::Vector2f d_mouseClickPos;
     sf::Vector2f d_mousePos;
     bool d_drawBounds;
+    bool d_drawMode;
 };
 
 #endif //INCLUDED_VIEW_CHANGER_HPP

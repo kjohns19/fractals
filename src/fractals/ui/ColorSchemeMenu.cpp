@@ -1,8 +1,8 @@
 #include <fractals/ui/ColorSchemeMenu.hpp>
 #include <fractals/ui/SFMLWidget.hpp>
-#include <fractals/color/GradientColorScheme.hpp>
 #include <fractals/ui/Application.hpp>
 #include <fractals/ui/MenuUtils.hpp>
+#include <fractals/color/ColorScheme.hpp>
 #include <SFML/Graphics.hpp>
 #include <gtkmm.h>
 #include <utility>
@@ -33,7 +33,7 @@ void showColorSchemeMenu(Application& app)
 {
     Gtk::Dialog dialog("Color Scheme", app.getWindow(), true);
 
-    GradientColorScheme& cs = dynamic_cast<GradientColorScheme&>(app.getColorScheme());
+    ColorScheme& cs = dynamic_cast<ColorScheme&>(app.getColorScheme());
 
     dialog.add_button("Ok", Gtk::RESPONSE_OK);
     dialog.add_button("Apply", Gtk::RESPONSE_APPLY);
@@ -48,6 +48,9 @@ void showColorSchemeMenu(Application& app)
     Gtk::ListBox list;
 
     list.set_sort_func(Gtk::ListBox::SlotSort(sigc::ptr_fun(sort_func)));
+    list.signal_row_selected().connect([&](Gtk::ListBoxRow* row) {
+        list.unselect_row();
+    });
 
     std::vector<Item> items;
     std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> > itemMap;
@@ -60,9 +63,11 @@ void showColorSchemeMenu(Application& app)
     if (colors.size() == 1)
         std::get<2>(items[0])->set_sensitive(false);
 
-    //Gtk::ScrolledWindow scroll;
-    //scroll.add(list);
-    content->pack_start(list);
+    Gtk::ScrolledWindow scroll;
+    scroll.add(list);
+    scroll.set_size_request(300, 200);
+    scroll.set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS);
+    content->pack_start(scroll);
 
     Gtk::SpinButton* loopEntry = Gtk::manage(new Gtk::SpinButton());
 
@@ -71,7 +76,7 @@ void showColorSchemeMenu(Application& app)
 
         std::map<double, sf::Color> newColors;
         getColors(items, newColors);
-        GradientColorScheme newCS(newColors);
+        ColorScheme newCS(newColors);
         newCS.setLoopCount(loopEntry->get_value_as_int());
 
         sf::RectangleShape rect;

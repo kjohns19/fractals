@@ -8,7 +8,7 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
 
-Mandelbrot::Mandelbrot(const sf::Vector2u& size, const sf::Rect<double>& view):
+Mandelbrot::Mandelbrot(const sf::Vector2u& size, const View& view):
     d_points(size.x * size.y),
     d_valid(size.x * size.y),
     d_done(),
@@ -20,17 +20,17 @@ Mandelbrot::Mandelbrot(const sf::Vector2u& size, const sf::Rect<double>& view):
     setView(view);
 }
 
-void Mandelbrot::setView(const sf::Rect<double>& view)
+void Mandelbrot::setView(const View& view)
 {
     d_valid.resize(d_size.x * d_size.y);
     d_done.clear();
     d_hist.resize(1, 0);
     d_view = view;
 
-    for(unsigned x = 0; x < d_size.x; x++)
-        for(unsigned y = 0; y < d_size.y; y++)
+    for(unsigned y = 0; y < d_size.y; y++)
+        for(unsigned x = 0; x < d_size.x; x++)
         {
-            size_t index = x * d_size.y + y;
+            size_t index = x + d_size.x * y;
             d_valid[index] = index;
 
             Point& point = d_points[index];
@@ -49,9 +49,6 @@ void Mandelbrot::iterate(int count)
     size_t size = d_valid.size() / (threadCount + 1);
     std::vector<std::thread> threads;
     std::vector<std::vector<size_t> > thread_dones;
-
-    //std::cout << threadCount << " threads handling " << size << " points (out of " << d_valid.size() << " total)" << std::endl;
-    //std::cout << "Done: " << d_done.size() << std::endl;
 
     auto func = [&] (int i) {
         iterate(count, i*size, size, thread_dones[i]);
@@ -91,8 +88,8 @@ void Mandelbrot::iterate(int count)
 
     d_iterations+=count;
 
-    if (d_iterations % 100 == 0)
-        std::cout << d_iterations << std::endl;
+    //if (d_iterations % 100 == 0)
+    //    std::cout << d_iterations << std::endl;
 }
 
 void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t>& done)
@@ -100,22 +97,14 @@ void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t
     for(size_t j = 0; j < size; j++)
     {
         size_t index = d_valid[left + j];
-        /*
-        if (index > d_points.size())
-        {
-            std::cout << "----------------------------------------\n";
-            std::cout << "Error: Index is " << index << " for left=" << left << ", j=" << j << "\n";
-            std::cout << "Accessing " << left + j << " for vector of size " << d_valid.size() << std::endl;
-            std::cout << "----------------------------------------" << std::endl;;
-            break;
-        }
-        */
         Point& point = d_points[index];
 
-        double cx = d_view.width * (index / d_size.y) / d_size.x + d_view.left;
-        double cy = d_view.height * (index % d_size.y) / d_size.y + d_view.top;
-        double newx, newy;
-        //double q;
+        long double cx = d_view.width;
+        long double cy = d_view.height;
+
+        cx = cx * (index % d_size.x) / d_size.x + d_view.left;
+        cy = cy * (index / d_size.x) / d_size.y + d_view.top;
+        long double newx, newy;
 
         for(int i = 0; i < count; i++)
         {
@@ -123,9 +112,7 @@ void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t
             {
                 newx = point.x*point.x - point.y*point.y + cx;
                 newy = 2*point.x*point.y + cy;
-                //q = (point.x-0.25)*(point.x-0.25) + point.y*point.y;
                 if (point.x == newx && point.y == newy)
-                    //q * (q + (point.x-0.25)) < 0.25 * point.y * point.y)
                 {
                     point.value+=count-i;
                     point.remove = true;
@@ -171,14 +158,15 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
     std::vector<sf::Color> colors;
     getColors(cs, colors);
 
-    sf::VertexArray vertices(sf::Points, d_size.x * d_size.y);
+    sf::VertexArray vertices(sf::Points, d_size.x * (d_size.y + 1));
 
     if (d_iterations > 0)
-        for(unsigned x = 0; x < d_size.x; x++)
-            for(unsigned y = 0; y < d_size.y; y++)
+    {
+        for(unsigned y = 0; y < d_size.y; y++)
+            for(unsigned x = 0; x < d_size.x; x++)
             {
-                size_t index = x * d_size.y + y;
-                vertices[index].position = sf::Vector2f(x, y);
+                size_t index = x + d_size.x * y;
+                vertices[index].position = sf::Vector2f(x+0.5, y+0.5);
 
                 if (getDrawMode())
                     vertices[index].color = colors[d_points[index].value];
@@ -194,17 +182,25 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
                         double nu = std::log2(std::log2(zn)/2);
                         it += 1 - nu;
 
-                        sf::Color col1 = colors[(int)std::floor(it)];
-                        sf::Color col2 = colors[(int)std::floor(it) + 1];
+                        if (it < 0)
+                            vertices[index].color = colors[0];
+                        else if (it+1 > colors.size()-1)
+                            vertices[index].color = colors.back();
+                        else
+                        {
+                            sf::Color col1 = colors[(int)std::floor(it)];
+                            sf::Color col2 = colors[(int)std::floor(it) + 1];
 
-                        double percent = it - (long) it;
-                        vertices[index].color = sf::Color(
-                            col1.r + (col2.r - col1.r) * percent,
-                            col1.g + (col2.g - col1.g) * percent,
-                            col1.b + (col2.b - col1.b) * percent);
+                            double percent = it - (long) it;
+                            vertices[index].color = sf::Color(
+                                col1.r + (col2.r - col1.r) * percent,
+                                col1.g + (col2.g - col1.g) * percent,
+                                col1.b + (col2.b - col1.b) * percent);
+                        }
                     }
                 }
             }
+    }
 
     target.draw(vertices);
 }

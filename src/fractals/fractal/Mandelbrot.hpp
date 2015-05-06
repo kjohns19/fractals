@@ -2,6 +2,7 @@
 #define INCLUDED_MANDELBROT_HPP
 
 #include <fractals/fractal/Fractal.hpp>
+#include <fractals/util/View.hpp>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -9,12 +10,14 @@
 
 #include <vector>
 
+class View;
+
 class Mandelbrot : public Fractal
 {
 public:
-    Mandelbrot(const sf::Vector2u& size, const sf::Rect<double>& view);
+    Mandelbrot(const sf::Vector2u& size, const View& view);
 
-    virtual void setView(const sf::Rect<double>& view);
+    virtual void setView(const View& view);
 
     virtual void iterate(int count = 1);
 
@@ -24,8 +27,8 @@ public:
 private:
     struct Point
     {
-        double x, y;
-        int value;
+        long double x, y;
+        unsigned short value;
         bool remove;
     };
 
@@ -38,7 +41,7 @@ private:
     std::vector<size_t> d_done;
     std::vector<int> d_hist;
     sf::Vector2u d_size;
-    sf::Rect<double> d_view;
+    View d_view;
 
     int d_iterations;
 };

@@ -1,10 +1,11 @@
-#include <fractals/color/GradientColorScheme.hpp>
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/fractal/Mandelbrot.hpp>
 #include <fractals/fractal/Julia.hpp>
 #include <fractals/ui/Menu.hpp>
 #include <fractals/ui/SFMLWidget.hpp>
 #include <fractals/ui/Application.hpp>
+#include <fractals/color/ColorScheme.hpp>
+#include <fractals/util/View.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -16,17 +17,31 @@
 
 //static sf::Color colorHSV(float h, float s, float v);
 
-static Fractal* createFractal(const sf::Vector2u& size,
-                              const sf::Rect<double>& view);
+static Fractal* createFractal(const sf::Vector2u& size, const View& view);
 static ColorScheme* createColorScheme();
 
 int main(int argc, char* argv[])
 {
-    auto app = Gtk::Application::create(argc, argv, "mandelbrot.set");
+    sf::Vector2u wsize(1400*3/5, 1100*3/5);
+    if (argc >= 3)
+    {
+        int w = std::atoi(argv[1]);
+        int h = std::atoi(argv[2]);
+        if (w > 0 && h > 0)
+        {
+            wsize.x = w;
+            wsize.y = h;
+        }
+    }
 
-    sf::Vector2u wsize(360*4, 240*4);
-    sf::Rect<double> view(-0.5, 0, 3, 2.5);
-    //sf::Rect<double> view(0, 0, 2, 2);
+    View view(-0.5, 0, 3, 2.5);
+
+    int   gtk_argc = 1;
+    char* gtk_args[] = { argv[0], nullptr };
+
+    char** gtk_argv = gtk_args;
+
+    auto app = Gtk::Application::create(gtk_argc, gtk_argv, "mandelbrot.set");
 
     double ratio = 1.0 * wsize.x / wsize.y;
     if (ratio < 1.0 * view.width / view.height)
@@ -48,36 +63,7 @@ sf::Color colorRGB(float r, float g, float b)
     return sf::Color((int)(255*r), (int)(255*g), (int)(255*b));
 }
 
-/*
-sf::Color colorHSV(float h, float s, float v)
-{
-    if (s == 0)
-        return sf::Color(v, v, v);
-
-    h/=0.2;
-    int i = std::floor(h);
-    float f = h - i;
-    float p = v * (1 - s);
-    float q = v * (1 - s * f);
-    float t = v * (1 - s * (1 - f));
-
-    if (i == 0)
-        return colorRGB(v, t, p);
-    else if (i == 1)
-        return colorRGB(q, v, p);
-    else if (i == 2)
-        return colorRGB(p, v, t);
-    else if (i == 3)
-        return colorRGB(p, q, v);
-    else if (i == 4)
-        return colorRGB(t, p, v);
-    else
-        return colorRGB(v, p, q);
-}
-*/
-
-Fractal* createFractal(const sf::Vector2u& size,
-                                       const sf::Rect<double>& view)
+Fractal* createFractal(const sf::Vector2u& size, const View& view)
 {
     Fractal* fractal = new Mandelbrot(size, view);
     //fractal->iterate(1000);
@@ -98,9 +84,10 @@ Fractal* createFractal(const sf::Vector2u& size,
     */
     return fractal;
 }
+
 ColorScheme* createColorScheme()
 {
-    ColorScheme* colorScheme = new GradientColorScheme({
+    ColorScheme* colorScheme = new ColorScheme({
         { 0.0000, sf::Color(0,   7,   100) },
         { 0.1600, sf::Color(32,  107, 203) },
         { 0.4200, sf::Color(237, 255, 255) },
@@ -108,7 +95,7 @@ ColorScheme* createColorScheme()
         { 0.8575, sf::Color(0,   2,   0  ) }
     });
     /*
-    GradientColorScheme* colorScheme = new GradientColorScheme({
+    ColorScheme* colorScheme = new ColorScheme({
         {0.9, sf::Color::Black},
         {1.0, sf::Color::Black},
     });

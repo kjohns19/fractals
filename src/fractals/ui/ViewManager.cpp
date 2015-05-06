@@ -2,29 +2,38 @@
 #include <fractals/ui/Application.hpp>
 #include <fractals/fractal/Fractal.hpp>
 #include <cmath>
+#include <fstream>
+#include <iostream>
 
-ViewManager::ViewManager(Application& app, const View& view): d_app(app),
-    d_view(view) {}
+ViewManager::ViewManager(Application& app, const View& view):
+    d_app(app),
+    d_view(view),
+    d_loaded(false) {}
 
-const ViewManager::View& ViewManager::getView()
+ViewManager::~ViewManager()
+{
+    saveViews();
+}
+
+const View& ViewManager::getView()
 {
     return d_view;
 }
-void ViewManager::setView(const View& view)
+void ViewManager::setView(const View& view, int iterations)
 {
     d_prev_views.push_back(d_view);
     d_next_views.clear();
     d_view = view;
-    resetView();
+    resetView(iterations);
 }
 
-static void swap_views(std::vector<ViewManager::View>& to,
-                       std::vector<ViewManager::View>& from,
-                       ViewManager::View& view)
+static void swap_views(std::vector<View>& to,
+                       std::vector<View>& from,
+                       View& view)
 {
     if (!from.empty())
     {
-        ViewManager::View& newView = from.back();
+        View& newView = from.back();
         to.push_back(view);
         view = newView;
         from.pop_back();
@@ -84,10 +93,14 @@ void ViewManager::zoomOut()
     zoom(1.0/1.5);
 }
 
-void ViewManager::resetView()
+void ViewManager::resetView(int iterations)
 {
+    if (iterations == -1)
+        iterations = d_app.getFractal().iterations();
+
+    //std::cout << "Ratio: " << d_view.width / d_view.height << std::endl;
     d_app.getFractal().setView(d_view);
-    d_app.getFractal().iterate(500);
+    d_app.getFractal().iterate(iterations);
     d_app.redrawFractal();
     notify(*this);
 }
@@ -99,39 +112,64 @@ void ViewManager::clearViews()
     notify(*this);
 }
 
-std::vector<ViewManager::View> ViewManager::path(const View& start, const View& end, int count)
+std::map<std::string, std::pair<View, int> >& ViewManager::getSavedViews()
 {
-    sf::Vector2<double> startCenter(start.left + start.width/2,
-                                    start.top + start.height/2);
-    sf::Vector2<double> endCenter(end.left + end.width/2, 
-                                  end.top + end.height/2);
-
-    sf::Vector2<double> startSize(start.width, start.height);
-    sf::Vector2<double> endSize(end.width, end.height);
-
-    double sizeScale = end.width / start.width;
-
-    sf::Vector2<double> diffCenter = endCenter - startCenter;
-
-    std::vector<View> path;
-
-    double ratio = std::pow(sizeScale, 1.0/(count-1));
-    double sum = (std::pow(ratio, count) - 1) / (ratio - 1);
-
-    for(int i = 0; i < count; i++)
+    if (!d_loaded)
     {
-        double scale = 1.0 * i / (count - 1);
+        d_loaded = true;
+        std::ifstream in("views.dat");
+        if (in)
+        {
+            size_t count;
+            size_t nameLength;
+            std::string name;
+            View view;
+            int iterations;
+            in.read(reinterpret_cast<char*>(&count), sizeof(count));
+            for(size_t i = 0; i < count; i++)
+            {
+                in.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+                name.resize(nameLength, ' ');
 
-        double amount = (std::pow(ratio, i+1) - 1) / (ratio - 1);
-        double offX = diffCenter.x / sum * amount;
-        double offY = diffCenter.y / sum * amount;
-        sf::Vector2<double> center = startCenter + sf::Vector2<double>(offX, offY);//diffCenter * scale;
-        sf::Vector2<double> size = startSize * std::pow(sizeScale, scale);
+                in.read(&*name.begin(), nameLength);
+                in.read(reinterpret_cast<char*>(&view.left),   sizeof(view.left));
+                in.read(reinterpret_cast<char*>(&view.top),    sizeof(view.top));
+                in.read(reinterpret_cast<char*>(&view.width),  sizeof(view.width));
+                in.read(reinterpret_cast<char*>(&view.height), sizeof(view.height));
+                in.read(reinterpret_cast<char*>(&iterations), sizeof(int));
 
-        path.push_back(View(center.x - size.x/2,
-                            center.y - size.y/2,
-                            size.x, size.y));
+                d_saved_views[name] = std::make_pair(view, iterations);
+            }
+        }
     }
+    return d_saved_views;
+}
 
-    return path;
+void ViewManager::saveViews() const
+{
+    if (d_loaded)
+    {
+        std::ofstream out("views.dat");
+        if (out)
+        {
+            size_t size = d_saved_views.size();
+            out.write(reinterpret_cast<char*>(&size), sizeof(size));
+            for(auto& pair: d_saved_views)
+            {
+                const std::string& name = pair.first;
+                size_t nameLength = name.length();
+                out.write(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+                out.write(name.c_str(), nameLength);
+
+                const View view = pair.second.first;
+                int iterations = pair.second.second;
+
+                out.write(reinterpret_cast<const char*>(&view.left),   sizeof(view.left));
+                out.write(reinterpret_cast<const char*>(&view.top),    sizeof(view.top));
+                out.write(reinterpret_cast<const char*>(&view.width),  sizeof(view.width));
+                out.write(reinterpret_cast<const char*>(&view.height), sizeof(view.height));
+                out.write(reinterpret_cast<const char*>(&iterations), sizeof(int));
+            }
+        }
+    }
 }

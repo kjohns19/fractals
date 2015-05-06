@@ -6,13 +6,16 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <iostream>
 
 ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next):
     EventHandler(next),
     d_app(app),
     d_bounds(),
+    d_mouseClickPos(),
     d_mousePos(),
-    d_drawBounds(false)
+    d_drawBounds(false),
+    d_drawMode(false)
 {
     d_bounds.setOutlineColor(sf::Color::Blue);
     d_bounds.setFillColor(sf::Color(0, 0, 0, 0));
@@ -22,7 +25,19 @@ ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next):
 void ViewChanger::drawBounds(sf::RenderTarget& target) const
 {
     if (d_drawBounds)
+    {
         target.draw(d_bounds);
+        if (!d_drawMode)
+        {
+            sf::RectangleShape shape;
+            shape.setOutlineColor(sf::Color::Red);
+            shape.setFillColor(sf::Color(0, 0, 0, 0));
+            shape.setOutlineThickness(1);
+            shape.setPosition(d_mouseClickPos);
+            shape.setSize(d_mousePos - d_mouseClickPos);
+            target.draw(shape);
+        }
+    }
 }
 
 bool ViewChanger::doHandle(const sf::Event& event)
@@ -35,43 +50,51 @@ bool ViewChanger::doHandle(const sf::Event& event)
     switch(event.type)
     {
         case sf::Event::MouseButtonPressed:
-            if (button.button == sf::Mouse::Left)
+            if (button.button == sf::Mouse::Left || button.button == sf::Mouse::Right)
             {
-                d_mousePos = sf::Vector2f(button.x, button.y);
-                d_bounds.setPosition(d_mousePos);
-                d_bounds.setSize(sf::Vector2f(0, 0));
-                d_drawBounds = true;
-            }
-            else if (button.button == sf::Mouse::Right)
-            {
-                if (!d_drawBounds)
-                    vm.previousView();
-                else
+                if (d_drawBounds)
                     d_drawBounds = false;
+                else
+                {
+                    d_mouseClickPos = sf::Vector2f(button.x, button.y);
+                    d_mousePos = d_mouseClickPos;
+                    d_bounds.setPosition(d_mouseClickPos);
+                    d_bounds.setSize(sf::Vector2f(0, 0));
+                    d_drawBounds = true;
+                    d_drawMode = (button.button == sf::Mouse::Left);
+                }
             }
+            else if (button.button == sf::Mouse::Middle && !d_drawBounds)
+                vm.previousView();
             break;
         case sf::Event::MouseButtonReleased:
-            if (button.button == sf::Mouse::Left && d_drawBounds)
+            if (d_drawBounds &&
+                    (button.button == sf::Mouse::Left ||
+                    button.button == sf::Mouse::Right))
             {
-                if (d_bounds.getSize() != sf::Vector2f(0, 0))
+                if (d_drawMode == (button.button == sf::Mouse::Left))
                 {
-                    const Application::View& oldView = vm.getView();
-                    Application::View  newView(d_bounds.getGlobalBounds());
-                    newView.left   = oldView.left + oldView.width * newView.left / wsize.x;
-                    newView.top    = oldView.top + oldView.height * newView.top / wsize.y;
-                    newView.width *= oldView.width / wsize.x;
-                    newView.height*= oldView.height / wsize.y;
+                    if (d_bounds.getSize() != sf::Vector2f(0, 0))
+                    {
+                        const View& oldView = vm.getView();
+                        View  newView(d_bounds.getGlobalBounds());
+                        newView.left   = oldView.left + oldView.width * newView.left / wsize.x;
+                        newView.top    = oldView.top + oldView.height * newView.top / wsize.y;
+                        newView.width *= oldView.width / wsize.x;
+                        newView.height*= oldView.height / wsize.y;
+                        newView.fit(wsize);
 
-                    vm.setView(newView);
+                        vm.setView(newView);
+                    }
+                    d_drawBounds = false;
                 }
-                d_drawBounds = false;
             }
             break;
         case sf::Event::MouseMoved:
             if (d_drawBounds)
             {
-                sf::Vector2f mouse(move.x, move.y);
-                sf::Vector2f difference = mouse - d_mousePos;
+                d_mousePos = sf::Vector2f(move.x, move.y);
+                sf::Vector2f difference = d_mousePos - d_mouseClickPos;
                 if (difference.x < 0)
                     difference.x = -difference.x;
                 if (difference.y < 0)
@@ -80,10 +103,19 @@ bool ViewChanger::doHandle(const sf::Event& event)
                 float ratio = 1.0 * wsize.x / wsize.y;
 
                 sf::Vector2f size(std::max(difference.x, difference.y * ratio),
-                                    std::max(difference.y, difference.x / ratio));
+                                  std::max(difference.y, difference.x / ratio));
 
-                d_bounds.setPosition(d_mousePos - size);
-                d_bounds.setSize(size*2.0f);
+                if (d_drawMode)
+                {
+                    d_bounds.setPosition(d_mouseClickPos - size);
+                    d_bounds.setSize(size*2.0f);
+                }
+                else
+                {
+                    sf::Vector2f center = d_mouseClickPos + (d_mousePos - d_mouseClickPos) / 2.0f;
+                    d_bounds.setPosition(center - size / 2.0f);
+                    d_bounds.setSize(size);
+                }
             }
             break;
         default:

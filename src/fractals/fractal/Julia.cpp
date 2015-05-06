@@ -1,11 +1,12 @@
 #include <fractals/fractal/Julia.hpp>
 #include <fractals/color/ColorScheme.hpp>
+#include <fractals/util/View.hpp>
 
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
 
-Julia::Julia(const sf::Vector2u& size, const sf::Rect<double>& view, const Func& func):
+Julia::Julia(const sf::Vector2u& size, const View& view, const Func& func):
     d_points(size.x * size.y),
     d_valid(size.x * size.y),
     d_size(size),
@@ -15,7 +16,7 @@ Julia::Julia(const sf::Vector2u& size, const sf::Rect<double>& view, const Func&
     setView(view);
 }
 
-void Julia::setView(const sf::Rect<double>& view)
+void Julia::setView(const View& view)
 {
     d_valid.resize(d_size.x * d_size.y);
 
