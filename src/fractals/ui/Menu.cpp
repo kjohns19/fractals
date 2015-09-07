@@ -342,7 +342,9 @@ void showViewDialog(Application& app)
     Gtk::ListBox list;
     list.set_sort_func(Gtk::ListBox::SlotSort(sigc::ptr_fun(view_sort_func)));
 
-    SFMLWidget previewWidget(sf::VideoMode(300, 200));
+    const int previewWidth = 300;
+    const int previewHeight = 200;
+    SFMLWidget previewWidget(sf::VideoMode(previewWidth, previewHeight));
 
     Gtk::HBox entryBox;
     Gtk::Entry entryName;
@@ -403,7 +405,9 @@ void showViewDialog(Application& app)
     previewWidget.onDraw([&](SFMLWidget& widget) {
         if (viewView)
         {
-            Mandelbrot fractal(sf::Vector2u(300, 200), viewView->first);
+            auto view = viewView->first;
+            view.fit(1.0 * previewWidth / previewHeight);
+            Mandelbrot fractal(sf::Vector2u(300, 200), view);
             fractal.iterate(viewView->second);
             fractal.draw(widget.window(), app.getColorScheme());
         }
@@ -426,7 +430,12 @@ void showViewDialog(Application& app)
     if (result == Gtk::RESPONSE_ACCEPT)
     {
         if (viewView)
-            vm.setView(viewView->first, viewView->second);
+        {
+            auto view = viewView->first;
+            const auto& current = vm.getView();
+            view.fit(current.width / current.height);
+            vm.setView(view, viewView->second);
+        }
     }
 }
 
