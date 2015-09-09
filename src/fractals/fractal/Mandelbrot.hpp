@@ -3,12 +3,14 @@
 
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/util/View.hpp>
+#include <fractals/util/ThreadWorker.hpp>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
 
 #include <vector>
+#include <thread>
 
 class View;
 
@@ -39,6 +41,7 @@ private:
     std::vector<Point> d_points;
     std::vector<size_t> d_valid;
     std::vector<size_t> d_done;
+    std::vector<ThreadWorker> d_workers;
     std::vector<int> d_hist;
     sf::Vector2u d_size;
     View d_view;

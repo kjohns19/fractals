@@ -12,6 +12,7 @@ Mandelbrot::Mandelbrot(const sf::Vector2u& size, const View& view):
     d_points(size.x * size.y),
     d_valid(size.x * size.y),
     d_done(),
+    d_workers(std::thread::hardware_concurrency()),
     d_hist(1, 0),
     d_size(size),
     d_view(view),
@@ -45,35 +46,33 @@ void Mandelbrot::setView(const View& view)
 void Mandelbrot::iterate(int count)
 {
     size_t maxSize = 50000;
-    size_t threadCount = std::min<size_t>(10, d_valid.size() / maxSize);
+    size_t threadCount = std::min(d_workers.size(), d_valid.size() / maxSize);
     size_t size = d_valid.size() / (threadCount + 1);
-    std::vector<std::thread> threads;
-    std::vector<std::vector<size_t> > thread_dones;
-
-    auto func = [&] (int i) {
-        iterate(count, i*size, size, thread_dones[i]);
-    };
-
-    thread_dones.resize(threadCount);
     d_hist.resize(d_hist.size() + count, 0);
-
-    for(size_t i = 0; i < threadCount; i++)
-        threads.push_back(std::thread(func, i));
 
     for(size_t pos: d_done)
         d_points[pos].value+=count;
 
+    std::vector<std::vector<size_t>> allDone(threadCount);
+    for(size_t i = 0; i < threadCount; i++)
+    {
+        d_workers[i].doWork([=, &allDone]() {
+            iterate(count, i*size, size, allDone[i]);
+        });
+    }
+
     iterate(count, threadCount * size, d_valid.size() - threadCount * size, d_done);
 
-    size_t i = 0;
-    for(auto& thread: threads)
+    for(size_t i = 0; i < threadCount; i++)
+        d_workers[i].wait();
+
+    for(size_t i = 0; i < threadCount; i++)
     {
-        thread.join();
-        std::vector<size_t>& done = thread_dones[i++];
+        auto& done = allDone[i];
         d_done.insert(d_done.end(), done.begin(), done.end());
     }
 
-    for(i = 0; i < d_valid.size();)
+    for(size_t i = 0; i < d_valid.size();)
     {
         Point& p = d_points[d_valid[i]];
         if (p.remove)
@@ -87,9 +86,6 @@ void Mandelbrot::iterate(int count)
     }
 
     d_iterations+=count;
-
-    //if (d_iterations % 100 == 0)
-    //    std::cout << d_iterations << std::endl;
 }
 
 void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t>& done)
