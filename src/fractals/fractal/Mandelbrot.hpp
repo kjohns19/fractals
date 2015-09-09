@@ -10,7 +10,7 @@
 #include <SFML/Graphics/Color.hpp>
 
 #include <vector>
-#include <thread>
+#include <memory>
 
 class View;
 
@@ -18,6 +18,8 @@ class Mandelbrot : public Fractal
 {
 public:
     Mandelbrot(const sf::Vector2u& size, const View& view);
+
+    void setNumThreads(int num);
 
     virtual void setView(const View& view);
 
@@ -41,7 +43,7 @@ private:
     std::vector<Point> d_points;
     std::vector<size_t> d_valid;
     std::vector<size_t> d_done;
-    std::vector<ThreadWorker> d_workers;
+    std::vector<std::shared_ptr<ThreadWorker>> d_workers;
     std::vector<int> d_hist;
     sf::Vector2u d_size;
     View d_view;

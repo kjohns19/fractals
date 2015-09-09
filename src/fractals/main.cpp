@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iomanip>
 #include <memory>
+#include <thread>
 
 //static sf::Color colorHSV(float h, float s, float v);
 
@@ -65,23 +66,8 @@ sf::Color colorRGB(float r, float g, float b)
 
 Fractal* createFractal(const sf::Vector2u& size, const View& view)
 {
-    Fractal* fractal = new Mandelbrot(size, view);
-    //fractal->iterate(1000);
-    /*
-    double cx = -0.8;
-    double cy = 0.156;
-
-    Fractal* fractal = new Julia(size, view,
-        [cx, cy](double zx, double zy, double& nx, double& ny) {
-            if (zx*zx + zy*zy < 4)
-            {
-                nx = zx*zx - zy*zy + cx;
-                ny = 2*zx*zy + cy;
-                return true;
-            }
-            return false;
-        });
-    */
+    Mandelbrot* fractal = new Mandelbrot(size, view);
+    fractal->setNumThreads(std::thread::hardware_concurrency());
     return fractal;
 }
 
@@ -94,17 +80,5 @@ ColorScheme* createColorScheme()
         { 0.6425, sf::Color(255, 170, 0  ) },
         { 0.8575, sf::Color(0,   2,   0  ) }
     });
-    /*
-    ColorScheme* colorScheme = new ColorScheme({
-        {0.9, sf::Color::Black},
-        {1.0, sf::Color::Black},
-    });
-    int count = 100;
-    for(int i = 0; i < count; i++)
-        colorScheme->add({
-            {0.45 * i*2 / count, sf::Color::Black},
-            {0.45* (i*2+1) / count, colorHSV(1-1.0*i/count, 1, 1)}
-        });
-    */
     return colorScheme;
 }

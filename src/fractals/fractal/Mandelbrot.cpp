@@ -1,7 +1,6 @@
 #include <fractals/fractal/Mandelbrot.hpp>
 #include <fractals/color/ColorScheme.hpp>
 #include <iostream>
-#include <thread>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -12,13 +11,26 @@ Mandelbrot::Mandelbrot(const sf::Vector2u& size, const View& view):
     d_points(size.x * size.y),
     d_valid(size.x * size.y),
     d_done(),
-    d_workers(std::thread::hardware_concurrency()),
+    d_workers(),
     d_hist(1, 0),
     d_size(size),
     d_view(view),
     d_iterations(0)
 {
     setView(view);
+}
+
+void Mandelbrot::setNumThreads(int num)
+{
+    //Manual instead of using resize because we can't copy ThreadWorkers
+    int current = static_cast<int>(d_workers.size());
+    if (num > current)
+    {
+        for(int i = current; i < num; i++)
+            d_workers.push_back(std::make_shared<ThreadWorker>());
+    }
+    else if (num < current)
+        d_workers.resize(num);
 }
 
 void Mandelbrot::setView(const View& view)
@@ -56,7 +68,7 @@ void Mandelbrot::iterate(int count)
     std::vector<std::vector<size_t>> allDone(threadCount);
     for(size_t i = 0; i < threadCount; i++)
     {
-        d_workers[i].doWork([=, &allDone]() {
+        d_workers[i]->doWork([=, &allDone]() {
             iterate(count, i*size, size, allDone[i]);
         });
     }
@@ -64,7 +76,7 @@ void Mandelbrot::iterate(int count)
     iterate(count, threadCount * size, d_valid.size() - threadCount * size, d_done);
 
     for(size_t i = 0; i < threadCount; i++)
-        d_workers[i].wait();
+        d_workers[i]->wait();
 
     for(size_t i = 0; i < threadCount; i++)
     {
