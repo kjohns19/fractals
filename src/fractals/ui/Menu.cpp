@@ -452,7 +452,15 @@ static void save(const std::string& filename, const ColorScheme& cs, const sf::V
         std::cout << "Saving " << size << " size image of " << view << " at " << iterations << " iterations to " << filename << std::endl;
         std::cout << "Creating fractal..." << std::endl;
         Mandelbrot fractal(size, view);
-        fractal.iterate(iterations);
+        std::cout << "Iterating..." << std::endl;
+        int stepCount = 100;
+        for(int total = 0; total < iterations;)
+        {
+            int iterationCount = std::min(stepCount, iterations - total);
+            fractal.iterate(iterationCount);
+            total+=iterationCount;
+            std::cout << total << std::endl;
+        }
         fractal.setDrawMode(false);
 
         std::cout << "Creating image..." << std::endl;
