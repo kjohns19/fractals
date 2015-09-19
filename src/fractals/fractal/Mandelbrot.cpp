@@ -142,6 +142,7 @@ void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t
 
 void Mandelbrot::getColors(const ColorScheme& cs, std::vector<sf::Color>& colors)
 {
+    colors.resize(d_iterations+1);
     bool histogram = false;
     if (histogram)
     {
@@ -150,13 +151,13 @@ void Mandelbrot::getColors(const ColorScheme& cs, std::vector<sf::Color>& colors
         for(int i = 0; i <= d_iterations; i++)
         {
             hue = (i == d_iterations) ? 1 : (hue + 1.0 * d_hist[i] / total);
-            colors.push_back(cs.getColor(hue));
+            colors[i] = cs.getColor(hue);
         }
     }
     else
     {
         for(int i = 0; i <= d_iterations; i++)
-            colors.push_back(cs.getColor(1.0 * i / d_iterations));
+            colors[i] = cs.getColor(1.0 * i / d_iterations);
     }
 
 }
@@ -165,6 +166,28 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
 {
     std::vector<sf::Color> colors;
     getColors(cs, colors);
+
+    bool fastDraw = getDrawMode();
+
+    std::vector<sf::Color> transitionColors;
+    int transitionCount = 10;
+    if (!fastDraw)
+    {
+        transitionColors.resize(colors.size() * transitionCount);
+        for(size_t i = 0; i < colors.size(); i++)
+        {
+            sf::Color& col1 = colors[i];
+            sf::Color& col2 = colors[(i+1)%colors.size()];
+            for(int j = 0; j < transitionCount; j++)
+            {
+                double percent = 1.0 * j / transitionCount;
+                transitionColors[i*transitionCount + j] = sf::Color(
+                    col1.r + (col2.r - col1.r) * percent,
+                    col1.g + (col2.g - col1.g) * percent,
+                    col1.b + (col2.b - col1.b) * percent);
+            }
+        }
+    }
 
     sf::VertexArray vertices(sf::Points, d_size.x * (d_size.y + 1));
 
@@ -176,7 +199,7 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
                 size_t index = x + d_size.x * y;
                 vertices[index].position = sf::Vector2f(x+0.5, y+0.5);
 
-                if (getDrawMode())
+                if (fastDraw)
                     vertices[index].color = colors[d_points[index].value];
                 else
                 {
@@ -187,7 +210,7 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
                     {
                         double it = point.value;
                         double zn = point.x*point.x + point.y*point.y;
-                        double nu = std::log2(std::log2(zn)/2);
+                        double nu = std::log2(std::log2(zn)) - 1;
                         it += 1 - nu;
 
                         if (it < 0)
@@ -196,19 +219,14 @@ void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
                             vertices[index].color = colors.back();
                         else
                         {
-                            sf::Color col1 = colors[(int)std::floor(it)];
-                            sf::Color col2 = colors[(int)std::floor(it) + 1];
-
                             double percent = it - (long) it;
-                            vertices[index].color = sf::Color(
-                                col1.r + (col2.r - col1.r) * percent,
-                                col1.g + (col2.g - col1.g) * percent,
-                                col1.b + (col2.b - col1.b) * percent);
+                            int transitionIndex = (int)(percent * transitionCount);
+                            int base = (int)std::floor(it);
+                            vertices[index].color = transitionColors[base*transitionCount+transitionIndex];
                         }
                     }
                 }
             }
     }
-
     target.draw(vertices);
 }
