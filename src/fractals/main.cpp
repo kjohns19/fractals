@@ -18,8 +18,8 @@
 
 //static sf::Color colorHSV(float h, float s, float v);
 
-static Fractal* createFractal(const sf::Vector2u& size, const View& view);
-static ColorScheme* createColorScheme();
+static std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view);
+static std::unique_ptr<ColorScheme> createColorScheme();
 
 int main(int argc, char* argv[])
 {
@@ -35,7 +35,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    View view(-0.5, 0, 3, 2.5);
+    //View view(-0.5, 0, 3, 2.5);
+    View view(0, 0, 3, 2.5);
 
     int   gtk_argc = 1;
     char* gtk_args[] = { argv[0], nullptr };
@@ -50,8 +51,8 @@ int main(int argc, char* argv[])
     else
         view.width = view.height * ratio;
 
-    view.left = -0.5 - view.width/2;
-    view.top = -view.height/2;
+    view.left -= view.width/2;
+    view.top -= view.height/2;
 
     Application application(wsize, view, createFractal(wsize, view), createColorScheme());
 
@@ -59,26 +60,45 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-sf::Color colorRGB(float r, float g, float b)
+std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view)
 {
-    return sf::Color((int)(255*r), (int)(255*g), (int)(255*b));
-}
-
-Fractal* createFractal(const sf::Vector2u& size, const View& view)
-{
-    Mandelbrot* fractal = new Mandelbrot(size, view);
-    fractal->setNumThreads(std::thread::hardware_concurrency());
+    std::unique_ptr<Fractal> fractal;
+    if (1)
+    {
+        fractal.reset(new Mandelbrot(size));
+        fractal->setNumThreads(std::thread::hardware_concurrency());
+    }
+    else
+    {
+        long double cx, cy;
+        cx = 0.285;
+        cy = 0.01;
+        fractal.reset(new Julia(size, cx, cy));
+        //double cx = 0.285;
+        //double cy = 0.01;
+        //fractal = new Julia(size,
+        //    [cx, cy](double zx, double zy, double& nx, double& ny) {
+        //        if (zx*zx + zy*zy < 4)
+        //        {
+        //            nx = zx*zx - zy*zy + cx;
+        //            ny = 2*zx*zy + cy;
+        //            return true;
+        //        }
+        //        return false;
+        //    });
+    }
+    fractal->setView(view);
     return fractal;
 }
 
-ColorScheme* createColorScheme()
+std::unique_ptr<ColorScheme> createColorScheme()
 {
-    ColorScheme* colorScheme = new ColorScheme({
+    std::unique_ptr<ColorScheme> colorScheme(new ColorScheme({
         { 0.0000, sf::Color(0,   7,   100) },
         { 0.1600, sf::Color(32,  107, 203) },
         { 0.4200, sf::Color(237, 255, 255) },
         { 0.6425, sf::Color(255, 170, 0  ) },
         { 0.8575, sf::Color(0,   2,   0  ) }
-    });
+    }));
     return colorScheme;
 }

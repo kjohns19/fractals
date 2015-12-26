@@ -1,37 +1,78 @@
 #ifndef INCLUDED_FRACTAL_HPP
 #define INCLUDED_FRACTAL_HPP
 
+#include <fractals/util/View.hpp>
+#include <fractals/util/ThreadWorker.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <vector>
+#include <memory>
+
 namespace sf
 {
     template<typename T>
     class Rect;
 
     class RenderTarget;
+
+    class Color;
 }
 
 class ColorScheme;
 
-class View;
-
 class Fractal
 {
 public:
-    Fractal():
-        d_fastDraw(true) {}
-    virtual ~Fractal() {}
+    Fractal(const sf::Vector2u& size);
 
-    virtual void setView(const View& view) = 0;
+    std::unique_ptr<Fractal> clone() const;
+    std::unique_ptr<Fractal> clone(const sf::Vector2u& size) const;
+    std::unique_ptr<Fractal> clone(const View& view) const;
+    virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const = 0;
 
-    virtual void iterate(int count = 1) = 0;
+    void setNumThreads(int num);
 
-    virtual int iterations() const = 0;
+    void setView(const View& view);
+    const View& getView() const { return d_view; }
+    const sf::Vector2u& getSize() const { return d_size; }
+
+    void iterate(int count = 1);
 
     void setDrawMode(bool fast) { d_fastDraw = fast; }
     bool getDrawMode() const { return d_fastDraw; }
 
-    virtual void draw(sf::RenderTarget& target, const ColorScheme& cs) = 0;
-    //virtual void draw2(sf::RenderTarget& target, const ColorScheme& cs) { draw(target, cs); }
+    void draw(sf::RenderTarget& target, const ColorScheme& cs);
+
+    int iterations() const { return d_iterations; }
+protected:
+    struct Point
+    {
+        long double x, y;
+        unsigned short value;
+        bool remove;
+    };
+
 private:
+    virtual void resetPoint(long double x, long double y, Point& point) = 0;
+    virtual void doIterate(
+            int count,
+            const std::vector<size_t>& valid,
+            std::vector<Point>& points,
+            size_t startPoint,
+            size_t numPoints,
+            std::vector<size_t>& done) = 0;
+
+    void getColors(const ColorScheme& cs, std::vector<sf::Color>& colors);
+
+    std::vector<Point> d_points;
+    std::vector<size_t> d_valid;
+    std::vector<size_t> d_done;
+    std::vector<std::shared_ptr<ThreadWorker>> d_workers;
+    std::vector<int> d_hist;
+    sf::Vector2u d_size;
+    View d_view;
+
+    int d_iterations;
     bool d_fastDraw;
 };
 

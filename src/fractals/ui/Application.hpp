@@ -20,8 +20,8 @@ class Application
 public:
     Application(const sf::Vector2u& windowSize,
                 const View& view,
-                Fractal* fractal,
-                ColorScheme* colorScheme);
+                std::unique_ptr<Fractal> fractal,
+                std::unique_ptr<ColorScheme> colorScheme);
 
     const sf::Vector2u& getWindowSize() const;
 
@@ -34,7 +34,7 @@ public:
     Gtk::Window& getWindow();
     const Gtk::Window& getWindow() const;
 
-    void setFractal(Fractal* fractal);
+    void setFractal(std::unique_ptr<Fractal> fractal);
     Fractal& getFractal();
     const Fractal& getFractal() const;
 

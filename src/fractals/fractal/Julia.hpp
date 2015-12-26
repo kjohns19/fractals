@@ -19,31 +19,25 @@ class View;
 class Julia : public Fractal
 {
 public:
-    using Func = std::function<bool(double zx, double zy, double& nx, double& ny)>;
-    Julia(const sf::Vector2u& size, const View& view, const Func& func);
+    Julia(const sf::Vector2u& size, long double x, long double y);
 
-    virtual void setView(const View& view);
+    virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
 
-    virtual void iterate(int count = 1);
+    long double getX() const { return d_x; }
+    long double getY() const { return d_y; }
 
-    virtual void draw(sf::RenderTarget& target, const ColorScheme& cs);
-
-    virtual int iterations() const { return d_iterations; }
+    void setValue(long double x, long double y);
 private:
-    struct Point
-    {
-        double x, y;
-        int value;
-    };
-
-    void getColors(const ColorScheme& cs, std::vector<sf::Color>& colors);
-
-    std::vector<Point> d_points;
-    std::vector<size_t> d_valid;
-    sf::Vector2u d_size;
-
-    Func d_func;
-    int d_iterations;
+    virtual void resetPoint(long double x, long double y, Point& point);
+    virtual void doIterate(
+            int count,
+            const std::vector<size_t>& valid,
+            std::vector<Fractal::Point>& points,
+            size_t left,
+            size_t numPoints,
+            std::vector<size_t>& done);
+    long double d_x;
+    long double d_y;
 };
 
 #endif //INCLUDED_JULIA_HPP

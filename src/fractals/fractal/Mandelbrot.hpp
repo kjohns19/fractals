@@ -17,38 +17,18 @@ class View;
 class Mandelbrot : public Fractal
 {
 public:
-    Mandelbrot(const sf::Vector2u& size, const View& view);
+    Mandelbrot(const sf::Vector2u& size);
 
-    void setNumThreads(int num);
-
-    virtual void setView(const View& view);
-
-    virtual void iterate(int count = 1);
-
-    virtual void draw(sf::RenderTarget& target, const ColorScheme& cs);
-
-    virtual int iterations() const { return d_iterations; }
+    virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
 private:
-    struct Point
-    {
-        long double x, y;
-        unsigned short value;
-        bool remove;
-    };
-
-    void iterate(int count, size_t left, size_t size, std::vector<size_t>& done);
-
-    void getColors(const ColorScheme& cs, std::vector<sf::Color>& colors);
-
-    std::vector<Point> d_points;
-    std::vector<size_t> d_valid;
-    std::vector<size_t> d_done;
-    std::vector<std::shared_ptr<ThreadWorker>> d_workers;
-    std::vector<int> d_hist;
-    sf::Vector2u d_size;
-    View d_view;
-
-    int d_iterations;
+    virtual void resetPoint(long double x, long double y, Point& point);
+    virtual void doIterate(
+            int count,
+            const std::vector<size_t>& valid,
+            std::vector<Fractal::Point>& points,
+            size_t startPoint,
+            size_t numPoints,
+            std::vector<size_t>& done);
 };
 
 #endif //INCLUDED_MANDELBROT_HPP

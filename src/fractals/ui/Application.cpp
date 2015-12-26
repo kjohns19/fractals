@@ -12,10 +12,10 @@
 
 Application::Application(const sf::Vector2u& windowSize,
                          const View& view,
-                         Fractal* fractal,
-                         ColorScheme* colorScheme):
-    d_fractal(fractal),
-    d_colorScheme(colorScheme),
+                         std::unique_ptr<Fractal> fractal,
+                        std::unique_ptr<ColorScheme> colorScheme):
+    d_fractal(std::move(fractal)),
+    d_colorScheme(std::move(colorScheme)),
     d_windowSize(windowSize),
     d_viewManager(*this, view),
     d_lastIteration(-1),
@@ -23,8 +23,8 @@ Application::Application(const sf::Vector2u& windowSize,
     d_paused(false),
     d_iterateAmount(1)
 {
-    assert(fractal != nullptr);
-    assert(colorScheme != nullptr);
+    assert(d_fractal);
+    assert(d_colorScheme);
 
     d_fractalTexture.create(windowSize.x, windowSize.y);
     d_fractalSprite.setTexture(d_fractalTexture.getTexture());
@@ -105,10 +105,10 @@ int Application::getIterateAmount() const
     return d_iterateAmount;
 }
 
-void Application::setFractal(Fractal* fractal)
+void Application::setFractal(std::unique_ptr<Fractal> fractal)
 {
-    assert(fractal != nullptr);
-    d_fractal.reset(fractal);
+    assert(fractal);
+    d_fractal = std::move(fractal);
     d_lastIteration = -1;
 }
 Fractal& Application::getFractal()

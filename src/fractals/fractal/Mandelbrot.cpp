@@ -7,111 +7,42 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
 
-Mandelbrot::Mandelbrot(const sf::Vector2u& size, const View& view):
-    d_points(size.x * size.y),
-    d_valid(size.x * size.y),
-    d_done(),
-    d_workers(),
-    d_hist(1, 0),
-    d_size(size),
-    d_view(view),
-    d_iterations(0)
+Mandelbrot::Mandelbrot(const sf::Vector2u& size):
+    Fractal(size) {}
+
+void Mandelbrot::resetPoint(long double x, long double y, Point& point)
 {
-    setView(view);
+    point.x = 0;
+    point.y = 0;
 }
 
-void Mandelbrot::setNumThreads(int num)
+std::unique_ptr<Fractal> Mandelbrot::clone(const sf::Vector2u& size, const View& view) const
 {
-    //Manual instead of using resize because we can't copy ThreadWorkers
-    int current = static_cast<int>(d_workers.size());
-    if (num > current)
-    {
-        for(int i = current; i < num; i++)
-            d_workers.push_back(std::make_shared<ThreadWorker>());
-    }
-    else if (num < current)
-        d_workers.resize(num);
+    std::unique_ptr<Fractal> fractal(new Mandelbrot(size));
+    fractal->setView(view);
+    return fractal;
 }
 
-void Mandelbrot::setView(const View& view)
+void Mandelbrot::doIterate(
+        int count,
+        const std::vector<size_t>& valid,
+        std::vector<Fractal::Point>& points,
+        size_t startPoint,
+        size_t numPoints,
+        std::vector<size_t>& done)
 {
-    d_valid.resize(d_size.x * d_size.y);
-    d_done.clear();
-    d_hist.resize(1, 0);
-    d_view = view;
-
-    for(unsigned y = 0; y < d_size.y; y++)
-        for(unsigned x = 0; x < d_size.x; x++)
-        {
-            size_t index = x + d_size.x * y;
-            d_valid[index] = index;
-
-            Point& point = d_points[index];
-            point.x = 0;
-            point.y = 0;
-            point.value = 0;
-            point.remove = false;
-        }
-    d_iterations = 0;
-}
-
-void Mandelbrot::iterate(int count)
-{
-    size_t maxSize = 50000;
-    size_t threadCount = std::min(d_workers.size(), d_valid.size() / maxSize);
-    size_t size = d_valid.size() / (threadCount + 1);
-    d_hist.resize(d_hist.size() + count, 0);
-
-    for(size_t pos: d_done)
-        d_points[pos].value+=count;
-
-    std::vector<std::vector<size_t>> allDone(threadCount);
-    for(size_t i = 0; i < threadCount; i++)
+    auto& view = getView();
+    auto& size = getSize();
+    for(size_t j = 0; j < numPoints; j++)
     {
-        d_workers[i]->doWork([=, &allDone]() {
-            iterate(count, i*size, size, allDone[i]);
-        });
-    }
+        size_t index = valid[startPoint + j];
+        auto& point = points[index];
 
-    iterate(count, threadCount * size, d_valid.size() - threadCount * size, d_done);
+        long double cx = view.width;
+        long double cy = view.height;
 
-    for(size_t i = 0; i < threadCount; i++)
-        d_workers[i]->wait();
-
-    for(size_t i = 0; i < threadCount; i++)
-    {
-        auto& done = allDone[i];
-        d_done.insert(d_done.end(), done.begin(), done.end());
-    }
-
-    for(size_t i = 0; i < d_valid.size();)
-    {
-        Point& p = d_points[d_valid[i]];
-        if (p.remove)
-        {
-            d_hist[p.value]++;
-            d_valid[i] = d_valid.back();
-            d_valid.pop_back();
-        }
-        else
-            i++;
-    }
-
-    d_iterations+=count;
-}
-
-void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t>& done)
-{
-    for(size_t j = 0; j < size; j++)
-    {
-        size_t index = d_valid[left + j];
-        Point& point = d_points[index];
-
-        long double cx = d_view.width;
-        long double cy = d_view.height;
-
-        cx = cx * (index % d_size.x) / d_size.x + d_view.left;
-        cy = cy * (index / d_size.x) / d_size.y + d_view.top;
+        cx = cx * (index % size.x) / size.x + view.left;
+        cy = cy * (index / size.x) / size.y + view.top;
         long double newx, newy;
 
         for(int i = 0; i < count; i++)
@@ -138,95 +69,4 @@ void Mandelbrot::iterate(int count, size_t left, size_t size, std::vector<size_t
             }
         }
     }
-}
-
-void Mandelbrot::getColors(const ColorScheme& cs, std::vector<sf::Color>& colors)
-{
-    colors.resize(d_iterations+1);
-    bool histogram = false;
-    if (histogram)
-    {
-        size_t total = d_points.size();
-        double hue = 0;
-        for(int i = 0; i <= d_iterations; i++)
-        {
-            hue = (i == d_iterations) ? 1 : (hue + 1.0 * d_hist[i] / total);
-            colors[i] = cs.getColor(hue);
-        }
-    }
-    else
-    {
-        for(int i = 0; i <= d_iterations; i++)
-            colors[i] = cs.getColor(1.0 * i / d_iterations);
-    }
-
-}
-
-void Mandelbrot::draw(sf::RenderTarget& target, const ColorScheme& cs)
-{
-    std::vector<sf::Color> colors;
-    getColors(cs, colors);
-
-    bool fastDraw = getDrawMode();
-
-    std::vector<sf::Color> transitionColors;
-    int transitionCount = 10;
-    if (!fastDraw)
-    {
-        transitionColors.resize(colors.size() * transitionCount);
-        for(size_t i = 0; i < colors.size(); i++)
-        {
-            sf::Color& col1 = colors[i];
-            sf::Color& col2 = colors[(i+1)%colors.size()];
-            for(int j = 0; j < transitionCount; j++)
-            {
-                double percent = 1.0 * j / transitionCount;
-                transitionColors[i*transitionCount + j] = sf::Color(
-                    col1.r + (col2.r - col1.r) * percent,
-                    col1.g + (col2.g - col1.g) * percent,
-                    col1.b + (col2.b - col1.b) * percent);
-            }
-        }
-    }
-
-    sf::VertexArray vertices(sf::Points, d_size.x * (d_size.y + 1));
-
-    if (d_iterations > 0)
-    {
-        for(unsigned y = 0; y < d_size.y; y++)
-            for(unsigned x = 0; x < d_size.x; x++)
-            {
-                size_t index = x + d_size.x * y;
-                vertices[index].position = sf::Vector2f(x+0.5, y+0.5);
-
-                if (fastDraw)
-                    vertices[index].color = colors[d_points[index].value];
-                else
-                {
-                    Point& point = d_points[index];
-                    if (point.value == d_iterations)
-                        vertices[index].color = colors[d_iterations];
-                    else
-                    {
-                        double it = point.value;
-                        double zn = point.x*point.x + point.y*point.y;
-                        double nu = std::log2(std::log2(zn)) - 1;
-                        it += 1 - nu;
-
-                        if (it < 0)
-                            vertices[index].color = colors[0];
-                        else if (it+1 > colors.size()-1)
-                            vertices[index].color = colors.back();
-                        else
-                        {
-                            double percent = it - (long) it;
-                            int transitionIndex = (int)(percent * transitionCount);
-                            int base = (int)std::floor(it);
-                            vertices[index].color = transitionColors[base*transitionCount+transitionIndex];
-                        }
-                    }
-                }
-            }
-    }
-    target.draw(vertices);
 }
