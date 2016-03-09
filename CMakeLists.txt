@@ -1,18 +1,15 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
+project(fractal)
+
 INCLUDE(FindPkgConfig)
 
 pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
-include_directories(${GTKMM_INCLUDE_DIRS} src)
 link_directories(${GTKMM_LIBRARY_DIRS})
 
-set(CMAKE_BUILD_TYPE "Debug")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
+file(GLOB_RECURSE SRC_FILES_fractal src/*cpp)
+add_executable(fractal ${SRC_FILES_fractal})
+target_compile_options(fractal PRIVATE -std=c++14 -g -Wall -Werror)
+target_include_directories(fractal PRIVATE ${GTKMM_INCLUDE_DIRS} src)
+target_link_libraries(fractal sfml-system sfml-window sfml-graphics ${GTKMM_LIBRARIES} pthread)
 
-project(Fractal)
-
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
-
-add_executable(fractal ${SRC_FILES})
-
-target_link_libraries(fractal sfml-window sfml-system sfml-graphics ${GTKMM_LIBRARIES} pthread)

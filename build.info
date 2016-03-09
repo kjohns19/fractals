@@ -1,0 +1,15 @@
+{
+    "projectname": "fractal",
+    "builddir": "build.dir",
+    "flags": "-std=c++14 -g -Wall -Werror",
+    "targets": [
+        {
+            "name": "fractal",
+            "type": "executable",
+            "srcs": [ "src/*cpp" ],
+            "include_dirs": [ "src" ],
+            "libraries": [ "sfml", "gtkmm", "pthread" ]
+        }
+    ]
+}
+
