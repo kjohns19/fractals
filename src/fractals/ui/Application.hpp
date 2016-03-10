@@ -2,6 +2,7 @@
 #define INCLUDED_APPLICATION_HPP
 
 #include <fractals/ui/ViewManager.hpp>
+#include <fractals/ui/gtkmm_nowarning.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -9,7 +10,6 @@
 
 #include <memory>
 #include <vector>
-#include <gtkmm.h>
 
 class Fractal;
 class ColorScheme;

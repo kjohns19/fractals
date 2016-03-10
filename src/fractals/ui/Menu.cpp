@@ -9,10 +9,10 @@
 #include <fractals/fractal/Mandelbrot.hpp>
 #include <fractals/ui/SFMLWidget.hpp>
 #include <fractals/fractal/Julia.hpp>
+#include <fractals/ui/gtkmm_nowarning.hpp>
 
 #include <SFML/Graphics.hpp>
 
-#include <gtkmm.h>
 #include <iostream>
 #include <iomanip>
 

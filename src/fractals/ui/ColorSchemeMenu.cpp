@@ -3,8 +3,8 @@
 #include <fractals/ui/Application.hpp>
 #include <fractals/ui/MenuUtils.hpp>
 #include <fractals/color/ColorScheme.hpp>
+#include <fractals/ui/gtkmm_nowarning.hpp>
 #include <SFML/Graphics.hpp>
-#include <gtkmm.h>
 #include <utility>
 #include <iostream>
 
