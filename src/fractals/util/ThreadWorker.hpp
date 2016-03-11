@@ -1,7 +1,7 @@
 #ifndef INCLUDED_THREAD_WORKER_HPP
 #define INCLUDED_THREAD_WORKER_HPP
 
-#include <fractals/util/Semaphore.hpp>
+#include <kj/semaphore.hpp>
 #include <thread>
 
 class ThreadWorker
@@ -21,9 +21,9 @@ private:
 
     std::thread d_thread;
     std::function<void()> d_func;
-    Semaphore d_semWork;
-    Semaphore d_semDone;
-    Semaphore d_semWait;
+    kj::Semaphore d_semWork;
+    kj::Semaphore d_semDone;
+    kj::Semaphore d_semWait;
     bool d_killed;
 };
 
