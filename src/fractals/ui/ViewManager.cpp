@@ -102,14 +102,14 @@ void ViewManager::resetView(int iterations)
     d_app.getFractal().setView(d_view);
     d_app.getFractal().iterate(iterations);
     d_app.redrawFractal();
-    notify(*this);
+    notifyObservers(*this);
 }
 
 void ViewManager::clearViews()
 {
     d_prev_views.clear();
     d_next_views.clear();
-    notify(*this);
+    notifyObservers(*this);
 }
 
 std::map<std::string, std::pair<View, int> >& ViewManager::getSavedViews()

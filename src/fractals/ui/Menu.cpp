@@ -10,6 +10,7 @@
 #include <fractals/ui/SFMLWidget.hpp>
 #include <fractals/fractal/Julia.hpp>
 #include <fractals/ui/gtkmm_nowarning.hpp>
+#include <kj/observer.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -40,7 +41,7 @@ static std::ostream& operator<<(std::ostream& out, const View& view)
 }
 
 
-struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
+struct ViewButtons : public Gtk::ToolButton, public kj::Observer<ViewManager&>
 {
     ViewButtons(Gtk::Toolbar* toolbar, Application& app):
         vm(app.getViewManager())
@@ -71,7 +72,7 @@ struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
         });
 
         vm.addObserver(*this);
-        notify(vm);
+        update(vm);
     }
 
     ~ViewButtons()
@@ -79,7 +80,7 @@ struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager>
         vm.removeObserver(*this);
     }
 
-    void notify(ViewManager& vm)
+    void update(ViewManager& vm)
     {
         set_sensitive(vm.hasPreviousView());
         firstButton->set_sensitive(vm.hasPreviousView());

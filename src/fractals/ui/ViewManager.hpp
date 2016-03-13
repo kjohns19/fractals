@@ -1,8 +1,8 @@
 #ifndef INCLUDED_VIEW_MANAGER_HPP
 #define INCLUDED_VIEW_MANAGER_HPP
 
-#include <fractals/util/Subject.hpp>
 #include <fractals/util/View.hpp>
+#include <kj/subject.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <vector>
@@ -10,7 +10,7 @@
 
 class Application;
 
-class ViewManager : public Subject<ViewManager>
+class ViewManager : public kj::Subject<ViewManager&>
 {
 public:
     ViewManager(Application& app, const View& view);
