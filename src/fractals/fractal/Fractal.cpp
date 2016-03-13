@@ -1,5 +1,6 @@
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/color/ColorScheme.hpp>
+#include <future>
 #include <iostream>
 
 #include <SFML/Graphics/Rect.hpp>
@@ -11,7 +12,7 @@ Fractal::Fractal(const sf::Vector2u& size):
     d_points(size.x * size.y),
     d_valid(),
     d_done(),
-    d_workers(),
+    d_pool(4), //TODO implement setNumThreads
     d_hist(1, 0),
     d_size(size),
     d_view(),
@@ -36,15 +37,8 @@ std::unique_ptr<Fractal> Fractal::clone(const View& view) const
 
 void Fractal::setNumThreads(int num)
 {
-    //Manual instead of using resize because we can't copy ThreadWorkers
-    int current = static_cast<int>(d_workers.size());
-    if (num > current)
-    {
-        for(int i = current; i < num; i++)
-            d_workers.push_back(std::make_shared<ThreadWorker>());
-    }
-    else if (num < current)
-        d_workers.resize(num);
+    //TODO
+    //d_pool.resize(num);
 }
 
 void Fractal::setView(const View& view)
@@ -75,25 +69,26 @@ void Fractal::setView(const View& view)
 void Fractal::iterate(int count)
 {
     size_t maxSize = 50000;
-    size_t threadCount = std::min(d_workers.size(), d_valid.size() / maxSize);
+    size_t threadCount = std::min(d_pool.size(), d_valid.size() / maxSize);
     size_t size = d_valid.size() / (threadCount + 1);
     d_hist.resize(d_hist.size() + count, 0);
 
     for(size_t pos: d_done)
         d_points[pos].value+=count;
 
+    std::vector<std::future<void>> futures(threadCount);
     std::vector<std::vector<size_t>> allDone(threadCount);
     for(size_t i = 0; i < threadCount; i++)
     {
-        d_workers[i]->doWork([=, &allDone]() {
+        futures[i] = std::move(d_pool.push([=, &allDone]() {
             doIterate(count, d_valid, d_points, i*size, size, allDone[i]);
-        });
+        }));
     }
 
     doIterate(count, d_valid, d_points, threadCount * size, d_valid.size() - threadCount * size, d_done);
 
     for(size_t i = 0; i < threadCount; i++)
-        d_workers[i]->wait();
+        futures[i].get();
 
     for(size_t i = 0; i < threadCount; i++)
     {

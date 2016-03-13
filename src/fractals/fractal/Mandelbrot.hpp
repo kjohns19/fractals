@@ -3,7 +3,6 @@
 
 #include <fractals/fractal/Fractal.hpp>
 #include <fractals/util/View.hpp>
-#include <fractals/util/ThreadWorker.hpp>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>

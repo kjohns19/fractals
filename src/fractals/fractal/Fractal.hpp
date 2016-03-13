@@ -2,7 +2,7 @@
 #define INCLUDED_FRACTAL_HPP
 
 #include <fractals/util/View.hpp>
-#include <fractals/util/ThreadWorker.hpp>
+#include <kj/thread_pool.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <vector>
@@ -67,7 +67,7 @@ private:
     std::vector<Point> d_points;
     std::vector<size_t> d_valid;
     std::vector<size_t> d_done;
-    std::vector<std::shared_ptr<ThreadWorker>> d_workers;
+    kj::ThreadPool d_pool;
     std::vector<int> d_hist;
     sf::Vector2u d_size;
     View d_view;
