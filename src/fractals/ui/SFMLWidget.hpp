@@ -1,7 +1,7 @@
 #ifndef SFMLWIDGET_H_INCLUDED
 #define SFMLWIDGET_H_INCLUDED
 
-#include <fractals/ui/gtkmm_nowarning.hpp>
+#include <kj/gtkmm_no_warning.hpp>
 
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Event.hpp>

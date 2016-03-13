@@ -1,7 +1,7 @@
 #ifndef INCLUDED_MENU_UTILS_HPP
 #define INCLUDED_MENU_UTILS_HPP
 
-#include <fractals/ui/gtkmm_nowarning.hpp>
+#include <kj/gtkmm_no_warning.hpp>
 #include <functional>
 
 template<typename ButtonType = Gtk::Button>

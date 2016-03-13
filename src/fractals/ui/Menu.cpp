@@ -9,7 +9,7 @@
 #include <fractals/fractal/Mandelbrot.hpp>
 #include <fractals/ui/SFMLWidget.hpp>
 #include <fractals/fractal/Julia.hpp>
-#include <fractals/ui/gtkmm_nowarning.hpp>
+#include <kj/gtkmm_no_warning.hpp>
 #include <kj/observer.hpp>
 
 #include <SFML/Graphics.hpp>
