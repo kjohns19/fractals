@@ -1,6 +1,4 @@
 #include <fractals/fractal/Mandelbrot.hpp>
-#include <fractals/color/ColorScheme.hpp>
-#include <iostream>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
