@@ -1,12 +1,15 @@
 #include <fractals/util/View.hpp>
 #include <iostream>
 
-View::View():
-    rect() {}
-View::View(long double left, long double top, long double width, long double height):
-    rect(left, top, width, height) {}
-View::View(const sf::Vector2<long double>& pos, const sf::Vector2<long double>& size):
-    rect(pos, size) {}
+View::View()
+: View(0, 0, 0, 0) {}
+View::View(long double left, long double top, long double width, long double height)
+: left(left)
+, top(top)
+, width(width)
+, height(height) {}
+View::View(const sf::Vector2<long double>& pos, const sf::Vector2<long double>& size)
+: View(pos.x, pos.y, size.x, size.y) {}
 
 void View::fit(const sf::Vector2u& size)
 {
