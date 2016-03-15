@@ -48,6 +48,9 @@ void Fractal::setView(const View& view)
     d_hist.resize(1, 0);
     d_view = view;
 
+    long double left = d_view.x - d_view.width/2;
+    long double top  = d_view.y - d_view.height/2;
+
     long double realX, realY;
     for(unsigned y = 0; y < d_size.y; y++)
         for(unsigned x = 0; x < d_size.x; x++)
@@ -55,8 +58,8 @@ void Fractal::setView(const View& view)
             size_t index = x + d_size.x * y;
             d_valid[index] = index;
 
-            realX = d_view.width * x / d_size.x + d_view.left;
-            realY = d_view.height * y / d_size.y + view.top;
+            realX = d_view.width * x / d_size.x + left;
+            realY = d_view.height * y / d_size.y + top;
 
             Point& point = d_points[index];
             resetPoint(realX, realY, point);

@@ -78,8 +78,8 @@ bool ViewChanger::doHandle(const sf::Event& event)
                     {
                         const View& oldView = vm.getView();
                         View  newView(d_bounds.getGlobalBounds());
-                        newView.left   = oldView.left + oldView.width * newView.left / wsize.x;
-                        newView.top    = oldView.top + oldView.height * newView.top / wsize.y;
+                        newView.x = oldView.x + oldView.width*(newView.x-wsize.x/2.0)/wsize.x;
+                        newView.y = oldView.y + oldView.height*(newView.y-wsize.y/2.0)/wsize.y;
                         newView.width *= oldView.width / wsize.x;
                         newView.height*= oldView.height / wsize.y;
                         newView.fit(wsize);

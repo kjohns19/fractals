@@ -31,6 +31,9 @@ void Mandelbrot::doIterate(
 {
     auto& view = getView();
     auto& size = getSize();
+
+    long double left = view.x - view.width/2;
+    long double top  = view.y - view.height/2;
     for(size_t j = 0; j < numPoints; j++)
     {
         size_t index = valid[startPoint + j];
@@ -39,8 +42,8 @@ void Mandelbrot::doIterate(
         long double cx = view.width;
         long double cy = view.height;
 
-        cx = cx * (index % size.x) / size.x + view.left;
-        cy = cy * (index / size.x) / size.y + view.top;
+        cx = cx * (index % size.x) / size.x + left;
+        cy = cy * (index / size.x) / size.y + top;
         long double newx, newy;
 
         for(int i = 0; i < count; i++)

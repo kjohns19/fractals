@@ -2,6 +2,7 @@
 #define INCLUDED_VIEW_HPP
 
 #include <SFML/Graphics/Rect.hpp>
+#include <ostream>
 #include <vector>
 
 namespace sf
@@ -16,9 +17,10 @@ struct View
 
     template<typename U>
     View(const sf::Rect<U>& rect)
-    : View(rect.left, rect.top, rect.width, rect.height) {}
+    : View(rect.left+rect.width/2.0, rect.top+rect.height/2.0,
+           rect.width, rect.height) {}
 
-    View(long double left, long double top, long double width, long double height);
+    View(long double x, long double y, long double width, long double height);
     View(const sf::Vector2<long double>& pos, const sf::Vector2<long double>& size);
 
     void fit(const sf::Vector2u& size);
@@ -26,10 +28,12 @@ struct View
 
     std::vector<View> path(const View& view, int count) const;
 
-    long double left;
-    long double top;
+    long double x;
+    long double y;
     long double width;
     long double height;
 };
+
+std::ostream& operator<<(std::ostream& os, const View& view);
 
 #endif //INCLUDED_VIEW_HPP

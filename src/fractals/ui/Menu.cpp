@@ -31,15 +31,6 @@ static std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
     return out << "(" << vec.x << ", " << vec.y << ")";
 }
 
-static std::ostream& operator<<(std::ostream& out, const View& view)
-{
-    return out << "("
-               << view.left << ", "
-               << view.top << ", "
-               << view.width << ", "
-               << view.height << ")";
-}
-
 
 struct ViewButtons : public Gtk::ToolButton, public kj::Observer<ViewManager&>
 {
@@ -178,8 +169,8 @@ Gtk::Widget* createMenu(Application& app)
     createToolButton(menu, "View", "gtk-find", [&]() {
         View view = app.getViewManager().getView();
         std::cout << std::setprecision(30) << std::scientific;
-        std::cout << "X: " << view.left + view.width/2 << std::endl;
-        std::cout << "Y: " << view.top + view.height/2 << std::endl;
+        std::cout << "X: " << view.x << std::endl;
+        std::cout << "Y: " << view.y << std::endl;
         std::cout << "W: " << view.width << std::endl;
         std::cout << "H: " << view.height << std::endl;
     });
@@ -532,13 +523,13 @@ static void showSetViewDialog(Application& app)
     xEntry.set_range(-2.0, 2.0);
     xEntry.set_increments(0.01, 0.1);
     xEntry.set_digits(10);
-    xEntry.set_value(view.left + view.width/2);
+    xEntry.set_value(view.x);
 
     Gtk::SpinButton yEntry;
     yEntry.set_range(-2.0, 2.0);
     yEntry.set_increments(0.01, 0.1);
     yEntry.set_digits(10);
-    yEntry.set_value(view.top + view.height/2);
+    yEntry.set_value(view.y);
 
     content->pack_start(xEntry);
     content->pack_start(yEntry);
@@ -547,10 +538,8 @@ static void showSetViewDialog(Application& app)
     int result = dialog.run();
     if (result == Gtk::RESPONSE_ACCEPT)
     {
-        long double x = xEntry.get_value();
-        long double y = yEntry.get_value();
-        view.left = x - view.width/2;
-        view.top = y - view.height/2;
+        view.x = xEntry.get_value();
+        view.y = yEntry.get_value();
         app.getFractal().setView(view);
         app.redrawFractal();
     }

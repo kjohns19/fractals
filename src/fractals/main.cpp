@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    //View view(-0.5, 0, 3, 2.5);
     View view(0, 0, 3, 2.5);
 
     int   gtk_argc = 1;
@@ -43,14 +42,7 @@ int main(int argc, char* argv[])
 
     auto app = Gtk::Application::create(gtk_argc, gtk_argv, "mandelbrot.set");
 
-    double ratio = 1.0 * wsize.x / wsize.y;
-    if (ratio < 1.0 * view.width / view.height)
-        view.height = view.width / ratio;
-    else
-        view.width = view.height * ratio;
-
-    view.left -= view.width/2;
-    view.top -= view.height/2;
+    view.fit({wsize.x, wsize.y});
 
     Application application(wsize, view, createFractal(wsize, view), createColorScheme());
 

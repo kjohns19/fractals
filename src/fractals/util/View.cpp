@@ -3,13 +3,13 @@
 
 View::View()
 : View(0, 0, 0, 0) {}
-View::View(long double left, long double top, long double width, long double height)
-: left(left)
-, top(top)
+View::View(long double x, long double y, long double width, long double height)
+: x(x)
+, y(y)
 , width(width)
 , height(height) {}
 View::View(const sf::Vector2<long double>& pos, const sf::Vector2<long double>& size)
-: View(pos.x, pos.y, size.x, size.y) {}
+: View(pos.x-size.x/2, pos.y-size.y/2, size.x, size.y) {}
 
 void View::fit(const sf::Vector2u& size)
 {
@@ -19,24 +19,16 @@ void View::fit(long double ratio)
 {
     long double myratio = 1.0 * width / height;
 
-    long double centerx = left + width/2;
-    long double centery = top + height/2;
-
     if (myratio > ratio)
         height = width / ratio;
     else
         width = height * ratio;
-
-    left = centerx - width/2;
-    top = centery - height/2;
 }
 
 std::vector<View> View::path(const View& view, int count) const
 {
-    sf::Vector2<double> startCenter(this->left + this->width/2,
-                                    this->top + this->height/2);
-    sf::Vector2<double> endCenter(view.left + view.width/2, 
-                                  view.top + view.height/2);
+    sf::Vector2<double> startCenter(this->x, this->y);
+    sf::Vector2<double> endCenter(view.x, view.y);
 
     sf::Vector2<double> startSize(this->width, this->height);
     sf::Vector2<double> endSize(view.width, view.height);
@@ -70,4 +62,10 @@ std::vector<View> View::path(const View& view, int count) const
     }
 
     return path;
+}
+
+std::ostream& operator<<(std::ostream& os, const View& view)
+{
+    return os << "(" << view.x << ", " << view.y
+              << ", " << view.width << ", " << view.height << ")";
 }

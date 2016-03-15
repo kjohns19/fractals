@@ -78,8 +78,6 @@ void ViewManager::zoom(double amount)
     View newView(d_view);
     newView.width/=amount;
     newView.height/=amount;
-    newView.left = d_view.left + (d_view.width - newView.width) / 2;
-    newView.top = d_view.top + (d_view.height - newView.height) / 2;
     setView(newView);
 }
 
@@ -132,8 +130,8 @@ std::map<std::string, std::pair<View, int> >& ViewManager::getSavedViews()
                 name.resize(nameLength, ' ');
 
                 in.read(&*name.begin(), nameLength);
-                in.read(reinterpret_cast<char*>(&view.left),   sizeof(view.left));
-                in.read(reinterpret_cast<char*>(&view.top),    sizeof(view.top));
+                in.read(reinterpret_cast<char*>(&view.x),   sizeof(view.x));
+                in.read(reinterpret_cast<char*>(&view.y),    sizeof(view.y));
                 in.read(reinterpret_cast<char*>(&view.width),  sizeof(view.width));
                 in.read(reinterpret_cast<char*>(&view.height), sizeof(view.height));
                 in.read(reinterpret_cast<char*>(&iterations), sizeof(int));
@@ -164,8 +162,8 @@ void ViewManager::saveViews() const
                 const View view = pair.second.first;
                 int iterations = pair.second.second;
 
-                out.write(reinterpret_cast<const char*>(&view.left),   sizeof(view.left));
-                out.write(reinterpret_cast<const char*>(&view.top),    sizeof(view.top));
+                out.write(reinterpret_cast<const char*>(&view.x),   sizeof(view.x));
+                out.write(reinterpret_cast<const char*>(&view.y),    sizeof(view.y));
                 out.write(reinterpret_cast<const char*>(&view.width),  sizeof(view.width));
                 out.write(reinterpret_cast<const char*>(&view.height), sizeof(view.height));
                 out.write(reinterpret_cast<const char*>(&iterations), sizeof(int));
