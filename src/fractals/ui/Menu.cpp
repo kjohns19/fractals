@@ -17,19 +17,23 @@
 #include <iostream>
 #include <iomanip>
 
-static void showSaveDialog(Application& app);
-static void showIterateDialog(Application& app);
-static void showViewDialog(Application& app);
-static void showNewDialog(Application& app);
-static void showSetViewDialog(Application& app);
+namespace {
 
-static void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations);
+void showSaveDialog(Application& app);
+void showIterateDialog(Application& app);
+void showViewDialog(Application& app);
+void showNewDialog(Application& app);
+void showSetViewDialog(Application& app);
+
+void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations);
 
 template<typename T>
-static std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
+std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
 {
     return out << "(" << vec.x << ", " << vec.y << ")";
 }
+
+} // close anonymous namespace
 
 
 struct ViewButtons : public Gtk::ToolButton, public kj::Observer<ViewManager&>
@@ -210,6 +214,8 @@ Gtk::Widget* createMenu(Application& app)
     return menu;
 }
 
+namespace {
+
 void showSaveDialog(Application& app)
 {
     Gtk::Dialog dialog("Save Image", app.getWindow(), true);
@@ -338,16 +344,17 @@ void showIterateDialog(Application& app)
     }
 }
 
-static int view_sort_func(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2) {
+typedef std::pair<View, int> ViewPair;
+
+void addViewRow(Gtk::ListBox& list, const std::string& name);
+
+int listSortFunc(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2)
+{
     Gtk::Label* label1 = dynamic_cast<Gtk::Label*>(row1->get_child());
     Gtk::Label* label2 = dynamic_cast<Gtk::Label*>(row2->get_child());
 
     return label1->get_text() < label2->get_text();
 }
-
-typedef std::pair<View, int> ViewPair;
-
-static void addViewRow(Gtk::ListBox& list, const std::string& name);
 
 void showViewDialog(Application& app)
 {
@@ -367,7 +374,7 @@ void showViewDialog(Application& app)
     ViewPair* viewView = nullptr;
 
     Gtk::ListBox list;
-    list.set_sort_func(Gtk::ListBox::SlotSort(sigc::ptr_fun(view_sort_func)));
+    list.set_sort_func(sigc::ptr_fun(listSortFunc));
 
     const int previewWidth = 300;
     const int previewHeight = 200;
@@ -467,7 +474,7 @@ void showViewDialog(Application& app)
     }
 }
 
-static void showNewDialog(Application& app)
+void showNewDialog(Application& app)
 {
     Gtk::Dialog dialog("New Fractal", app.getWindow(), true);
 
@@ -509,7 +516,7 @@ static void showNewDialog(Application& app)
     }
 }
 
-static void showSetViewDialog(Application& app)
+void showSetViewDialog(Application& app)
 {
     Gtk::Dialog dialog("Set View", app.getWindow(), true);
 
@@ -545,7 +552,7 @@ static void showSetViewDialog(Application& app)
     }
 }
 
-static void addViewRow(Gtk::ListBox& list, const std::string& name)
+void addViewRow(Gtk::ListBox& list, const std::string& name)
 {
     Gtk::Label* label = Gtk::manage(new Gtk::Label(name));
     list.append(*label);
@@ -553,7 +560,7 @@ static void addViewRow(Gtk::ListBox& list, const std::string& name)
     list.invalidate_sort();
 }
 
-static void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations)
+void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations)
 {
         std::cout << "Saving " << size << " size image of " << view << " at " << iterations << " iterations to " << filename << std::endl;
         std::cout << "Creating fractal..." << std::endl;
@@ -587,3 +594,5 @@ static void save(const std::string& filename, Fractal& fractal, const ColorSchem
             std::cout << "Failed to create image!" << std::endl;
         }
 }
+
+} // close anonymous namespace

@@ -6,10 +6,9 @@
 
 class ColorScheme
 {
-private:
+public:
     typedef std::pair<double, sf::Color> ColorValue;
 
-public:
     template<typename Container>
     ColorScheme(const Container& container):
         d_colors(std::begin(container), std::end(container)),

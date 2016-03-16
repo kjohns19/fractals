@@ -10,11 +10,20 @@
 
 typedef std::tuple<Gtk::SpinButton*, Gtk::ColorButton*, Gtk::Button*> Item;
 
+namespace {
+
 void getColors(const std::vector<Item>& items, std::map<double, sf::Color>& colors);
 
 sf::Color getColor(const Gtk::ColorButton* button);
 
-static int sort_func(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2) {
+void addRow(Gtk::ListBox& list,
+            double value, const sf::Color& color,
+            SFMLWidget& previewWidget,
+            std::vector<Item>& items,
+            std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> >& itemMap);
+
+int listSortFunc(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2)
+{
     Gtk::HBox* box1 = dynamic_cast<Gtk::HBox*>(row1->get_child());
     Gtk::HBox* box2 = dynamic_cast<Gtk::HBox*>(row2->get_child());
 
@@ -23,11 +32,7 @@ static int sort_func(Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2) {
     return entry1->get_value() < entry2->get_value();
 }
 
-void addRow(Gtk::ListBox& list,
-            double value, const sf::Color& color,
-            SFMLWidget& previewWidget,
-            std::vector<Item>& items,
-            std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> >& itemMap);
+} // close anonymous namespace
 
 void showColorSchemeMenu(Application& app)
 {
@@ -47,7 +52,7 @@ void showColorSchemeMenu(Application& app)
 
     Gtk::ListBox list;
 
-    list.set_sort_func(Gtk::ListBox::SlotSort(sigc::ptr_fun(sort_func)));
+    list.set_sort_func(sigc::ptr_fun(listSortFunc));
     list.signal_row_selected().connect([&](Gtk::ListBoxRow* row) {
         list.unselect_row();
     });
@@ -113,19 +118,6 @@ void showColorSchemeMenu(Application& app)
         for(auto& pair: colors)
             addRow(list, pair.first, pair.second, previewWidget, items, itemMap);
         loopEntry->set_value(startLoopCount);
-        /*
-        std::map<double, sf::Color> current;
-        getColors(items, current);
-        for(auto& item: items)
-        {
-            Gtk::SpinButton* button = std::get<0>(item);
-            button->set_value(button->get_value() / 2);
-        }
-        for(auto& pair: current)
-            addRow(list, pair.first/2 + 0.5, pair.second, previewWidget, items, itemMap);
-        list.invalidate_sort();
-        list.show_all();
-        */
         list.invalidate_sort();
         list.show_all();
         previewWidget.invalidate();
@@ -161,6 +153,8 @@ void showColorSchemeMenu(Application& app)
     }
 }
 
+namespace {
+
 void addRow(Gtk::ListBox& list,
             double value, const sf::Color& color,
             SFMLWidget& previewWidget,
@@ -173,8 +167,6 @@ void addRow(Gtk::ListBox& list,
     valueEntry->set_digits(3);
     valueEntry->set_increments(0.01, 0.1);
     valueEntry->set_value(value);
-    //previousValues[valueEntry] = colorPair.first;
-
 
     box->pack_start(*valueEntry);
 
@@ -254,3 +246,5 @@ sf::Color getColor(const Gtk::ColorButton* button)
                      (int)color.get_green()/256,
                      (int)color.get_blue()/256);
 }
+
+} // close anonymous namespace

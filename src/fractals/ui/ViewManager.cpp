@@ -5,6 +5,12 @@
 #include <fstream>
 #include <iostream>
 
+namespace {
+
+void swap_views(std::vector<View>& to, std::vector<View>& from, View& view);
+
+} // close anonymous namespace
+
 ViewManager::ViewManager(Application& app, const View& view):
     d_app(app),
     d_view(view),
@@ -25,19 +31,6 @@ void ViewManager::setView(const View& view, int iterations)
     d_next_views.clear();
     d_view = view;
     resetView(iterations);
-}
-
-static void swap_views(std::vector<View>& to,
-                       std::vector<View>& from,
-                       View& view)
-{
-    if (!from.empty())
-    {
-        View& newView = from.back();
-        to.push_back(view);
-        view = newView;
-        from.pop_back();
-    }
 }
 
 void ViewManager::nextView()
@@ -96,7 +89,6 @@ void ViewManager::resetView(int iterations)
     if (iterations == -1)
         iterations = d_app.getFractal().iterations();
 
-    //std::cout << "Ratio: " << d_view.width / d_view.height << std::endl;
     d_app.getFractal().setView(d_view);
     d_app.getFractal().iterate(iterations);
     d_app.redrawFractal();
@@ -171,3 +163,18 @@ void ViewManager::saveViews() const
         }
     }
 }
+
+namespace {
+
+void swap_views(std::vector<View>& to, std::vector<View>& from, View& view)
+{
+    if (!from.empty())
+    {
+        View& newView = from.back();
+        to.push_back(view);
+        view = newView;
+        from.pop_back();
+    }
+}
+
+} // close anonymous namespace

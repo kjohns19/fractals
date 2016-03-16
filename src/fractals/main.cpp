@@ -14,10 +14,12 @@
 #include <memory>
 #include <thread>
 
-//static sf::Color colorHSV(float h, float s, float v);
+namespace {
 
-static std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view);
-static std::unique_ptr<ColorScheme> createColorScheme();
+std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view);
+std::unique_ptr<ColorScheme> createColorScheme();
+
+} // close anonymous namespace
 
 int main(int argc, char* argv[])
 {
@@ -50,12 +52,14 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+namespace {
+
 std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view)
 {
     std::unique_ptr<Fractal> fractal;
     if (1)
     {
-        fractal.reset(new Mandelbrot(size));
+        fractal = std::make_unique<Mandelbrot>(size);
         fractal->setNumThreads(std::thread::hardware_concurrency());
     }
     else
@@ -63,19 +67,7 @@ std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& vie
         long double cx, cy;
         cx = 0.285;
         cy = 0.01;
-        fractal.reset(new Julia(size, cx, cy));
-        //double cx = 0.285;
-        //double cy = 0.01;
-        //fractal = new Julia(size,
-        //    [cx, cy](double zx, double zy, double& nx, double& ny) {
-        //        if (zx*zx + zy*zy < 4)
-        //        {
-        //            nx = zx*zx - zy*zy + cx;
-        //            ny = 2*zx*zy + cy;
-        //            return true;
-        //        }
-        //        return false;
-        //    });
+        fractal = std::make_unique<Julia>(size, cx, cy);
     }
     fractal->setView(view);
     return fractal;
@@ -83,12 +75,13 @@ std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& vie
 
 std::unique_ptr<ColorScheme> createColorScheme()
 {
-    std::unique_ptr<ColorScheme> colorScheme(new ColorScheme({
+    return std::make_unique<ColorScheme>(std::initializer_list<ColorScheme::ColorValue>{
         { 0.0000, sf::Color(0,   7,   100) },
         { 0.1600, sf::Color(32,  107, 203) },
         { 0.4200, sf::Color(237, 255, 255) },
         { 0.6425, sf::Color(255, 170, 0  ) },
         { 0.8575, sf::Color(0,   2,   0  ) }
-    }));
-    return colorScheme;
+    });
 }
+
+} // close anonymous namespace
