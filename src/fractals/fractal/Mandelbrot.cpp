@@ -16,7 +16,7 @@ void Mandelbrot::resetPoint(long double x, long double y, Point& point)
 
 std::unique_ptr<Fractal> Mandelbrot::clone(const sf::Vector2u& size, const View& view) const
 {
-    std::unique_ptr<Fractal> fractal(new Mandelbrot(size));
+    std::unique_ptr<Fractal> fractal = std::make_unique<Mandelbrot>(size);
     fractal->setView(view);
     return fractal;
 }

@@ -35,7 +35,7 @@ public:
 
     void remove(double value);
 
-    const std::map<double, sf::Color> getColors() const { return d_colors; }
+    const std::map<double, sf::Color>& getColors() const;
 
     virtual sf::Color getColor(double value) const;
 

@@ -28,7 +28,7 @@ void Julia::setValue(long double x, long double y)
 
 std::unique_ptr<Fractal> Julia::clone(const sf::Vector2u& size, const View& view) const
 {
-    std::unique_ptr<Fractal> fractal(new Julia(size, d_x, d_y));
+    std::unique_ptr<Fractal> fractal = std::make_unique<Julia>(size, d_x, d_y);
     fractal->setView(view);
     return fractal;
 }

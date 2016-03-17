@@ -17,10 +17,7 @@ Fractal::Fractal(const sf::Vector2u& size):
     d_size(size),
     d_view(),
     d_iterations(0),
-    d_fastDraw(true)
-{
-    //setView(view);
-}
+    d_fastDraw(true) {}
 
 std::unique_ptr<Fractal> Fractal::clone() const
 {

@@ -34,6 +34,11 @@ void ColorScheme::remove(double value)
     d_colors.erase(value);
 }
 
+const std::map<double, sf::Color>& ColorScheme::getColors() const
+{
+    return d_colors;
+}
+
 int ColorScheme::getLoopCount() const
 {
     return d_loop_count;
@@ -93,8 +98,9 @@ sf::Color ColorScheme::getColor(double val) const
 
     double percent = (value - val2) / (val1 - val2);
 
-    sf::Color result((sf::Uint8) ((int)col1.r + ((int)col2.r - (int)col1.r) * percent),
-                     (sf::Uint8) ((int)col1.g + ((int)col2.g - (int)col1.g) * percent),
-                     (sf::Uint8) ((int)col1.b + ((int)col2.b - (int)col1.b) * percent));
+    sf::Color result(
+        (sf::Uint8) ((int)col1.r + ((int)col2.r - (int)col1.r) * percent),
+        (sf::Uint8) ((int)col1.g + ((int)col2.g - (int)col1.g) * percent),
+        (sf::Uint8) ((int)col1.b + ((int)col2.b - (int)col1.b) * percent));
     return result;
 }

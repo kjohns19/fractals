@@ -18,10 +18,11 @@ class ViewChanger;
 class Application
 {
 public:
-    Application(const sf::Vector2u& windowSize,
-                const View& view,
-                std::unique_ptr<Fractal> fractal,
-                std::unique_ptr<ColorScheme> colorScheme);
+    Application(
+            const sf::Vector2u& windowSize,
+            const View& view,
+            std::unique_ptr<Fractal> fractal,
+            std::unique_ptr<ColorScheme> colorScheme);
 
     const sf::Vector2u& getWindowSize() const;
 

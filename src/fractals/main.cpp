@@ -46,7 +46,9 @@ int main(int argc, char* argv[])
 
     view.fit({wsize.x, wsize.y});
 
-    Application application(wsize, view, createFractal(wsize, view), createColorScheme());
+    auto fractal = createFractal(wsize, view);
+    auto colorScheme = createColorScheme();
+    Application application(wsize, view, std::move(fractal), std::move(colorScheme));
 
     application.run(app);
     return 0;
