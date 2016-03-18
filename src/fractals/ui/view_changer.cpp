@@ -1,5 +1,5 @@
-#include <fractals/ui/ViewChanger.hpp>
-#include <fractals/ui/Application.hpp>
+#include <fractals/ui/view_changer.hpp>
+#include <fractals/ui/application.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Rect.hpp>

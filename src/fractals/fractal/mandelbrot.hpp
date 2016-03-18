@@ -1,33 +1,25 @@
-#ifndef INCLUDED_JULIA_HPP
-#define INCLUDED_JULIA_HPP
+#ifndef INCLUDED_MANDELBROT_HPP
+#define INCLUDED_MANDELBROT_HPP
 
-#include <fractals/fractal/Fractal.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/util/view.hpp>
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Color.hpp>
 
-#include <complex>
 #include <vector>
-#include <functional>
-
-namespace sf
-{
-    class Color;
-}
+#include <memory>
 
 class View;
 
-class Julia : public Fractal
+class Mandelbrot : public Fractal
 {
 public:
-    Julia(const sf::Vector2u& size, long double x, long double y);
+    Mandelbrot(const sf::Vector2u& size);
 
     using Fractal::clone;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
-
-    long double getX() const { return d_x; }
-    long double getY() const { return d_y; }
-
-    void setValue(long double x, long double y);
 private:
     virtual void resetPoint(long double x, long double y, Point& point) override;
     virtual void doIterate(
@@ -37,8 +29,6 @@ private:
             size_t startPoint,
             size_t numPoints,
             std::vector<size_t>& done) override;
-    long double d_x;
-    long double d_y;
 };
 
-#endif //INCLUDED_JULIA_HPP
+#endif //INCLUDED_MANDELBROT_HPP

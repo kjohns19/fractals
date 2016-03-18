@@ -1,9 +1,9 @@
-#include <fractals/color/ColorScheme.hpp>
-#include <fractals/fractal/Fractal.hpp>
-#include <fractals/ui/Application.hpp>
-#include <fractals/ui/SFMLWidget.hpp>
-#include <fractals/ui/Menu.hpp>
-#include <fractals/ui/ViewChanger.hpp>
+#include <fractals/color/color_scheme.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/ui/application.hpp>
+#include <fractals/ui/sfml_widget.hpp>
+#include <fractals/ui/menu.hpp>
+#include <fractals/ui/view_changer.hpp>
 
 #include <SFML/Graphics.hpp>
 

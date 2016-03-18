@@ -1,5 +1,5 @@
-#include <fractals/fractal/Julia.hpp>
-#include <fractals/util/View.hpp>
+#include <fractals/fractal/julia.hpp>
+#include <fractals/util/view.hpp>
 
 #include <SFML/Graphics.hpp>
 

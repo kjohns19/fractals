@@ -1,5 +1,4 @@
-#include <fractals/ui/SFMLWidget.hpp>
-//#include <SFML/Graphics.hpp>
+#include <fractals/ui/sfml_widget.hpp>
 #include <iostream>
 
 // Tested on Linux Mint 12.4 and Windows 7

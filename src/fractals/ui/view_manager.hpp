@@ -1,7 +1,7 @@
 #ifndef INCLUDED_VIEW_MANAGER_HPP
 #define INCLUDED_VIEW_MANAGER_HPP
 
-#include <fractals/util/View.hpp>
+#include <fractals/util/view.hpp>
 #include <kj/subject.hpp>
 
 #include <SFML/Graphics/Rect.hpp>

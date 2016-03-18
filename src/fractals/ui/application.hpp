@@ -1,7 +1,7 @@
 #ifndef INCLUDED_APPLICATION_HPP
 #define INCLUDED_APPLICATION_HPP
 
-#include <fractals/ui/ViewManager.hpp>
+#include <fractals/ui/view_manager.hpp>
 #include <kj/gtkmm_no_warning.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>

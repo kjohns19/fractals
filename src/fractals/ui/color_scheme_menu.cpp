@@ -1,8 +1,8 @@
-#include <fractals/ui/ColorSchemeMenu.hpp>
-#include <fractals/ui/SFMLWidget.hpp>
-#include <fractals/ui/Application.hpp>
-#include <fractals/ui/MenuUtils.hpp>
-#include <fractals/color/ColorScheme.hpp>
+#include <fractals/ui/color_scheme_menu.hpp>
+#include <fractals/ui/sfml_widget.hpp>
+#include <fractals/ui/application.hpp>
+#include <fractals/ui/menu_utils.hpp>
+#include <fractals/color/color_scheme.hpp>
 #include <kj/gtkmm_no_warning.hpp>
 #include <SFML/Graphics.hpp>
 #include <utility>

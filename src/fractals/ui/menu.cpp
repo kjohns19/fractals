@@ -1,14 +1,14 @@
-#include <fractals/color/ColorScheme.hpp>
-#include <fractals/fractal/Fractal.hpp>
-#include <fractals/ui/Menu.hpp>
-#include <fractals/util/View.hpp>
-#include <fractals/ui/ColorSchemeMenu.hpp>
-#include <fractals/ui/Application.hpp>
-#include <fractals/ui/ViewManager.hpp>
-#include <fractals/ui/MenuUtils.hpp>
-#include <fractals/fractal/Mandelbrot.hpp>
-#include <fractals/ui/SFMLWidget.hpp>
-#include <fractals/fractal/Julia.hpp>
+#include <fractals/color/color_scheme.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/ui/menu.hpp>
+#include <fractals/util/view.hpp>
+#include <fractals/ui/color_scheme_menu.hpp>
+#include <fractals/ui/application.hpp>
+#include <fractals/ui/view_manager.hpp>
+#include <fractals/ui/menu_utils.hpp>
+#include <fractals/fractal/mandelbrot.hpp>
+#include <fractals/ui/sfml_widget.hpp>
+#include <fractals/fractal/julia.hpp>
 #include <kj/gtkmm_no_warning.hpp>
 #include <kj/observer.hpp>
 

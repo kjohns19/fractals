@@ -1,4 +1,4 @@
-#include <fractals/fractal/Mandelbrot.hpp>
+#include <fractals/fractal/mandelbrot.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

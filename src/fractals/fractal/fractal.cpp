@@ -1,5 +1,5 @@
-#include <fractals/fractal/Fractal.hpp>
-#include <fractals/color/ColorScheme.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/color/color_scheme.hpp>
 #include <future>
 #include <iostream>
 

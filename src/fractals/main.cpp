@@ -1,9 +1,9 @@
-#include <fractals/fractal/Fractal.hpp>
-#include <fractals/fractal/Mandelbrot.hpp>
-#include <fractals/fractal/Julia.hpp>
-#include <fractals/ui/Application.hpp>
-#include <fractals/color/ColorScheme.hpp>
-#include <fractals/util/View.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/fractal/mandelbrot.hpp>
+#include <fractals/fractal/julia.hpp>
+#include <fractals/ui/application.hpp>
+#include <fractals/color/color_scheme.hpp>
+#include <fractals/util/view.hpp>
 
 #include <SFML/Graphics.hpp>
 

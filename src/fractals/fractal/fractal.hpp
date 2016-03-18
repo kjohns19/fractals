@@ -1,7 +1,7 @@
 #ifndef INCLUDED_FRACTAL_HPP
 #define INCLUDED_FRACTAL_HPP
 
-#include <fractals/util/View.hpp>
+#include <fractals/util/view.hpp>
 #include <kj/thread_pool.hpp>
 #include <SFML/System/Vector2.hpp>
 

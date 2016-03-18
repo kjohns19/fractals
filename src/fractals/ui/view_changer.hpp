@@ -1,7 +1,7 @@
 #ifndef INCLUDED_VIEW_CHANGER_HPP
 #define INCLUDED_VIEW_CHANGER_HPP
 
-#include <fractals/ui/EventHandler.hpp>
+#include <fractals/ui/event_handler.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>

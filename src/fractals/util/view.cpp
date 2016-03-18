@@ -1,4 +1,4 @@
-#include <fractals/util/View.hpp>
+#include <fractals/util/view.hpp>
 #include <iostream>
 
 View::View()

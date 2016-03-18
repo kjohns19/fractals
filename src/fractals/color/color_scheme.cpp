@@ -1,4 +1,4 @@
-#include <fractals/color/ColorScheme.hpp>
+#include <fractals/color/color_scheme.hpp>
 
 #include <algorithm>
 #include <iostream>
