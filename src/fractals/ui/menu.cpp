@@ -7,8 +7,8 @@
 #include <fractals/ui/view_manager.hpp>
 #include <fractals/ui/menu_utils.hpp>
 #include <fractals/fractal/mandelbrot.hpp>
-#include <fractals/ui/sfml_widget.hpp>
 #include <fractals/fractal/julia.hpp>
+#include <kj/sfml_widget.hpp>
 #include <kj/gtkmm_no_warning.hpp>
 #include <kj/observer.hpp>
 
@@ -378,7 +378,7 @@ void showViewDialog(Application& app)
 
     const int previewWidth = 300;
     const int previewHeight = 200;
-    SFMLWidget previewWidget(sf::VideoMode(previewWidth, previewHeight));
+    kj::SFMLWidget previewWidget(sf::VideoMode(previewWidth, previewHeight));
 
     Gtk::HBox entryBox;
     Gtk::Entry entryName;
@@ -436,7 +436,7 @@ void showViewDialog(Application& app)
     scroll.set_size_request(300, 200);
     scroll.set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS);
 
-    previewWidget.onDraw([&](SFMLWidget& widget) {
+    previewWidget.onDraw([&](kj::SFMLWidget& widget) {
         if (viewView)
         {
             auto view = viewView->first;

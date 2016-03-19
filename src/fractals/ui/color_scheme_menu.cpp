@@ -1,8 +1,8 @@
 #include <fractals/ui/color_scheme_menu.hpp>
-#include <fractals/ui/sfml_widget.hpp>
 #include <fractals/ui/application.hpp>
 #include <fractals/ui/menu_utils.hpp>
 #include <fractals/color/color_scheme.hpp>
+#include <kj/sfml_widget.hpp>
 #include <kj/gtkmm_no_warning.hpp>
 #include <SFML/Graphics.hpp>
 #include <utility>
@@ -18,7 +18,7 @@ sf::Color getColor(const Gtk::ColorButton* button);
 
 void addRow(Gtk::ListBox& list,
             double value, const sf::Color& color,
-            SFMLWidget& previewWidget,
+            kj::SFMLWidget& previewWidget,
             std::vector<Item>& items,
             std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> >& itemMap);
 
@@ -60,7 +60,7 @@ void showColorSchemeMenu(Application& app)
     std::vector<Item> items;
     std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> > itemMap;
 
-    SFMLWidget previewWidget(sf::VideoMode(300, 100));
+    kj::SFMLWidget previewWidget(sf::VideoMode(300, 100));
 
     for(auto& colorPair: colors)
         addRow(list, colorPair.first, colorPair.second, previewWidget, items, itemMap);
@@ -76,7 +76,7 @@ void showColorSchemeMenu(Application& app)
 
     Gtk::SpinButton* loopEntry = Gtk::manage(new Gtk::SpinButton());
 
-    previewWidget.onDraw([&](SFMLWidget& widget) {
+    previewWidget.onDraw([&](kj::SFMLWidget& widget) {
         sf::RenderTarget& target = widget.window();
 
         std::map<double, sf::Color> newColors;
@@ -157,7 +157,7 @@ namespace {
 
 void addRow(Gtk::ListBox& list,
             double value, const sf::Color& color,
-            SFMLWidget& previewWidget,
+            kj::SFMLWidget& previewWidget,
             std::vector<Item>& items,
             std::map<Gtk::Button*, std::pair<Gtk::ListBoxRow*, int> >& itemMap)
 {

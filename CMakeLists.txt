@@ -11,5 +11,5 @@ file(GLOB_RECURSE SRC_FILES_fractal src/*cpp)
 add_executable(fractal ${SRC_FILES_fractal})
 target_compile_options(fractal PRIVATE -std=c++14 -g -Wall -Werror)
 target_include_directories(fractal PRIVATE ${GTKMM_INCLUDE_DIRS} src)
-target_link_libraries(fractal sfml-system sfml-window sfml-graphics ${GTKMM_LIBRARIES} kj pthread)
+target_link_libraries(fractal sfml-system sfml-window sfml-graphics kj ${GTKMM_LIBRARIES} pthread)
 
