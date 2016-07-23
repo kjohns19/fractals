@@ -1,7 +1,12 @@
 #ifndef INCLUDED_MENU_UTILS_HPP
 #define INCLUDED_MENU_UTILS_HPP
 
-#include <kj/gtkmm_no_warning.hpp>
+#include <gtkmm/button.h>
+#include <gtkmm/hvbox.h>
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/box.h>
+
 #include <functional>
 
 template<typename ButtonType = Gtk::Button>

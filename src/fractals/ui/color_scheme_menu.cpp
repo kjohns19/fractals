@@ -3,8 +3,19 @@
 #include <fractals/ui/menu_utils.hpp>
 #include <fractals/color/color_scheme.hpp>
 #include <kj/sfml_widget.hpp>
-#include <kj/gtkmm_no_warning.hpp>
+
+#include <gtkmm/button.h>
+#include <gtkmm/colorbutton.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/hvbox.h>
+#include <gtkmm/listbox.h>
+#include <gtkmm/listboxrow.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/widget.h>
+
 #include <SFML/Graphics.hpp>
+
 #include <utility>
 #include <iostream>
 

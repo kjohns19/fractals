@@ -2,7 +2,9 @@
 #define INCLUDED_APPLICATION_HPP
 
 #include <fractals/ui/view_manager.hpp>
-#include <kj/gtkmm_no_warning.hpp>
+
+#include <gtkmm/window.h>
+#include <gtkmm/application.h>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>

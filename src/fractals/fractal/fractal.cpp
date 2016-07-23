@@ -1,12 +1,13 @@
 #include <fractals/fractal/fractal.hpp>
 #include <fractals/color/color_scheme.hpp>
-#include <future>
-#include <iostream>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <future>
+#include <iostream>
 
 Fractal::Fractal(const sf::Vector2u& size):
     d_points(size.x * size.y),

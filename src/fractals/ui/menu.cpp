@@ -9,8 +9,22 @@
 #include <fractals/fractal/mandelbrot.hpp>
 #include <fractals/fractal/julia.hpp>
 #include <kj/sfml_widget.hpp>
-#include <kj/gtkmm_no_warning.hpp>
 #include <kj/observer.hpp>
+
+#include <gtkmm/box.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvbox.h>
+#include <gtkmm/label.h>
+#include <gtkmm/listbox.h>
+#include <gtkmm/listboxrow.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/separatortoolitem.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/widget.h>
 
 #include <SFML/Graphics.hpp>
 
