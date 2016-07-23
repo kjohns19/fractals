@@ -2,7 +2,6 @@
 #define INCLUDED_FRACTAL_HPP
 
 #include <fractals/util/view.hpp>
-#include <kj/thread_pool.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <vector>
@@ -30,7 +29,7 @@ public:
     std::unique_ptr<Fractal> clone(const View& view) const;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const = 0;
 
-    void setNumThreads(int num);
+    void setMaxThreads(int num);
 
     void setView(const View& view);
     const View& getView() const { return d_view; }
@@ -67,12 +66,12 @@ private:
     std::vector<Point> d_points;
     std::vector<size_t> d_valid;
     std::vector<size_t> d_done;
-    kj::ThreadPool d_pool;
     std::vector<int> d_hist;
     sf::Vector2u d_size;
     View d_view;
 
     int d_iterations;
+    int d_maxThreads;
     bool d_fastDraw;
 };
 

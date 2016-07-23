@@ -5,6 +5,9 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <iostream>
+#include <thread>
+
 Mandelbrot::Mandelbrot(const sf::Vector2u& size):
     Fractal(size) {}
 

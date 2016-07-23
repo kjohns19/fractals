@@ -13,11 +13,11 @@ Fractal::Fractal(const sf::Vector2u& size):
     d_points(size.x * size.y),
     d_valid(),
     d_done(),
-    d_pool(4), //TODO implement setNumThreads
     d_hist(1, 0),
     d_size(size),
     d_view(),
     d_iterations(0),
+    d_maxThreads(std::thread::hardware_concurrency()),
     d_fastDraw(true) {}
 
 std::unique_ptr<Fractal> Fractal::clone() const
@@ -33,10 +33,9 @@ std::unique_ptr<Fractal> Fractal::clone(const View& view) const
     return clone(getSize(), view);
 }
 
-void Fractal::setNumThreads(int num)
+void Fractal::setMaxThreads(int num)
 {
-    //TODO
-    //d_pool.resize(num);
+    d_maxThreads = num;
 }
 
 void Fractal::setView(const View& view)
@@ -70,7 +69,7 @@ void Fractal::setView(const View& view)
 void Fractal::iterate(int count)
 {
     size_t maxSize = 50000;
-    size_t threadCount = std::min(d_pool.size(), d_valid.size() / maxSize);
+    size_t threadCount = std::min(static_cast<size_t>(d_maxThreads), d_valid.size() / maxSize);
     size_t size = d_valid.size() / (threadCount + 1);
     d_hist.resize(d_hist.size() + count, 0);
 
@@ -81,9 +80,9 @@ void Fractal::iterate(int count)
     std::vector<std::vector<size_t>> allDone(threadCount);
     for(size_t i = 0; i < threadCount; i++)
     {
-        futures[i] = std::move(d_pool.push([=, &allDone]() {
+        futures[i] = std::async(std::launch::async, [=, &allDone]() {
             doIterate(count, d_valid, d_points, i*size, size, allDone[i]);
-        }));
+        });
     }
 
     doIterate(count, d_valid, d_points, threadCount * size, d_valid.size() - threadCount * size, d_done);

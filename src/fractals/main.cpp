@@ -62,7 +62,6 @@ std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& vie
     if (1)
     {
         fractal = std::make_unique<Mandelbrot>(size);
-        fractal->setNumThreads(std::thread::hardware_concurrency());
     }
     else
     {
