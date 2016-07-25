@@ -11,10 +11,10 @@ void swap_views(std::vector<View>& to, std::vector<View>& from, View& view);
 
 } // close anonymous namespace
 
-ViewManager::ViewManager(Application& app, const View& view):
-    d_app(app),
-    d_view(view),
-    d_loaded(false) {}
+ViewManager::ViewManager(Application& app, const View& view)
+: d_app(app)
+, d_view(view)
+, d_loaded(false) {}
 
 ViewManager::~ViewManager()
 {

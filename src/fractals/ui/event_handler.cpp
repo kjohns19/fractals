@@ -1,7 +1,7 @@
 #include <fractals/ui/event_handler.hpp>
 
-EventHandler::EventHandler(std::shared_ptr<EventHandler> next):
-    d_next(next) {}
+EventHandler::EventHandler(std::shared_ptr<EventHandler> next)
+: d_next(next) {}
 
 void EventHandler::handle(const sf::Event& event)
 {

@@ -8,14 +8,14 @@
 
 #include <iostream>
 
-ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next):
-    EventHandler(next),
-    d_app(app),
-    d_bounds(),
-    d_mouseClickPos(),
-    d_mousePos(),
-    d_drawBounds(false),
-    d_drawMode(false)
+ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next)
+: EventHandler(next)
+, d_app(app)
+, d_bounds()
+, d_mouseClickPos()
+, d_mousePos()
+, d_drawBounds(false)
+, d_drawMode(false)
 {
     d_bounds.setOutlineColor(sf::Color::Blue);
     d_bounds.setFillColor(sf::Color(0, 0, 0, 0));

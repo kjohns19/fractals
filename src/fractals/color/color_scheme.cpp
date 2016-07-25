@@ -4,9 +4,9 @@
 #include <iostream>
 #include <cmath>
 
-ColorScheme::ColorScheme(std::initializer_list<ColorValue> l):
-    d_colors(l.begin(), l.end()),
-    d_loop_count(1) {}
+ColorScheme::ColorScheme(std::initializer_list<ColorValue> l)
+: d_colors(l.begin(), l.end())
+, d_loop_count(1) {}
     
 
 void ColorScheme::add(std::initializer_list<ColorValue> l)

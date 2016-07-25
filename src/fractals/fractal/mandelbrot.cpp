@@ -8,8 +8,8 @@
 #include <iostream>
 #include <thread>
 
-Mandelbrot::Mandelbrot(const sf::Vector2u& size):
-    Fractal(size) {}
+Mandelbrot::Mandelbrot(const sf::Vector2u& size)
+: Fractal(size) {}
 
 void Mandelbrot::resetPoint(long double x, long double y, Point& point)
 {

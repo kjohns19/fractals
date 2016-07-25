@@ -10,9 +10,9 @@ public:
     typedef std::pair<double, sf::Color> ColorValue;
 
     template<typename Container>
-    ColorScheme(const Container& container):
-        d_colors(std::begin(container), std::end(container)),
-        d_loop_count(1) {}
+    ColorScheme(const Container& container)
+    : d_colors(std::begin(container), std::end(container))
+    , d_loop_count(1) {}
 
     ColorScheme(std::initializer_list<ColorValue> l);
 

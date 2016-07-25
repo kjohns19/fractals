@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 
-Julia::Julia(const sf::Vector2u& size, long double x, long double y):
-    Fractal(size),
-    d_x(x),
-    d_y(y) {}
+Julia::Julia(const sf::Vector2u& size, long double x, long double y)
+: Fractal(size)
+, d_x(x)
+, d_y(y) {}
 
 void Julia::resetPoint(long double x, long double y, Point& point)
 {

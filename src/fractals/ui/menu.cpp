@@ -52,8 +52,8 @@ std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
 
 struct ViewButtons : public Gtk::ToolButton, public kj::Observer<ViewManager&>
 {
-    ViewButtons(Gtk::Toolbar* toolbar, Application& app):
-        vm(app.getViewManager())
+    ViewButtons(Gtk::Toolbar* toolbar, Application& app)
+    : vm(app.getViewManager())
     {
         signal_clicked().connect([this]() {
             vm.previousView();

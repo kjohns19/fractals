@@ -9,16 +9,16 @@
 #include <future>
 #include <iostream>
 
-Fractal::Fractal(const sf::Vector2u& size):
-    d_points(size.x * size.y),
-    d_valid(),
-    d_done(),
-    d_hist(1, 0),
-    d_size(size),
-    d_view(),
-    d_iterations(0),
-    d_maxThreads(std::thread::hardware_concurrency()),
-    d_fastDraw(true) {}
+Fractal::Fractal(const sf::Vector2u& size)
+: d_points(size.x * size.y)
+, d_valid()
+, d_done()
+, d_hist(1, 0)
+, d_size(size)
+, d_view()
+, d_iterations(0)
+, d_maxThreads(std::thread::hardware_concurrency())
+, d_fastDraw(true) {}
 
 std::unique_ptr<Fractal> Fractal::clone() const
 {
