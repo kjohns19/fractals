@@ -8,6 +8,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <gtkmm/hvbox.h>
+
 #include <cassert>
 #include <iostream>
 
@@ -46,14 +48,11 @@ Application::Application(
     box->show();
     d_window.add(*box);
 
-    d_viewChanger = std::make_shared<ViewChanger>(*this, nullptr);
-
-    sfmlWindow->onEvent([this] (sf::Event event) {
-        d_viewChanger->handle(event);
-    });
+    auto viewChanger = std::make_shared<ViewChanger>(*this, nullptr);
+    sfmlWindow->eventHandler(viewChanger);
 
     sfmlWindow->setFramerate(60);
-    sfmlWindow->onDraw([this] (kj::SFMLWidget& widget) {
+    sfmlWindow->onDraw([this, viewChanger] (kj::SFMLWidget& widget) {
         if (!d_paused)
             d_fractal->iterate(d_iterateAmount);
 
@@ -71,7 +70,7 @@ Application::Application(
         target.clear();
         target.draw(d_fractalSprite);
 
-        d_viewChanger->drawBounds(target);
+        viewChanger->drawBounds(target);
     });
 
     d_window.show();

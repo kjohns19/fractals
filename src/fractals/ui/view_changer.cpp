@@ -10,6 +10,9 @@
 
 namespace frac {
 
+ViewChanger::ViewChanger(Application& app)
+: ViewChanger(app, nullptr) {}
+
 ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next)
 : EventHandler(next)
 , d_app(app)
