@@ -1,15 +1,18 @@
-#ifndef INCLUDED_VIEW_HPP
-#define INCLUDED_VIEW_HPP
+#ifndef INCLUDED_FRAC_VIEW_HPP
+#define INCLUDED_FRAC_VIEW_HPP
 
 #include <SFML/Graphics/Rect.hpp>
 #include <ostream>
 #include <vector>
 
-namespace sf
-{
-    template<typename T>
-    class Vector2;
-}
+namespace sf {
+
+template<typename T>
+class Vector2;
+
+} // close namespace sf
+
+namespace frac {
 
 struct View
 {
@@ -36,4 +39,6 @@ struct View
 
 std::ostream& operator<<(std::ostream& os, const View& view);
 
-#endif //INCLUDED_VIEW_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_VIEW_HPP

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cmath>
 
+namespace frac {
+
 ColorScheme::ColorScheme(std::initializer_list<ColorValue> l)
 : d_colors(l.begin(), l.end())
 , d_loop_count(1) {}
@@ -104,3 +106,5 @@ sf::Color ColorScheme::getColor(double val) const
         (sf::Uint8) ((int)col1.b + ((int)col2.b - (int)col1.b) * percent));
     return result;
 }
+
+} // close namespace frac

@@ -10,6 +10,8 @@
 #include <cassert>
 #include <iostream>
 
+namespace frac {
+
 Application::Application(
         const sf::Vector2u& windowSize,
         const View& view,
@@ -156,3 +158,5 @@ void Application::redrawFractal()
 {
     d_redraw = true;
 }
+
+} // close namespace frac

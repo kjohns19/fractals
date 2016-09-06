@@ -16,8 +16,8 @@
 
 namespace {
 
-std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view);
-std::unique_ptr<ColorScheme> createColorScheme();
+std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const frac::View& view);
+std::unique_ptr<frac::ColorScheme> createColorScheme();
 
 } // close anonymous namespace
 
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    View view(0, 0, 3, 2.5);
+    frac::View view(0, 0, 3, 2.5);
 
     int   gtk_argc = 1;
     char* gtk_args[] = { argv[0], nullptr };
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
     auto fractal = createFractal(wsize, view);
     auto colorScheme = createColorScheme();
-    Application application(wsize, view, std::move(fractal), std::move(colorScheme));
+    frac::Application application(wsize, view, std::move(fractal), std::move(colorScheme));
 
     application.run(app);
     return 0;
@@ -56,32 +56,33 @@ int main(int argc, char* argv[])
 
 namespace {
 
-std::unique_ptr<Fractal> createFractal(const sf::Vector2u& size, const View& view)
+std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const frac::View& view)
 {
-    std::unique_ptr<Fractal> fractal;
+    std::unique_ptr<frac::Fractal> fractal;
     if (1)
     {
-        fractal = std::make_unique<Mandelbrot>(size);
+        fractal = std::make_unique<frac::Mandelbrot>(size);
     }
     else
     {
         long double cx, cy;
         cx = 0.285;
         cy = 0.01;
-        fractal = std::make_unique<Julia>(size, cx, cy);
+        fractal = std::make_unique<frac::Julia>(size, cx, cy);
     }
     fractal->setView(view);
     return fractal;
 }
 
-std::unique_ptr<ColorScheme> createColorScheme()
+std::unique_ptr<frac::ColorScheme> createColorScheme()
 {
-    return std::make_unique<ColorScheme>(std::initializer_list<ColorScheme::ColorValue>{
-        { 0.0000, sf::Color(0,   7,   100) },
-        { 0.1600, sf::Color(32,  107, 203) },
-        { 0.4200, sf::Color(237, 255, 255) },
-        { 0.6425, sf::Color(255, 170, 0  ) },
-        { 0.8575, sf::Color(0,   2,   0  ) }
+    return std::make_unique<frac::ColorScheme>(
+        std::initializer_list<frac::ColorScheme::ColorValue>{
+            { 0.0000, sf::Color(0,   7,   100) },
+            { 0.1600, sf::Color(32,  107, 203) },
+            { 0.4200, sf::Color(237, 255, 255) },
+            { 0.6425, sf::Color(255, 170, 0  ) },
+            { 0.8575, sf::Color(0,   2,   0  ) }
     });
 }
 

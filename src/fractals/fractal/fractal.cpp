@@ -9,6 +9,8 @@
 #include <future>
 #include <iostream>
 
+namespace frac {
+
 Fractal::Fractal(const sf::Vector2u& size)
 : d_points(size.x * size.y)
 , d_valid()
@@ -202,3 +204,5 @@ void Fractal::draw(sf::RenderTarget& target, const ColorScheme& cs)
     }
     target.draw(vertices);
 }
+
+} // close namespace frac

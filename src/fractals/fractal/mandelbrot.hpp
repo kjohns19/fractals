@@ -1,5 +1,5 @@
-#ifndef INCLUDED_MANDELBROT_HPP
-#define INCLUDED_MANDELBROT_HPP
+#ifndef INCLUDED_FRAC_MANDELBROT_HPP
+#define INCLUDED_FRAC_MANDELBROT_HPP
 
 #include <fractals/fractal/fractal.hpp>
 #include <fractals/util/view.hpp>
@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <memory>
+
+namespace frac {
 
 class View;
 
@@ -31,4 +33,6 @@ private:
             std::vector<size_t>& done) override;
 };
 
-#endif //INCLUDED_MANDELBROT_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_MANDELBROT_HPP

@@ -1,5 +1,5 @@
-#ifndef INCLUDED_APPLICATION_HPP
-#define INCLUDED_APPLICATION_HPP
+#ifndef INCLUDED_FRAC_APPLICATION_HPP
+#define INCLUDED_FRAC_APPLICATION_HPP
 
 #include <fractals/ui/view_manager.hpp>
 
@@ -12,6 +12,8 @@
 
 #include <memory>
 #include <vector>
+
+namespace frac {
 
 class Fractal;
 class ColorScheme;
@@ -69,4 +71,6 @@ private:
     std::shared_ptr<ViewChanger> d_viewChanger;
 };
 
-#endif //INCLUDED_APPLICATION_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_APPLICATION_HPP

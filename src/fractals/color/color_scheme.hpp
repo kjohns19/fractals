@@ -1,8 +1,10 @@
-#ifndef INCLUDED_COLOR_SCHEME_HPP
-#define INCLUDED_COLOR_SCHEME_HPP
+#ifndef INCLUDED_FRAC_COLOR_SCHEME_HPP
+#define INCLUDED_FRAC_COLOR_SCHEME_HPP
 
 #include <SFML/Graphics/Color.hpp>
 #include <map>
+
+namespace frac {
 
 class ColorScheme
 {
@@ -47,4 +49,6 @@ private:
     int d_loop_count;
 };
 
-#endif //INCLUDED_COLOR_SCHEME_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_COLOR_SCHEME_HPP

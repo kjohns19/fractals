@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+namespace frac {
+
 namespace {
 
 void swap_views(std::vector<View>& to, std::vector<View>& from, View& view);
@@ -178,3 +180,5 @@ void swap_views(std::vector<View>& to, std::vector<View>& from, View& view)
 }
 
 } // close anonymous namespace
+
+} // close namespace frac

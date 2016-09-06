@@ -1,6 +1,8 @@
 #include <fractals/util/view.hpp>
 #include <iostream>
 
+namespace frac {
+
 View::View()
 : View(0, 0, 0, 0) {}
 View::View(long double x, long double y, long double width, long double height)
@@ -69,3 +71,5 @@ std::ostream& operator<<(std::ostream& os, const View& view)
     return os << "(" << view.x << ", " << view.y
               << ", " << view.width << ", " << view.height << ")";
 }
+
+} // close namespace frac

@@ -1,5 +1,5 @@
-#ifndef INCLUDED_JULIA_HPP
-#define INCLUDED_JULIA_HPP
+#ifndef INCLUDED_FRAC_JULIA_HPP
+#define INCLUDED_FRAC_JULIA_HPP
 
 #include <fractals/fractal/fractal.hpp>
 
@@ -9,10 +9,13 @@
 #include <vector>
 #include <functional>
 
-namespace sf
-{
-    class Color;
-}
+namespace sf {
+
+class Color;
+
+} // close namespace sf
+
+namespace frac {
 
 class View;
 
@@ -41,4 +44,6 @@ private:
     long double d_y;
 };
 
-#endif //INCLUDED_JULIA_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_JULIA_HPP

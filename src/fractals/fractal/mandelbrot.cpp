@@ -8,6 +8,8 @@
 #include <iostream>
 #include <thread>
 
+namespace frac {
+
 Mandelbrot::Mandelbrot(const sf::Vector2u& size)
 : Fractal(size) {}
 
@@ -74,3 +76,5 @@ void Mandelbrot::doIterate(
         }
     }
 }
+
+} // close namespace frac

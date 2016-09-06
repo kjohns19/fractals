@@ -1,15 +1,18 @@
-#ifndef INCLUDED_VIEW_CHANGER_HPP
-#define INCLUDED_VIEW_CHANGER_HPP
+#ifndef INCLUDED_FRAC_VIEW_CHANGER_HPP
+#define INCLUDED_FRAC_VIEW_CHANGER_HPP
 
 #include <fractals/ui/event_handler.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 
-namespace sf
-{
-    class RenderTarget;
-}
+namespace sf {
+
+class RenderTarget;
+
+} // close namespace sf
+
+namespace frac {
 
 class Application;
 
@@ -30,4 +33,6 @@ private:
     bool d_drawMode;
 };
 
-#endif //INCLUDED_VIEW_CHANGER_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_VIEW_CHANGER_HPP

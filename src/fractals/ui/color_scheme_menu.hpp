@@ -1,8 +1,12 @@
-#ifndef INCLUDED_COLOR_SCHEME_MENU_HPP
-#define INCLUDED_COLOR_SCHEME_MENU_HPP
+#ifndef INCLUDED_FRAC_COLOR_SCHEME_MENU_HPP
+#define INCLUDED_FRAC_COLOR_SCHEME_MENU_HPP
+
+namespace frac {
 
 class Application;
 
 void showColorSchemeMenu(Application& app);
 
-#endif //INCLUDED_COLOR_SCHEME_MENU_HPP
+} // close namspace frac
+
+#endif //INCLUDED_FRAC_COLOR_SCHEME_MENU_HPP

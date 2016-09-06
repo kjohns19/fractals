@@ -1,5 +1,5 @@
-#ifndef INCLUDED_MENU_UTILS_HPP
-#define INCLUDED_MENU_UTILS_HPP
+#ifndef INCLUDED_FRAC_MENU_UTILS_HPP
+#define INCLUDED_FRAC_MENU_UTILS_HPP
 
 #include <gtkmm/button.h>
 #include <gtkmm/hvbox.h>
@@ -8,6 +8,8 @@
 #include <gtkmm/box.h>
 
 #include <functional>
+
+namespace frac {
 
 template<typename ButtonType = Gtk::Button>
 ButtonType* createButton(const std::string& label, const std::string& stock);
@@ -68,4 +70,6 @@ ButtonType* createToolButton(Gtk::Toolbar* toolbar, const std::string& label, co
     return button;
 }
 
-#endif //INCLUDED_MENU_UTILS_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_MENU_UTILS_HPP

@@ -31,6 +31,8 @@
 #include <iostream>
 #include <iomanip>
 
+namespace frac {
+
 namespace {
 
 void showSaveDialog(Application& app);
@@ -610,3 +612,5 @@ void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, 
 }
 
 } // close anonymous namespace
+
+} // close namespace frac

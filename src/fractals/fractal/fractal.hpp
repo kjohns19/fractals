@@ -1,5 +1,5 @@
-#ifndef INCLUDED_FRACTAL_HPP
-#define INCLUDED_FRACTAL_HPP
+#ifndef INCLUDED_FRAC_FRACTAL_HPP
+#define INCLUDED_FRAC_FRACTAL_HPP
 
 #include <fractals/util/view.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -7,15 +7,18 @@
 #include <vector>
 #include <memory>
 
-namespace sf
-{
-    template<typename T>
-    class Rect;
+namespace sf {
 
-    class RenderTarget;
+template<typename T>
+class Rect;
 
-    class Color;
-}
+class RenderTarget;
+
+class Color;
+
+} // close namespace sf
+
+namespace frac {
 
 class ColorScheme;
 
@@ -75,4 +78,6 @@ private:
     bool d_fastDraw;
 };
 
-#endif //INCLUDED_FRACTAL_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_FRACTAL_HPP

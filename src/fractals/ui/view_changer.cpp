@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+namespace frac {
+
 ViewChanger::ViewChanger(Application& app, std::shared_ptr<EventHandler> next)
 : EventHandler(next)
 , d_app(app)
@@ -123,3 +125,5 @@ bool ViewChanger::doHandle(const sf::Event& event)
     }
     return true;
 }
+
+} // close namespace frac

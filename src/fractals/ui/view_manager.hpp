@@ -1,5 +1,5 @@
-#ifndef INCLUDED_VIEW_MANAGER_HPP
-#define INCLUDED_VIEW_MANAGER_HPP
+#ifndef INCLUDED_FRAC_VIEW_MANAGER_HPP
+#define INCLUDED_FRAC_VIEW_MANAGER_HPP
 
 #include <fractals/util/view.hpp>
 #include <kj/subject.hpp>
@@ -7,6 +7,8 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <vector>
 #include <map>
+
+namespace frac {
 
 class Application;
 
@@ -45,4 +47,6 @@ private:
     bool d_loaded;
 };
 
-#endif //INCLUDED_VIEW_MANAGER_HPP
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_VIEW_MANAGER_HPP

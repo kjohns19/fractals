@@ -19,6 +19,8 @@
 #include <utility>
 #include <iostream>
 
+namespace frac {
+
 typedef std::tuple<Gtk::SpinButton*, Gtk::ColorButton*, Gtk::Button*> Item;
 
 namespace {
@@ -259,3 +261,5 @@ sf::Color getColor(const Gtk::ColorButton* button)
 }
 
 } // close anonymous namespace
+
+} // close namespace frac

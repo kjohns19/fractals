@@ -1,12 +1,15 @@
-#ifndef INCLUDED_EVENT_HANDLER
-#define INCLUDED_EVENT_HANDLER
+#ifndef INCLUDED_FRAC_EVENT_HANDLER
+#define INCLUDED_FRAC_EVENT_HANDLER
 
 #include <memory>
 
-namespace sf
-{
-    class Event;
-}
+namespace sf {
+
+class Event;
+
+} // close namespace sf
+
+namespace frac {
 
 class EventHandler
 {
@@ -22,4 +25,6 @@ private:
     std::shared_ptr<EventHandler> d_next;
 };
 
-#endif //INCLUDED_EVENT_HANDLER
+} // close namespace frac
+
+#endif //INCLUDED_FRAC_EVENT_HANDLER

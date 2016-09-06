@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace frac {
+
 Julia::Julia(const sf::Vector2u& size, long double x, long double y)
 : Fractal(size)
 , d_x(x)
@@ -72,3 +74,5 @@ void Julia::doIterate(
         }
     }
 }
+
+} // close namespace frac
