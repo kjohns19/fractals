@@ -2,11 +2,13 @@
 #define INCLUDED_FRAC_VIEW_MANAGER_HPP
 
 #include <fractals/util/view.hpp>
+
 #include <kj/subject.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
-#include <vector>
+
 #include <map>
+#include <vector>
 
 namespace frac {
 

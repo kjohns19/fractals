@@ -1,11 +1,11 @@
 #ifndef INCLUDED_FRAC_MENU_UTILS_HPP
 #define INCLUDED_FRAC_MENU_UTILS_HPP
 
+#include <gtkmm/box.h>
 #include <gtkmm/button.h>
 #include <gtkmm/hvbox.h>
-#include <gtkmm/toolbutton.h>
 #include <gtkmm/toolbar.h>
-#include <gtkmm/box.h>
+#include <gtkmm/toolbutton.h>
 
 #include <functional>
 

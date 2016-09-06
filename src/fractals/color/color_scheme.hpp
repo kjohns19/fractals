@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_COLOR_SCHEME_HPP
 
 #include <SFML/Graphics/Color.hpp>
+
 #include <map>
 
 namespace frac {

@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_VIEW_HPP
 
 #include <SFML/Graphics/Rect.hpp>
+
 #include <ostream>
 #include <vector>
 

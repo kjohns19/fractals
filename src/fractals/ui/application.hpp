@@ -3,8 +3,8 @@
 
 #include <fractals/ui/view_manager.hpp>
 
-#include <gtkmm/window.h>
 #include <gtkmm/application.h>
+#include <gtkmm/window.h>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -15,8 +15,8 @@
 
 namespace frac {
 
-class Fractal;
 class ColorScheme;
+class Fractal;
 class ViewChanger;
 
 class Application

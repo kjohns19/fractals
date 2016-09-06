@@ -3,15 +3,14 @@
 
 #include <fractals/fractal/fractal.hpp>
 
-#include <SFML/System/Vector2.hpp>
-
-#include <complex>
 #include <vector>
-#include <functional>
 
 namespace sf {
 
 class Color;
+
+template<typename T>
+class Vector2;
 
 } // close namespace sf
 

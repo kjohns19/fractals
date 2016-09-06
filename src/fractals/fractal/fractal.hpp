@@ -4,17 +4,17 @@
 #include <fractals/util/view.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace sf {
+
+class Color;
 
 template<typename T>
 class Rect;
 
 class RenderTarget;
-
-class Color;
 
 } // close namespace sf
 

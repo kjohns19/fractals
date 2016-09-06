@@ -4,12 +4,17 @@
 #include <fractals/fractal/fractal.hpp>
 #include <fractals/util/view.hpp>
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Color.hpp>
-
-#include <vector>
 #include <memory>
+#include <vector>
+
+namespace sf {
+
+class Color;
+
+template<typename T>
+class Vector2;
+
+} // close namespace sf
 
 namespace frac {
 

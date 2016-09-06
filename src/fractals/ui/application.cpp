@@ -3,6 +3,7 @@
 #include <fractals/ui/application.hpp>
 #include <fractals/ui/menu.hpp>
 #include <fractals/ui/view_changer.hpp>
+
 #include <kj/sfml_widget.hpp>
 
 #include <SFML/Graphics.hpp>
