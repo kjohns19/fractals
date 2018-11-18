@@ -68,7 +68,7 @@ std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const fra
         long double cx, cy;
         cx = 0.285;
         cy = 0.01;
-        fractal = std::make_unique<frac::Julia>(size, cx, cy);
+        fractal = std::make_unique<frac::Julia>(size, cx, cy, 2);
     }
     fractal->setView(view);
     return fractal;
