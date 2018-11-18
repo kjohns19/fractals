@@ -8,6 +8,7 @@
 
 #include <future>
 #include <iostream>
+#include <cmath>
 
 namespace frac {
 
