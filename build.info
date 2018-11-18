@@ -1,7 +1,7 @@
 {
     "projectname": "fractal",
     "builddir": "build.dir",
-    "flags": "-std=c++14 -g -Wall -Werror",
+    "flags": "-std=c++14 -g -O3 -Wall -Werror",
     "targets": [
         {
             "name": "fractal",
