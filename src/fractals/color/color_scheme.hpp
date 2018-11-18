@@ -10,7 +10,9 @@ namespace frac {
 class ColorScheme
 {
 public:
-    typedef std::pair<double, sf::Color> ColorValue;
+    using ColorValue = std::pair<double, sf::Color>;
+
+    ColorScheme();
 
     template<typename Container>
     ColorScheme(const Container& container)
@@ -33,14 +35,10 @@ public:
         d_colors.clear();
         add(container);
     }
-    void set(std::initializer_list<ColorValue> l);
-    void set(double value, const sf::Color& color);
-
-    void remove(double value);
 
     const std::map<double, sf::Color>& getColors() const;
 
-    virtual sf::Color getColor(double value) const;
+    sf::Color getColor(double value) const;
 
     int getLoopCount() const;
     void setLoopCount(int count);
