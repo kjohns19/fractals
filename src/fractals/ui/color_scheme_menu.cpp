@@ -145,7 +145,7 @@ void showColorSchemeMenu(Application& app)
     content->pack_start(*loopEntry);
 
     content->show_all();
-    
+
     while(1)
     {
         int result = dialog.run();

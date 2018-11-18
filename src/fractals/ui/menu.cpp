@@ -315,7 +315,7 @@ void showSaveDialog(Application& app)
         sf::Vector2u size(entryWidth->get_value_as_int(),
                           entryHeight->get_value_as_int());
 
-        
+
         save(entryFile->get_text(),
              app.getFractal(),
              app.getColorScheme(),
