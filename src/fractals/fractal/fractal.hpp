@@ -2,6 +2,8 @@
 #define INCLUDED_FRAC_FRACTAL_HPP
 
 #include <fractals/util/view.hpp>
+#include <fractals/util/thread_pool.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
@@ -31,8 +33,6 @@ public:
     std::unique_ptr<Fractal> clone(const sf::Vector2u& size) const;
     std::unique_ptr<Fractal> clone(const View& view) const;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const = 0;
-
-    void setMaxThreads(int num);
 
     void setView(const View& view);
     const View& getView() const { return d_view; }
@@ -73,8 +73,9 @@ private:
     sf::Vector2u d_size;
     View d_view;
 
+    ThreadPool d_threadPool;
+
     int d_iterations;
-    int d_maxThreads;
     bool d_fastDraw;
 };
 

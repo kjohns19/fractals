@@ -6,6 +6,7 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <numeric>
 #include <future>
 #include <iostream>
 #include <cmath>
@@ -20,7 +21,6 @@ Fractal::Fractal(const sf::Vector2u& size)
 , d_size(size)
 , d_view()
 , d_iterations(0)
-, d_maxThreads(std::thread::hardware_concurrency())
 , d_fastDraw(true) {}
 
 std::unique_ptr<Fractal> Fractal::clone() const
@@ -34,11 +34,6 @@ std::unique_ptr<Fractal> Fractal::clone(const sf::Vector2u& size) const
 std::unique_ptr<Fractal> Fractal::clone(const View& view) const
 {
     return clone(getSize(), view);
-}
-
-void Fractal::setMaxThreads(int num)
-{
-    d_maxThreads = num;
 }
 
 void Fractal::setView(const View& view)
@@ -71,33 +66,26 @@ void Fractal::setView(const View& view)
 
 void Fractal::iterate(int count)
 {
-    size_t maxSize = 50000;
-    size_t threadCount = std::min(static_cast<size_t>(d_maxThreads), d_valid.size() / maxSize);
-    size_t size = d_valid.size() / (threadCount + 1);
+    const size_t maxSize = 50000;
+    size_t jobCount = d_valid.size() / maxSize;
+    if (d_valid.size() % maxSize)
+        jobCount++;
     d_hist.resize(d_hist.size() + count, 0);
 
     for(size_t pos: d_done)
         d_points[pos].value+=count;
 
-    std::vector<std::future<void>> futures(threadCount);
-    std::vector<std::vector<size_t>> allDone(threadCount);
-    for(size_t i = 0; i < threadCount; i++)
-    {
-        futures[i] = std::async(std::launch::async, [=, &allDone]() {
-            doIterate(count, d_valid, d_points, i*size, size, allDone[i]);
-        });
-    }
+    std::vector<size_t> indices(jobCount);
+    std::iota(indices.begin(), indices.end(), 0);
+    std::vector<std::vector<size_t>> allDone(jobCount);
 
-    doIterate(count, d_valid, d_points, threadCount * size, d_valid.size() - threadCount * size, d_done);
+    d_threadPool.map(indices.begin(), indices.end(), [=, &allDone](int i) {
+        size_t jobSize = std::min(maxSize, d_valid.size()-i*maxSize);
+        doIterate(count, d_valid, d_points, i*maxSize, jobSize, allDone[i]);
+    });
 
-    for(size_t i = 0; i < threadCount; i++)
-        futures[i].get();
-
-    for(size_t i = 0; i < threadCount; i++)
-    {
-        auto& done = allDone[i];
+    for(auto& done: allDone)
         d_done.insert(d_done.end(), done.begin(), done.end());
-    }
 
     for(size_t i = 0; i < d_valid.size();)
     {
