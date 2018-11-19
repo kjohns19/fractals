@@ -3,6 +3,7 @@
 #include <fractals/fractal/julia.hpp>
 #include <fractals/ui/application.hpp>
 #include <fractals/color/color_scheme.hpp>
+#include <fractals/color/color_scheme_util.hpp>
 #include <fractals/util/view.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -76,14 +77,8 @@ std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const fra
 
 std::unique_ptr<frac::ColorScheme> createColorScheme()
 {
-    return std::make_unique<frac::ColorScheme>(
-        std::initializer_list<frac::ColorScheme::ColorValue>{
-            { 0.0000, sf::Color(0,   7,   100) },
-            { 0.1600, sf::Color(32,  107, 203) },
-            { 0.4200, sf::Color(237, 255, 255) },
-            { 0.6425, sf::Color(255, 170, 0  ) },
-            { 0.8575, sf::Color(0,   2,   0  ) }
-    });
+    auto colorScheme = frac::ColorSchemeUtil::loadFromFile("data/colors.json");
+    return colorScheme;
 }
 
 } // close anonymous namespace
