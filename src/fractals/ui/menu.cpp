@@ -40,6 +40,7 @@ void showIterateDialog(Application& app);
 void showViewDialog(Application& app);
 void showNewDialog(Application& app);
 void showSetViewDialog(Application& app);
+void showSetJuliaDialog(Application& app, Julia& julia);
 
 void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations);
 
@@ -205,25 +206,9 @@ Gtk::Widget* createMenu(Application& app)
     });
 
     createToolButton(menu, "Test", "gtk-new", [&]() {
-        static int count = 0;
-        double ax = -0.4;
-        double ay = 0.6;
-        double bx = 0.285;
-        double by = 0.01;
-        int total = 50;
-
-        count++;
-
-        double cx = bx + (ax - bx) * count / total;
-        double cy = by + (ay - by) * count / total;
-        std::cout << cx << "   " << cy << std::endl;
-
         Julia* julia = dynamic_cast<Julia*>(&app.getFractal());
         if (julia)
-        {
-            julia->setValue(cx, cy);
-            app.redrawFractal();
-        }
+            showSetJuliaDialog(app, *julia);
     });
 
     menu->show_all();
@@ -492,44 +477,44 @@ void showViewDialog(Application& app)
 
 void showNewDialog(Application& app)
 {
-    Gtk::Dialog dialog("New Fractal", app.getWindow(), true);
+    //Gtk::Dialog dialog("New Fractal", app.getWindow(), true);
 
-    dialog.add_button("Ok", Gtk::RESPONSE_ACCEPT);
+    //dialog.add_button("Ok", Gtk::RESPONSE_ACCEPT);
 
-    Gtk::Box* content = dialog.get_content_area();
+    //Gtk::Box* content = dialog.get_content_area();
 
-    Julia* julia = dynamic_cast<Julia*>(&app.getFractal());
-    if (julia)
-    {
-        long double x = julia->getX();
-        long double y = julia->getY();
+    //Julia* julia = dynamic_cast<Julia*>(&app.getFractal());
+    //if (julia)
+    //{
+    //    long double x = julia->getX();
+    //    long double y = julia->getY();
 
-        Gtk::SpinButton xEntry;
-        xEntry.set_range(-2.0, 2.0);
-        xEntry.set_increments(0.01, 0.1);
-        xEntry.set_digits(10);
-        xEntry.set_value(x);
+    //    Gtk::SpinButton xEntry;
+    //    xEntry.set_range(-2.0, 2.0);
+    //    xEntry.set_increments(0.01, 0.1);
+    //    xEntry.set_digits(10);
+    //    xEntry.set_value(x);
 
-        Gtk::SpinButton yEntry;
-        yEntry.set_range(-2.0, 2.0);
-        yEntry.set_increments(0.01, 0.1);
-        yEntry.set_digits(10);
-        yEntry.set_value(y);
+    //    Gtk::SpinButton yEntry;
+    //    yEntry.set_range(-2.0, 2.0);
+    //    yEntry.set_increments(0.01, 0.1);
+    //    yEntry.set_digits(10);
+    //    yEntry.set_value(y);
 
-        content->pack_start(xEntry);
-        content->pack_start(yEntry);
-        content->show_all();
+    //    content->pack_start(xEntry);
+    //    content->pack_start(yEntry);
+    //    content->show_all();
 
-        int result = dialog.run();
-        if (result == Gtk::RESPONSE_ACCEPT)
-        {
-            x = xEntry.get_value();
-            y = yEntry.get_value();
-            std::cout << "Woo! " << x << "   " << y << std::endl;
-            julia->setValue(x, y);
-            app.redrawFractal();
-        }
-    }
+    //    int result = dialog.run();
+    //    if (result == Gtk::RESPONSE_ACCEPT)
+    //    {
+    //        x = xEntry.get_value();
+    //        y = yEntry.get_value();
+    //        std::cout << "Woo! " << x << "   " << y << std::endl;
+    //        julia->setValue(x, y);
+    //        app.redrawFractal();
+    //    }
+    //}
 }
 
 void showSetViewDialog(Application& app)
@@ -568,6 +553,57 @@ void showSetViewDialog(Application& app)
     }
 }
 
+void showSetJuliaDialog(Application& app, Julia& julia)
+{
+    Gtk::Dialog dialog("Set Julia Values", app.getWindow(), true);
+
+    dialog.add_button("Ok", Gtk::RESPONSE_OK);
+    dialog.add_button("Apply", Gtk::RESPONSE_APPLY);
+    dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
+    Gtk::Box* content = dialog.get_content_area();
+
+    Gtk::SpinButton xEntry;
+    xEntry.set_range(-2.0, 2.0);
+    xEntry.set_increments(0.001, 0.01);
+    xEntry.set_digits(10);
+    xEntry.set_value(julia.getX());
+
+    Gtk::SpinButton yEntry;
+    yEntry.set_range(-2.0, 2.0);
+    yEntry.set_increments(0.001, 0.01);
+    yEntry.set_digits(10);
+    yEntry.set_value(julia.getY());
+
+    Gtk::SpinButton powEntry;
+    powEntry.set_range(0.0, 100.0);
+    powEntry.set_increments(0.01, 0.1);
+    powEntry.set_digits(10);
+    powEntry.set_value(julia.getPower());
+
+    content->pack_start(xEntry);
+    content->pack_start(yEntry);
+    content->pack_start(powEntry);
+    content->show_all();
+
+    while(1)
+    {
+        int result = dialog.run();
+        if (result == Gtk::RESPONSE_OK || result == Gtk::RESPONSE_APPLY)
+        {
+            julia.setValue(
+                xEntry.get_value(),
+                yEntry.get_value(),
+                powEntry.get_value());
+            app.redrawFractal();
+            if (result == Gtk::RESPONSE_OK)
+                break;
+        }
+        else
+            break;
+    }
+}
+
 void addViewRow(Gtk::ListBox& list, const std::string& name)
 {
     Gtk::Label* label = Gtk::manage(new Gtk::Label(name));
@@ -578,37 +614,37 @@ void addViewRow(Gtk::ListBox& list, const std::string& name)
 
 void save(const std::string& filename, Fractal& fractal, const ColorScheme& cs, const sf::Vector2u& size, const View& view, int iterations)
 {
-        std::cout << "Saving " << size << " size image of " << view << " at " << iterations << " iterations to " << filename << std::endl;
-        std::cout << "Creating fractal..." << std::endl;
-        auto newfractal = fractal.clone(size, view);
-        std::cout << "Iterating..." << std::endl;
-        int stepCount = 100;
-        for(int total = 0; total < iterations;)
-        {
-            int iterationCount = std::min(stepCount, iterations - total);
-            newfractal->iterate(iterationCount);
-            total+=iterationCount;
-            std::cout << total << std::endl;
-        }
-        newfractal->setDrawMode(false);
+    std::cout << "Saving " << size << " size image of " << view << " at " << iterations << " iterations to " << filename << std::endl;
+    std::cout << "Creating fractal..." << std::endl;
+    auto newfractal = fractal.clone(size, view);
+    std::cout << "Iterating..." << std::endl;
+    int stepCount = 100;
+    for(int total = 0; total < iterations;)
+    {
+        int iterationCount = std::min(stepCount, iterations - total);
+        newfractal->iterate(iterationCount);
+        total+=iterationCount;
+        std::cout << total << std::endl;
+    }
+    newfractal->setDrawMode(false);
 
-        std::cout << "Creating image..." << std::endl;
-        sf::RenderTexture texture;
-        if (texture.create(size.x, size.y))
-        {
-            newfractal->draw(texture, cs);
-            texture.display();
+    std::cout << "Creating image..." << std::endl;
+    sf::RenderTexture texture;
+    if (texture.create(size.x, size.y))
+    {
+        newfractal->draw(texture, cs);
+        texture.display();
 
-            sf::Image image = texture.getTexture().copyToImage();
+        sf::Image image = texture.getTexture().copyToImage();
 
-            std::cout << "Saving image..." << std::endl;
-            image.saveToFile(filename);
-            std::cout << "Done!" << std::endl;
-        }
-        else
-        {
-            std::cout << "Failed to create image!" << std::endl;
-        }
+        std::cout << "Saving image..." << std::endl;
+        image.saveToFile(filename);
+        std::cout << "Done!" << std::endl;
+    }
+    else
+    {
+        std::cout << "Failed to create image!" << std::endl;
+    }
 }
 
 } // close anonymous namespace
