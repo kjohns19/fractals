@@ -1,0 +1,15 @@
+{
+    "projectname": "example",
+    "builddir": "build.dir",
+    "flags": "-std=c++14 -g -Wall -Werror",
+    "targets": [
+        {
+            "name": "example",
+            "type": "executable",
+            "srcs": [ "src/*.cpp" ],
+            "include_dirs": [ "src" ],
+            "libraries": [ "gtkmm", "sfml", "kj" ]
+        }
+    ]
+}
+
