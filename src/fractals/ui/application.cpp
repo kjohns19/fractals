@@ -19,56 +19,28 @@ Application::Application(
         const View& view,
         std::unique_ptr<Fractal> fractal,
         std::unique_ptr<ColorScheme> colorScheme)
-: d_fractal(std::move(fractal))
-, d_colorScheme(std::move(colorScheme))
-, d_windowSize(windowSize)
-, d_viewManager(*this, view)
-, d_lastIteration(-1)
-, d_redraw(false)
-, d_paused(false)
-, d_iterateAmount(1)
+: d_windowSize(windowSize)
+, d_fractalWidget(Gtk::manage(
+    new FractalWidget({windowSize.x, windowSize.y}, std::move(fractal))))
+, d_viewManager(*d_fractalWidget, view)
 {
-    assert(d_fractal);
-    assert(d_colorScheme);
-
-    d_fractalTexture.create(windowSize.x, windowSize.y);
-    d_fractalSprite.setTexture(d_fractalTexture.getTexture());
-
-    SFMLWidget* sfmlWindow =
-        Gtk::manage(new SFMLWidget(sf::VideoMode(windowSize.x, windowSize.y)));
-    sfmlWindow->show();
+    d_fractalWidget->colorScheme() = *colorScheme;
+    d_fractalWidget->show();
 
     Gtk::VBox* box = Gtk::manage(new Gtk::VBox());
 
     Gtk::Widget* menu = createMenu(*this);
 
     box->pack_start(*menu);
-    box->pack_start(*sfmlWindow, Gtk::PACK_SHRINK);
+    box->pack_start(*d_fractalWidget, Gtk::PACK_SHRINK);
     box->show();
     d_window.add(*box);
 
     auto viewChanger = std::make_shared<ViewChanger>(*this, nullptr);
-    sfmlWindow->eventHandler(viewChanger);
+    d_fractalWidget->eventHandler(viewChanger);
 
-    sfmlWindow->setFramerate(60);
-    sfmlWindow->onDraw([this, viewChanger] (SFMLWidget& widget) {
-        if (!d_paused)
-            d_fractal->iterate(d_iterateAmount);
-
-        if (d_redraw || d_fractal->iterations() != d_lastIteration)
-        {
-            d_lastIteration = d_fractal->iterations();
-            d_fractalTexture.clear();
-            d_fractal->draw(d_fractalTexture, *d_colorScheme);
-            d_fractalTexture.display();
-            d_redraw = false;
-        }
-
+    d_fractalWidget->onDraw([this, viewChanger] (FractalWidget& widget) {
         sf::RenderTarget& target = widget.window();
-
-        target.clear();
-        target.draw(d_fractalSprite);
-
         viewChanger->drawBounds(target);
     });
 
@@ -89,55 +61,6 @@ const Gtk::Window& Application::getWindow() const
     return d_window;
 }
 
-void Application::setPaused(bool paused)
-{
-    d_paused = paused;
-}
-bool Application::isPaused() const
-{
-    return d_paused;
-}
-
-void Application::setIterateAmount(int iterations)
-{
-    if (iterations >= 0)
-        d_iterateAmount = iterations;
-}
-int Application::getIterateAmount() const
-{
-    return d_iterateAmount;
-}
-
-void Application::setFractal(std::unique_ptr<Fractal> fractal)
-{
-    assert(fractal);
-    d_fractal = std::move(fractal);
-    d_lastIteration = -1;
-}
-Fractal& Application::getFractal()
-{
-    return *d_fractal;
-}
-const Fractal& Application::getFractal() const
-{
-    return *d_fractal;
-}
-
-void Application::setColorScheme(ColorScheme* colorScheme)
-{
-    assert(colorScheme != nullptr);
-    d_colorScheme.reset(colorScheme);
-    redrawFractal();
-}
-ColorScheme& Application::getColorScheme()
-{
-    return *d_colorScheme;
-}
-const ColorScheme& Application::getColorScheme() const
-{
-    return *d_colorScheme;
-}
-
 
 void Application::run(Glib::RefPtr<Gtk::Application> app)
 {
@@ -151,11 +74,6 @@ ViewManager& Application::getViewManager()
 const ViewManager& Application::getViewManager() const
 {
     return d_viewManager;
-}
-
-void Application::redrawFractal()
-{
-    d_redraw = true;
 }
 
 } // close namespace frac

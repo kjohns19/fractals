@@ -122,10 +122,11 @@ Gtk::Widget* createMenu(Application& app)
 
     Gtk::ToolButton* buttonPlay = createToolButton("Pause", "gtk-media-pause");
     buttonPlay->signal_clicked().connect([buttonPlay, &app]() {
-        bool isPlaying = !app.isPaused();
-        buttonPlay->set_icon_name(isPlaying ? "gtk-media-play-ltr" : "gtk-media-pause");
-        buttonPlay->set_tooltip_text(isPlaying ? "Play" : "Pause");
-        app.setPaused(isPlaying);
+        auto& fractalWidget = app.fractalWidget();
+        bool running = fractalWidget.isRunning();
+        buttonPlay->set_icon_name(running ? "gtk-media-play-ltr" : "gtk-media-pause");
+        buttonPlay->set_tooltip_text(running ? "Play" : "Pause");
+        fractalWidget.setRunning(!running);
     });
     menu->append(*buttonPlay);
 
@@ -142,8 +143,9 @@ Gtk::Widget* createMenu(Application& app)
     Gtk::ToggleToolButton* buttonDraw = createToolButton<Gtk::ToggleToolButton>("Fast Drawing", "gtk-edit");
     buttonDraw->set_active(true);
     buttonDraw->signal_clicked().connect([&]() {
-        app.getFractal().setDrawMode(!app.getFractal().getDrawMode());
-        app.redrawFractal();
+        auto& fractalWidget = app.fractalWidget();
+        fractalWidget.fractal().setDrawMode(!fractalWidget.fractal().getDrawMode());
+        fractalWidget.redraw();
     });
     menu->append(*buttonDraw);
 
@@ -151,7 +153,7 @@ Gtk::Widget* createMenu(Application& app)
         //Gtk::Dialog dialog("Save Path", app.getWindow(), true);
 
         ViewManager& vm = app.getViewManager();
-        int iterations = app.getFractal().iterations();
+        int iterations = app.fractal().iterations();
 
         View start = vm.getView();
         vm.nextView();
@@ -168,7 +170,7 @@ Gtk::Widget* createMenu(Application& app)
             std::cout << i << ":" << std::endl;
             std::stringstream ss;
             ss << "data/zoom/" << (i++) << ".jpg";
-            save(ss.str(), app.getFractal(), app.getColorScheme(), app.getWindowSize(), v, iterations);
+            save(ss.str(), app.fractal(), app.colorScheme(), app.getWindowSize(), v, iterations);
         }
     });
 
@@ -177,7 +179,7 @@ Gtk::Widget* createMenu(Application& app)
     });
 
     createToolButton(menu, "Step", "gtk-media-forward-ltr", [&]() {
-        app.getFractal().iterate();
+        app.fractal().iterate();
     });
 
     createToolButton(menu, "Jump To Iteration", "gtk-jump-to-ltr", [&]() {
@@ -207,7 +209,7 @@ Gtk::Widget* createMenu(Application& app)
     });
 
     createToolButton(menu, "Test", "gtk-new", [&]() {
-        Julia* julia = dynamic_cast<Julia*>(&app.getFractal());
+        Julia* julia = dynamic_cast<Julia*>(&app.fractal());
         if (julia)
             showSetJuliaDialog(app, *julia);
     });
@@ -265,7 +267,7 @@ void showSaveDialog(Application& app)
     entryIterations = Gtk::manage(new Gtk::SpinButton());
     entryIterations->set_range(1, 99999);
     entryIterations->set_increments(1, 10);
-    entryIterations->set_value(app.getFractal().iterations());
+    entryIterations->set_value(app.fractal().iterations());
     row->pack_start(*entryIterations);
     content->pack_start(*row);
 
@@ -303,8 +305,8 @@ void showSaveDialog(Application& app)
 
 
         save(entryFile->get_text(),
-             app.getFractal(),
-             app.getColorScheme(),
+             app.fractal(),
+             app.colorScheme(),
              size,
              app.getViewManager().getView(),
              entryIterations->get_value_as_int());
@@ -319,7 +321,7 @@ void showIterateDialog(Application& app)
 
     Gtk::Box* content = dialog.get_content_area();
 
-    Fractal& fractal = app.getFractal();
+    Fractal& fractal = app.fractal();
 
     int currentIterations = fractal.iterations();
     Gtk::SpinButton iterationEntry;
@@ -342,7 +344,7 @@ void showIterateDialog(Application& app)
             fractal.iterate(val);
         }
         if (val != currentIterations)
-            app.redrawFractal();
+            app.fractalWidget().redraw();
     }
 }
 
@@ -369,7 +371,7 @@ void showViewDialog(Application& app)
     Gtk::Box* content = dialog.get_content_area();
 
     ViewManager& vm = app.getViewManager();
-    Fractal& fractal = app.getFractal();
+    Fractal& fractal = app.fractal();
 
     std::map<std::string, ViewPair>& views = vm.getSavedViews();
     const std::string* viewName = nullptr;
@@ -446,7 +448,7 @@ void showViewDialog(Application& app)
             Mandelbrot fractal(sf::Vector2u(300, 200));
             fractal.setView(view);
             fractal.iterate(viewView->second);
-            fractal.draw(widget.window(), app.getColorScheme());
+            fractal.draw(widget.window(), app.colorScheme());
         }
         widget.display();
     });
@@ -484,7 +486,7 @@ void showNewDialog(Application& app)
 
     //Gtk::Box* content = dialog.get_content_area();
 
-    //Julia* julia = dynamic_cast<Julia*>(&app.getFractal());
+    //Julia* julia = dynamic_cast<Julia*>(&app.fractal());
     //if (julia)
     //{
     //    long double x = julia->getX();
@@ -513,7 +515,7 @@ void showNewDialog(Application& app)
     //        y = yEntry.get_value();
     //        std::cout << "Woo! " << x << "   " << y << std::endl;
     //        julia->setValue(x, y);
-    //        app.redrawFractal();
+    //        app.fractalWidget().redraw();
     //    }
     //}
 }
@@ -526,7 +528,7 @@ void showSetViewDialog(Application& app)
 
     Gtk::Box* content = dialog.get_content_area();
 
-    View view = app.getFractal().getView();
+    View view = app.fractal().getView();
 
     Gtk::SpinButton xEntry;
     xEntry.set_range(-2.0, 2.0);
@@ -549,8 +551,8 @@ void showSetViewDialog(Application& app)
     {
         view.x = xEntry.get_value();
         view.y = yEntry.get_value();
-        app.getFractal().setView(view);
-        app.redrawFractal();
+        app.fractal().setView(view);
+        app.fractalWidget().redraw();
     }
 }
 
@@ -596,7 +598,7 @@ void showSetJuliaDialog(Application& app, Julia& julia)
                 xEntry.get_value(),
                 yEntry.get_value(),
                 powEntry.get_value());
-            app.redrawFractal();
+            app.fractalWidget().redraw();
             if (result == Gtk::RESPONSE_OK)
                 break;
         }

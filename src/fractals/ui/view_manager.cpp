@@ -13,8 +13,8 @@ void swap_views(std::vector<View>& to, std::vector<View>& from, View& view);
 
 } // close anonymous namespace
 
-ViewManager::ViewManager(Application& app, const View& view)
-: d_app(app)
+ViewManager::ViewManager(FractalWidget& widget, const View& view)
+: d_widget(widget)
 , d_view(view)
 , d_loaded(false) {}
 
@@ -89,11 +89,11 @@ void ViewManager::zoomOut()
 void ViewManager::resetView(int iterations)
 {
     if (iterations == -1)
-        iterations = d_app.getFractal().iterations();
+        iterations = d_widget.fractal().iterations();
 
-    d_app.getFractal().setView(d_view);
-    d_app.getFractal().iterate(iterations);
-    d_app.redrawFractal();
+    d_widget.fractal().setView(d_view);
+    d_widget.fractal().iterate(iterations);
+    d_widget.redraw();
     notifyObservers(*this);
 }
 

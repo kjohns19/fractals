@@ -11,12 +11,12 @@
 
 namespace frac {
 
-class Application;
+class FractalWidget;
 
 class ViewManager : public Subject<ViewManager&>
 {
 public:
-    ViewManager(Application& app, const View& view);
+    ViewManager(FractalWidget& widget, const View& view);
     ~ViewManager();
 
     const View& getView();
@@ -38,7 +38,7 @@ public:
     std::map<std::string, std::pair<View, int> >& getSavedViews();
     void saveViews() const;
 private:
-    Application& d_app;
+    FractalWidget& d_widget;
 
     View d_view;
     std::vector<View> d_prev_views;

@@ -52,7 +52,7 @@ void showColorSchemeMenu(Application& app)
 {
     Gtk::Dialog dialog("Color Scheme", app.getWindow(), true);
 
-    ColorScheme& cs = dynamic_cast<ColorScheme&>(app.getColorScheme());
+    ColorScheme& cs = app.colorScheme();
 
     dialog.add_button("Ok", Gtk::RESPONSE_OK);
     dialog.add_button("Apply", Gtk::RESPONSE_APPLY);
@@ -157,7 +157,7 @@ void showColorSchemeMenu(Application& app)
             getColors(items, newColors);
             cs.set(newColors);
             cs.setLoopCount(loopEntry->get_value_as_int());
-            app.redrawFractal();
+            app.fractalWidget().redraw();
 
             if (result == Gtk::RESPONSE_OK)
                 break;

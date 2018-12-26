@@ -1,6 +1,7 @@
 #ifndef INCLUDED_FRAC_APPLICATION_HPP
 #define INCLUDED_FRAC_APPLICATION_HPP
 
+#include <fractals/ui/fractal_widget.hpp>
 #include <fractals/ui/view_manager.hpp>
 
 #include <gtkmm/application.h>
@@ -30,44 +31,31 @@ public:
 
     const sf::Vector2u& getWindowSize() const;
 
-    void setPaused(bool paused = true);
-    bool isPaused() const;
-
-    void setIterateAmount(int iterations);
-    int getIterateAmount() const;
-
     Gtk::Window& getWindow();
     const Gtk::Window& getWindow() const;
 
-    void setFractal(std::unique_ptr<Fractal> fractal);
-    Fractal& getFractal();
-    const Fractal& getFractal() const;
+    FractalWidget& fractalWidget() { return *d_fractalWidget; }
+    const FractalWidget& fractalWidget() const { return *d_fractalWidget; }
 
-    void setColorScheme(ColorScheme* colorScheme);
-    ColorScheme& getColorScheme();
-    const ColorScheme& getColorScheme() const;
+    Fractal& fractal() { return fractalWidget().fractal(); }
+    const Fractal& fractal() const { return fractalWidget().fractal(); }
+
+    ColorScheme& colorScheme()
+        { return fractalWidget().colorScheme(); }
+    const ColorScheme& colorScheme() const
+        { return fractalWidget().colorScheme(); }
 
     ViewManager& getViewManager();
     const ViewManager& getViewManager() const;
 
-    void redrawFractal();
-
     void run(Glib::RefPtr<Gtk::Application> app);
 private:
-    std::unique_ptr<Fractal> d_fractal;
-    std::unique_ptr<ColorScheme> d_colorScheme;
     sf::Vector2u d_windowSize;
+    FractalWidget* d_fractalWidget;
     ViewManager d_viewManager;
+
     Gtk::Window d_window;
 
-    int d_lastIteration;
-    bool d_redraw;
-
-    bool d_paused;
-    int d_iterateAmount;
-
-    sf::RenderTexture d_fractalTexture;
-    sf::Sprite d_fractalSprite;
     std::shared_ptr<ViewChanger> d_viewChanger;
 };
 
