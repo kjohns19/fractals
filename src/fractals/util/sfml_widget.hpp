@@ -28,7 +28,7 @@ protected:
     virtual void on_unrealize() override;
 
 public:
-    SFMLWidget(sf::VideoMode mode, const char *name = "SFMLWidget");
+    SFMLWidget(sf::VideoMode mode, const char* name = "SFMLWidget");
     virtual ~SFMLWidget() {}
 
     void invalidate();

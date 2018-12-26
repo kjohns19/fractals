@@ -5,7 +5,7 @@
 
 namespace frac {
 
-SFMLWidget::SFMLWidget(sf::VideoMode mode, const char *name)
+SFMLWidget::SFMLWidget(sf::VideoMode mode, const char* name)
 : Glib::ObjectBase(name)
 , d_drawFunc([] (SFMLWidget&) {})
 {
