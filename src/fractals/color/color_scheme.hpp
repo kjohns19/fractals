@@ -9,8 +9,11 @@ namespace frac {
 
 class ColorScheme
 {
+private:
+    using ColorMap = std::map<double, sf::Color>;
 public:
     using ColorValue = std::pair<double, sf::Color>;
+    using iterator = ColorMap::const_iterator;
 
     ColorScheme();
 
@@ -19,14 +22,11 @@ public:
     : d_colors(std::begin(container), std::end(container))
     , d_loop_count(1) {}
 
-    ColorScheme(std::initializer_list<ColorValue> l);
-
     template<typename Container>
     void add(const Container& container)
     {
         d_colors.insert(std::begin(container), std::end(container));
     }
-    void add(std::initializer_list<ColorValue> l);
     void add(double value, const sf::Color& color);
 
     template<typename Container>
@@ -36,7 +36,9 @@ public:
         add(container);
     }
 
-    const std::map<double, sf::Color>& getColors() const;
+    iterator begin() const { return d_colors.begin(); }
+    iterator end() const { return d_colors.end(); }
+    size_t size() const { return d_colors.size(); }
 
     sf::Color getColor(double value) const;
 
@@ -44,7 +46,7 @@ public:
     void setLoopCount(int count);
 
 private:
-    std::map<double, sf::Color> d_colors;
+    ColorMap d_colors;
     int d_loop_count;
 };
 

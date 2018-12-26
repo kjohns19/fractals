@@ -9,24 +9,9 @@ namespace frac {
 ColorScheme::ColorScheme()
 : d_loop_count(1) {}
 
-ColorScheme::ColorScheme(std::initializer_list<ColorValue> l)
-: d_colors(l.begin(), l.end())
-, d_loop_count(1) {}
-
-
-void ColorScheme::add(std::initializer_list<ColorValue> l)
-{
-    d_colors.insert(l.begin(), l.end());
-}
-
 void ColorScheme::add(double value, const sf::Color& color)
 {
     d_colors.insert(ColorValue(value, color));
-}
-
-const std::map<double, sf::Color>& ColorScheme::getColors() const
-{
-    return d_colors;
 }
 
 int ColorScheme::getLoopCount() const

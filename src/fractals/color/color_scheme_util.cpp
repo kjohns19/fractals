@@ -42,7 +42,7 @@ ColorScheme ColorSchemeUtil::loadFromJson(const std::string& jsonStr)
 }
 
 void ColorSchemeUtil::saveToFile(
-            const std::string& filename, const ColorScheme& colorScheme)
+        const std::string& filename, const ColorScheme& colorScheme)
 {
     // TODO error handling
     std::ofstream out(filename);
@@ -55,8 +55,7 @@ std::string ColorSchemeUtil::saveToJson(const ColorScheme& colorScheme)
     nlohmann::json j;
     j["repeat"] = colorScheme.getLoopCount();
 
-    auto& colors = colorScheme.getColors();
-    for(auto& colorData: colors)
+    for(auto& colorData: colorScheme)
     {
         auto position = colorData.first;
         auto& color = colorData.second;

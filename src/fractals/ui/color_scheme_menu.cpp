@@ -52,15 +52,13 @@ void showColorSchemeMenu(Application& app)
 {
     Gtk::Dialog dialog("Color Scheme", app.getWindow(), true);
 
-    ColorScheme& cs = app.colorScheme();
+    ColorScheme& colorScheme = app.colorScheme();
 
     dialog.add_button("Ok", Gtk::RESPONSE_OK);
     dialog.add_button("Apply", Gtk::RESPONSE_APPLY);
     dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
 
-    const std::map<double, sf::Color>& colors = cs.getColors();
-
-    int startLoopCount = cs.getLoopCount();
+    int startLoopCount = colorScheme.getLoopCount();
 
     Gtk::Box* content = dialog.get_content_area();
 
@@ -76,10 +74,10 @@ void showColorSchemeMenu(Application& app)
 
     SFMLWidget previewWidget(sf::VideoMode(300, 100));
 
-    for(auto& colorPair: colors)
+    for(auto& colorPair: colorScheme)
         addRow(list, colorPair.first, colorPair.second, previewWidget, items, itemMap);
 
-    if (colors.size() == 1)
+    if (colorScheme.size() == 1)
         std::get<2>(items[0])->set_sensitive(false);
 
     Gtk::ScrolledWindow scroll;
@@ -129,7 +127,7 @@ void showColorSchemeMenu(Application& app)
         std::vector<Gtk::Widget*> children = list.get_children();
         for(auto child: children)
             list.remove(*child);
-        for(auto& pair: colors)
+        for(auto& pair: colorScheme)
             addRow(list, pair.first, pair.second, previewWidget, items, itemMap);
         loopEntry->set_value(startLoopCount);
         list.invalidate_sort();
@@ -139,7 +137,7 @@ void showColorSchemeMenu(Application& app)
 
     loopEntry->set_range(1, 1000);
     loopEntry->set_increments(1, 10);
-    loopEntry->set_value(cs.getLoopCount());
+    loopEntry->set_value(colorScheme.getLoopCount());
     loopEntry->signal_value_changed().connect([&]() {
         previewWidget.invalidate();
     });
@@ -155,8 +153,8 @@ void showColorSchemeMenu(Application& app)
         {
             std::map<double, sf::Color> newColors;
             getColors(items, newColors);
-            cs.set(newColors);
-            cs.setLoopCount(loopEntry->get_value_as_int());
+            colorScheme.set(newColors);
+            colorScheme.setLoopCount(loopEntry->get_value_as_int());
             app.fractalWidget().redraw();
 
             if (result == Gtk::RESPONSE_OK)
