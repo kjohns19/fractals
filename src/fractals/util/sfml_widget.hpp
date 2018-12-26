@@ -20,7 +20,7 @@ namespace frac {
 class SFMLWidget : public Gtk::Widget
 {
 public:
-    typedef std::function<void(SFMLWidget&)> DrawFunc;
+    using DrawFunc = std::function<void(SFMLWidget&)>;
 
 protected:
     virtual void on_size_allocate(Gtk::Allocation& allocation) override;
@@ -28,7 +28,7 @@ protected:
     virtual void on_unrealize() override;
 
 public:
-    SFMLWidget(sf::VideoMode mode);
+    SFMLWidget(sf::VideoMode mode, const char *name = "SFMLWidget");
     virtual ~SFMLWidget() {}
 
     void invalidate();
