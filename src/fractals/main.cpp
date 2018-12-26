@@ -15,12 +15,6 @@
 #include <memory>
 #include <thread>
 
-namespace {
-
-std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const frac::View& view);
-
-} // close anonymous namespace
-
 int main(int argc, char* argv[])
 {
     sf::Vector2u wsize(1400*3/5, 1100*3/5);
@@ -36,42 +30,20 @@ int main(int argc, char* argv[])
     }
 
     frac::View view(0, 0, 3, 2.5);
+    view.fit({wsize.x, wsize.y});
+
+    auto fractal = std::make_unique<frac::Mandelbrot>(wsize);
+    fractal->setView(view);
+    auto colorScheme = frac::ColorSchemeUtil::loadFromFile("data/colors.json");
 
     int   gtk_argc = 1;
     char* gtk_args[] = { argv[0], nullptr };
-
     char** gtk_argv = gtk_args;
 
-    auto app = Gtk::Application::create(gtk_argc, gtk_argv, "mandelbrot.set");
+    auto app = Gtk::Application::create(
+        gtk_argc, gtk_argv, "com.github.kjohns19.fractals");
 
-    view.fit({wsize.x, wsize.y});
-
-    auto fractal = createFractal(wsize, view);
-    auto colorScheme = frac::ColorSchemeUtil::loadFromFile("data/colors.json");
     frac::Application application(wsize, view, std::move(fractal), colorScheme);
-
     application.run(app);
     return 0;
 }
-
-namespace {
-
-std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const frac::View& view)
-{
-    std::unique_ptr<frac::Fractal> fractal;
-    if (1)
-    {
-        fractal = std::make_unique<frac::Mandelbrot>(size);
-    }
-    else
-    {
-        long double cx, cy;
-        cx = 0.285;
-        cy = 0.01;
-        fractal = std::make_unique<frac::Julia>(size, cx, cy, 2);
-    }
-    fractal->setView(view);
-    return fractal;
-}
-
-} // close anonymous namespace
