@@ -1,15 +1,16 @@
+#include <fractals/ui/menu.hpp>
+
 #include <fractals/color/color_scheme.hpp>
 #include <fractals/fractal/fractal.hpp>
-#include <fractals/ui/menu.hpp>
-#include <fractals/util/view.hpp>
-#include <fractals/ui/color_scheme_menu.hpp>
-#include <fractals/ui/application.hpp>
-#include <fractals/ui/view_manager.hpp>
-#include <fractals/ui/menu_utils.hpp>
-#include <fractals/fractal/mandelbrot.hpp>
 #include <fractals/fractal/julia.hpp>
-#include <kj/sfml_widget.hpp>
-#include <kj/observer.hpp>
+#include <fractals/fractal/mandelbrot.hpp>
+#include <fractals/ui/application.hpp>
+#include <fractals/ui/color_scheme_menu.hpp>
+#include <fractals/ui/menu_utils.hpp>
+#include <fractals/ui/view_manager.hpp>
+#include <fractals/util/observer.hpp>
+#include <fractals/util/sfml_widget.hpp>
+#include <fractals/util/view.hpp>
 
 #include <gtkmm/box.h>
 #include <gtkmm/dialog.h>
@@ -53,7 +54,7 @@ std::ostream& operator<<(std::ostream& out, const sf::Vector2<T>& vec)
 } // close anonymous namespace
 
 
-struct ViewButtons : public Gtk::ToolButton, public kj::Observer<ViewManager&>
+struct ViewButtons : public Gtk::ToolButton, public Observer<ViewManager&>
 {
     ViewButtons(Gtk::Toolbar* toolbar, Application& app)
     : vm(app.getViewManager())
@@ -379,7 +380,7 @@ void showViewDialog(Application& app)
 
     const int previewWidth = 300;
     const int previewHeight = 200;
-    kj::SFMLWidget previewWidget(sf::VideoMode(previewWidth, previewHeight));
+    SFMLWidget previewWidget(sf::VideoMode(previewWidth, previewHeight));
 
     Gtk::HBox entryBox;
     Gtk::Entry entryName;
@@ -437,7 +438,7 @@ void showViewDialog(Application& app)
     scroll.set_size_request(300, 200);
     scroll.set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS);
 
-    previewWidget.onDraw([&](kj::SFMLWidget& widget) {
+    previewWidget.onDraw([&](SFMLWidget& widget) {
         if (viewView)
         {
             auto view = viewView->first;

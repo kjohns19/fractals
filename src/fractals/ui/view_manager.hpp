@@ -1,9 +1,8 @@
 #ifndef INCLUDED_FRAC_VIEW_MANAGER_HPP
 #define INCLUDED_FRAC_VIEW_MANAGER_HPP
 
+#include <fractals/util/subject.hpp>
 #include <fractals/util/view.hpp>
-
-#include <kj/subject.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
 
@@ -14,7 +13,7 @@ namespace frac {
 
 class Application;
 
-class ViewManager : public kj::Subject<ViewManager&>
+class ViewManager : public Subject<ViewManager&>
 {
 public:
     ViewManager(Application& app, const View& view);

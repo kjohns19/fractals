@@ -3,8 +3,7 @@
 #include <fractals/ui/application.hpp>
 #include <fractals/ui/menu.hpp>
 #include <fractals/ui/view_changer.hpp>
-
-#include <kj/sfml_widget.hpp>
+#include <fractals/util/sfml_widget.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -35,8 +34,8 @@ Application::Application(
     d_fractalTexture.create(windowSize.x, windowSize.y);
     d_fractalSprite.setTexture(d_fractalTexture.getTexture());
 
-    kj::SFMLWidget* sfmlWindow =
-        Gtk::manage(new kj::SFMLWidget(sf::VideoMode(windowSize.x, windowSize.y)));
+    SFMLWidget* sfmlWindow =
+        Gtk::manage(new SFMLWidget(sf::VideoMode(windowSize.x, windowSize.y)));
     sfmlWindow->show();
 
     Gtk::VBox* box = Gtk::manage(new Gtk::VBox());
@@ -52,7 +51,7 @@ Application::Application(
     sfmlWindow->eventHandler(viewChanger);
 
     sfmlWindow->setFramerate(60);
-    sfmlWindow->onDraw([this, viewChanger] (kj::SFMLWidget& widget) {
+    sfmlWindow->onDraw([this, viewChanger] (SFMLWidget& widget) {
         if (!d_paused)
             d_fractal->iterate(d_iterateAmount);
 
