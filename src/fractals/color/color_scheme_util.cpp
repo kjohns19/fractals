@@ -8,8 +8,7 @@
 
 namespace frac {
 
-std::unique_ptr<ColorScheme> ColorSchemeUtil::loadFromFile(
-        const std::string& filename)
+ColorScheme ColorSchemeUtil::loadFromFile(const std::string& filename)
 {
     // TODO error handling
     std::ifstream in(filename);
@@ -19,14 +18,13 @@ std::unique_ptr<ColorScheme> ColorSchemeUtil::loadFromFile(
     return loadFromJson(jsonStr);
 }
 
-std::unique_ptr<ColorScheme> ColorSchemeUtil::loadFromJson(
-        const std::string& jsonStr)
+ColorScheme ColorSchemeUtil::loadFromJson(const std::string& jsonStr)
 {
+    ColorScheme colorScheme;
+
     auto j = nlohmann::json::parse(jsonStr);
 
-    auto colorScheme = std::make_unique<ColorScheme>();
-
-    colorScheme->setLoopCount(j["repeat"]);
+    colorScheme.setLoopCount(j["repeat"]);
 
     auto& colors = j["colors"];
     for(auto& colorData: colors)
@@ -37,7 +35,7 @@ std::unique_ptr<ColorScheme> ColorSchemeUtil::loadFromJson(
             values[0],
             values[1],
             values[2]);
-        colorScheme->add(position, color);
+        colorScheme.add(position, color);
     }
 
     return colorScheme;

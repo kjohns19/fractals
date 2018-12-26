@@ -12,9 +12,9 @@ struct ColorSchemeUtil
 {
     ColorSchemeUtil() = delete;
 
-    static std::unique_ptr<ColorScheme> loadFromFile(
+    static ColorScheme loadFromFile(
             const std::string& filename);
-    static std::unique_ptr<ColorScheme> loadFromJson(
+    static ColorScheme loadFromJson(
             const std::string& jsonStr);
 
     static void saveToFile(

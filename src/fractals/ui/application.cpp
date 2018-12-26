@@ -18,13 +18,13 @@ Application::Application(
         const sf::Vector2u& windowSize,
         const View& view,
         std::unique_ptr<Fractal> fractal,
-        std::unique_ptr<ColorScheme> colorScheme)
+        ColorScheme colorScheme)
 : d_windowSize(windowSize)
 , d_fractalWidget(Gtk::manage(
     new FractalWidget({windowSize.x, windowSize.y}, std::move(fractal))))
 , d_viewManager(*d_fractalWidget, view)
 {
-    d_fractalWidget->colorScheme() = *colorScheme;
+    d_fractalWidget->colorScheme() = colorScheme;
     d_fractalWidget->show();
 
     Gtk::VBox* box = Gtk::manage(new Gtk::VBox());

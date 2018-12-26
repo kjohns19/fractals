@@ -18,7 +18,6 @@
 namespace {
 
 std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const frac::View& view);
-std::unique_ptr<frac::ColorScheme> createColorScheme();
 
 } // close anonymous namespace
 
@@ -48,8 +47,8 @@ int main(int argc, char* argv[])
     view.fit({wsize.x, wsize.y});
 
     auto fractal = createFractal(wsize, view);
-    auto colorScheme = createColorScheme();
-    frac::Application application(wsize, view, std::move(fractal), std::move(colorScheme));
+    auto colorScheme = frac::ColorSchemeUtil::loadFromFile("data/colors.json");
+    frac::Application application(wsize, view, std::move(fractal), colorScheme);
 
     application.run(app);
     return 0;
@@ -73,12 +72,6 @@ std::unique_ptr<frac::Fractal> createFractal(const sf::Vector2u& size, const fra
     }
     fractal->setView(view);
     return fractal;
-}
-
-std::unique_ptr<frac::ColorScheme> createColorScheme()
-{
-    auto colorScheme = frac::ColorSchemeUtil::loadFromFile("data/colors.json");
-    return colorScheme;
 }
 
 } // close anonymous namespace

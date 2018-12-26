@@ -27,7 +27,7 @@ public:
             const sf::Vector2u& windowSize,
             const View& view,
             std::unique_ptr<Fractal> fractal,
-            std::unique_ptr<ColorScheme> colorScheme);
+            ColorScheme colorScheme);
 
     const sf::Vector2u& getWindowSize() const;
 
