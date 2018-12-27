@@ -38,6 +38,8 @@ public:
     const View& getView() const { return d_view; }
     const sf::Vector2u& getSize() const { return d_size; }
 
+    void reset();
+
     void iterate(int count = 1);
 
     void setDrawMode(bool fast) { d_fastDraw = fast; }

@@ -3,12 +3,13 @@
 
 #include <fractals/ui/fractal_widget.hpp>
 #include <fractals/ui/view_manager.hpp>
+#include <fractals/util/observer.hpp>
 
 #include <gtkmm/application.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/toolbutton.h>
 #include <gtkmm/window.h>
 
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
@@ -24,15 +25,12 @@ class Application
 {
 public:
     Application(
-            const sf::Vector2u& windowSize,
-            const View& view,
-            std::unique_ptr<Fractal> fractal,
-            ColorScheme colorScheme);
+        const sf::Vector2u& windowSize,
+        const View& view,
+        std::unique_ptr<Fractal> fractal,
+        ColorScheme colorScheme);
 
-    const sf::Vector2u& getWindowSize() const;
-
-    Gtk::Window& getWindow();
-    const Gtk::Window& getWindow() const;
+    const sf::Vector2u& windowSize() const { return d_windowSize; }
 
     FractalWidget& fractalWidget() { return *d_fractalWidget; }
     const FractalWidget& fractalWidget() const { return *d_fractalWidget; }
@@ -45,18 +43,21 @@ public:
     const ColorScheme& colorScheme() const
         { return fractalWidget().colorScheme(); }
 
-    ViewManager& getViewManager();
-    const ViewManager& getViewManager() const;
+    ViewManager& viewManager() { return d_viewManager; }
+    const ViewManager& viewManager() const { return d_viewManager; }
 
     void run(Glib::RefPtr<Gtk::Application> app);
+
 private:
+    void initMenu(Glib::RefPtr<Gtk::Builder> builder);
+    void initToolbar(Glib::RefPtr<Gtk::Builder> builder);
+
     sf::Vector2u d_windowSize;
     FractalWidget* d_fractalWidget;
     ViewManager d_viewManager;
-
-    Gtk::Window d_window;
-
-    std::shared_ptr<ViewChanger> d_viewChanger;
+    Gtk::Window* d_window;
+    std::unique_ptr<Observer<ViewManager&>> d_viewObserver;
+    Glib::RefPtr<Gtk::Application> d_app;
 };
 
 } // close namespace frac

@@ -12,7 +12,7 @@ class ColorScheme
 private:
     using ColorMap = std::map<double, sf::Color>;
 public:
-    using ColorValue = std::pair<double, sf::Color>;
+    using ColorValue = ColorMap::value_type;
     using iterator = ColorMap::const_iterator;
 
     ColorScheme();

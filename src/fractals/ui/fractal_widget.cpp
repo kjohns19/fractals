@@ -9,7 +9,7 @@ FractalWidget::FractalWidget(
 , d_drawFunc([] (FractalWidget&) {})
 , d_fractal(std::move(fractal))
 , d_lastIteration(-1)
-, d_running(true)
+, d_running(false)
 , d_redraw(true)
 {
     assert(d_fractal);

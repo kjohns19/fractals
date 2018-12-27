@@ -38,10 +38,15 @@ std::unique_ptr<Fractal> Fractal::clone(const View& view) const
 
 void Fractal::setView(const View& view)
 {
+    d_view = view;
+    reset();
+}
+
+void Fractal::reset()
+{
     d_valid.resize(d_size.x * d_size.y);
     d_done.clear();
     d_hist.resize(1, 0);
-    d_view = view;
 
     long double left = d_view.x - d_view.width/2;
     long double top  = d_view.y - d_view.height/2;

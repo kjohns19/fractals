@@ -49,8 +49,8 @@ bool ViewChanger::doHandle(const sf::Event& event)
 {
     const sf::Event::MouseButtonEvent& button = event.mouseButton;
     const sf::Event::MouseMoveEvent& move = event.mouseMove;
-    const sf::Vector2u& wsize = d_app.getWindowSize();
-    ViewManager& vm = d_app.getViewManager();
+    const sf::Vector2u& wsize = d_app.windowSize();
+    ViewManager& vm = d_app.viewManager();
 
     switch(event.type)
     {
