@@ -34,8 +34,9 @@ void addRow(
     auto& positionEntry = BU::getWidget<Gtk::SpinButton>(
         builder, "entry-position");
     positionEntry.set_value(position);
-    positionEntry.signal_value_changed().connect([&preview]() {
+    positionEntry.signal_value_changed().connect([&box, &preview]() {
         preview.invalidate();
+        box.invalidate_sort();
     });
 
     auto& colorEntry = BU::getWidget<Gtk::ColorButton>(
