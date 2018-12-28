@@ -306,7 +306,7 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button5">
-                <property name="label">gtk-apply</property>
+                <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -320,7 +320,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button4">
-                <property name="label">gtk-ok</property>
+                <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -334,7 +334,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button3">
-                <property name="label">gtk-cancel</property>
+                <property name="label">gtk-apply</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -445,9 +445,9 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-10">button5</action-widget>
-      <action-widget response="-5">button4</action-widget>
-      <action-widget response="-6">button3</action-widget>
+      <action-widget response="-5">button5</action-widget>
+      <action-widget response="-6">button4</action-widget>
+      <action-widget response="-10">button3</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dialog-jump">
