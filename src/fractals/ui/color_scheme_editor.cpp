@@ -14,6 +14,7 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/listbox.h>
+#include <gtkmm/scale.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/toggletoolbutton.h>
 
@@ -31,9 +32,9 @@ void addRow(
     auto builder = Gtk::Builder::create();
     builder->add_from_file("data/colorscheme-row.glade");
 
-    auto& positionEntry = BU::getWidget<Gtk::SpinButton>(
+    auto& positionEntry = BU::getWidget<Gtk::Scale>(
         builder, "entry-position");
-    positionEntry.set_value(position);
+    positionEntry.set_value(static_cast<int>(position*100));
     positionEntry.signal_value_changed().connect([&box, &preview]() {
         preview.invalidate();
         box.invalidate_sort();
@@ -48,7 +49,7 @@ void addRow(
 
     BU::getWidget<Gtk::Button>(builder, "button-add")
     .signal_clicked().connect([&box, &preview, &positionEntry, &colorEntry]() {
-        double position = positionEntry.get_value();
+        double position = positionEntry.get_value()/100.0;
         Gdk::RGBA color = colorEntry.get_rgba();
         addRow(box, preview, position, color);
         preview.invalidate();
@@ -99,8 +100,8 @@ ColorScheme buildColorScheme(
         auto& row = dynamic_cast<Gtk::ListBoxRow&>(widget);
         auto& box = dynamic_cast<Gtk::Box&>(*row.get_child());
         auto children = box.get_children();
-        double position = dynamic_cast<Gtk::SpinButton&>(*children[0])
-            .get_value();
+        double position = dynamic_cast<Gtk::Scale&>(*children[0])
+            .get_value()/100.0;
         Gdk::RGBA rgba = dynamic_cast<Gtk::ColorButton&>(*children[1])
             .get_rgba();
         auto convert = [](unsigned short value) -> unsigned char {
@@ -136,8 +137,8 @@ void ColorSchemeEditor::configure(
         auto& box1 = dynamic_cast<Gtk::Box&>(*row1->get_child());
         auto& box2 = dynamic_cast<Gtk::Box&>(*row2->get_child());
 
-        auto& entry1 = dynamic_cast<Gtk::SpinButton&>(*box1.get_children()[0]);
-        auto& entry2 = dynamic_cast<Gtk::SpinButton&>(*box2.get_children()[0]);
+        auto& entry1 = dynamic_cast<Gtk::Scale&>(*box1.get_children()[0]);
+        auto& entry2 = dynamic_cast<Gtk::Scale&>(*box2.get_children()[0]);
         int diff = entry1.get_value() < entry2.get_value();
         return (diff < 0) ? -1 : (diff > 0 ? 1 : 0);
     });
