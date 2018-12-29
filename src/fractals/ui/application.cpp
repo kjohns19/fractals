@@ -19,6 +19,9 @@
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/toggletoolbutton.h>
 
+#include <iostream>
+#include <cstdlib>
+
 namespace frac {
 namespace {
 
@@ -64,7 +67,15 @@ Application::Application(
     d_fractalWidget->show();
 
     auto builder = Gtk::Builder::create();
-    builder->add_from_file("data/ui.glade");
+    try
+    {
+        builder->add_from_file("data/ui.glade");
+    }
+    catch (Gtk::BuilderError& e)
+    {
+        std::cerr << e.code() << ": " << e.what()  << std::endl;
+        std::exit(1);
+    }
 
     d_window = &BU::getWidget<Gtk::Window>(
         builder, "window-main");

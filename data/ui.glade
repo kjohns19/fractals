@@ -6,12 +6,87 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
   </object>
+  <object class="GtkFileFilter" id="dialog-colorscheme-filefilter">
+    <mime-types>
+      <mime-type>application/json</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.json</pattern>
+    </patterns>
+  </object>
   <object class="GtkAdjustment" id="dialog-colorscheme-repeat-adjustments">
     <property name="lower">1</property>
     <property name="upper">10000</property>
     <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkFileChooserDialog" id="dialog-colorscheme-save-filechooser">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Save Colorscheme</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">dialog-colorscheme</property>
+    <property name="action">save</property>
+    <property name="do_overwrite_confirmation">True</property>
+    <property name="filter">dialog-colorscheme-filefilter</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button9">
+                <property name="label">gtk-save</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button10">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">button9</action-widget>
+      <action-widget response="-6">button10</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkAdjustment" id="dialog-jump-adjustments">
     <property name="upper">999999</property>
@@ -24,6 +99,12 @@
       <mime-type>image/jpeg</mime-type>
       <mime-type>image/bmp</mime-type>
     </mime-types>
+    <patterns>
+      <pattern>*.png</pattern>
+      <pattern>*.jpeg</pattern>
+      <pattern>*.jpg</pattern>
+      <pattern>*.bmp</pattern>
+    </patterns>
   </object>
   <object class="GtkAdjustment" id="dialog-save-height-adjustments">
     <property name="lower">1</property>
@@ -72,6 +153,7 @@
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
@@ -344,7 +426,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button5">
+              <object class="GtkButton" id="button1">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -358,7 +440,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button4">
+              <object class="GtkButton" id="button2">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -452,6 +534,34 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkButton" id="dialog-colorscheme-button-open">
+                    <property name="label">gtk-open</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="dialog-colorscheme-button-save">
+                    <property name="label">gtk-save</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -484,9 +594,74 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button5</action-widget>
-      <action-widget response="-6">button4</action-widget>
+      <action-widget response="-5">button1</action-widget>
+      <action-widget response="-6">button2</action-widget>
       <action-widget response="-10">button3</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkFileChooserDialog" id="dialog-colorscheme-open-filechooser">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Load Colorscheme</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">dialog-colorscheme</property>
+    <property name="filter">dialog-colorscheme-filefilter</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button11">
+                <property name="label">gtk-open</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button12">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">button11</action-widget>
+      <action-widget response="-6">button12</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dialog-jump">
@@ -510,7 +685,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="button4">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -524,7 +699,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="button5">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -563,8 +738,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button1</action-widget>
-      <action-widget response="-6">button2</action-widget>
+      <action-widget response="-5">button4</action-widget>
+      <action-widget response="-6">button5</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dialog-save">
@@ -797,7 +972,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button8">
+              <object class="GtkButton" id="button7">
                 <property name="label" translatable="yes">Select</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -810,7 +985,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button7">
+              <object class="GtkButton" id="button8">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -835,8 +1010,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button8</action-widget>
-      <action-widget response="-6">button7</action-widget>
+      <action-widget response="-5">button7</action-widget>
+      <action-widget response="-6">button8</action-widget>
     </action-widgets>
   </object>
 </interface>

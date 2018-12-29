@@ -1,6 +1,7 @@
 #include <fractals/ui/color_scheme_editor.hpp>
 
 #include <fractals/color/color_scheme.hpp>
+#include <fractals/color/color_scheme_util.hpp>
 #include <fractals/util/builder_utils.hpp>
 #include <fractals/util/raii_helpers.hpp>
 #include <fractals/util/sfml_widget.hpp>
@@ -12,6 +13,7 @@
 #include <gtkmm/box.h>
 #include <gtkmm/colorbutton.h>
 #include <gtkmm/dialog.h>
+#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/listbox.h>
 #include <gtkmm/scale.h>
@@ -169,6 +171,35 @@ void ColorSchemeEditor::configure(
         previewWidget->invalidate();
     });
 
+    auto& openDialog = BU::getWidget<Gtk::FileChooserDialog>(
+        builder, idPrefix + "-open-filechooser");
+    BU::getWidget<Gtk::Button>(builder, idPrefix + "-button-open")
+    .signal_clicked().connect(
+    [previewWidget, &listBox, &repeatSpinner, &openDialog]() {
+        int result = openDialog.run();
+        if (result == Gtk::RESPONSE_OK)
+        {
+            auto colorScheme = ColorSchemeUtil::loadFromFile(
+                openDialog.get_filename());
+            fillColorList(
+                listBox, repeatSpinner, *previewWidget, colorScheme);
+        }
+        openDialog.hide();
+    });
+
+    auto& saveDialog = BU::getWidget<Gtk::FileChooserDialog>(
+        builder, idPrefix + "-save-filechooser");
+    BU::getWidget<Gtk::Button>(builder, idPrefix + "-button-save")
+    .signal_clicked().connect([&app, &listBox, &repeatSpinner, &saveDialog]() {
+        int result = saveDialog.run();
+        if (result == Gtk::RESPONSE_OK)
+        {
+            auto colorScheme = buildColorScheme(listBox, repeatSpinner);
+            ColorSchemeUtil::saveToFile(
+                saveDialog.get_filename(), colorScheme);
+        }
+        saveDialog.hide();
+    });
 
     BU::getWidget<Gtk::ToolButton>(builder, toolId)
     .signal_clicked().connect(
