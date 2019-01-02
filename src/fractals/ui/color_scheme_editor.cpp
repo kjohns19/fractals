@@ -61,7 +61,8 @@ void addRow(
 
     BU::getWidget<Gtk::Button>(builder, "button-remove")
     .signal_clicked().connect([&box, &preview, &row]() {
-        box.remove(row);
+        auto container = row.get_parent();
+        box.remove(*container);
         preview.invalidate();
     });
 
