@@ -36,6 +36,7 @@ std::unique_ptr<Fractal> Julia::clone(const sf::Vector2u& size, const View& view
 {
     std::unique_ptr<Fractal> fractal = std::make_unique<Julia>(size, d_x, d_y, d_power);
     fractal->setView(view);
+    fractal->setDrawMode(getDrawMode());
     return fractal;
 }
 

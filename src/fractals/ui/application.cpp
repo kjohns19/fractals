@@ -3,6 +3,7 @@
 #include <fractals/color/color_scheme.hpp>
 #include <fractals/fractal/fractal.hpp>
 #include <fractals/ui/color_scheme_editor.hpp>
+#include <fractals/ui/dialog_fractal.hpp>
 #include <fractals/ui/dialog_save_image.hpp>
 #include <fractals/ui/view_changer.hpp>
 #include <fractals/util/builder_utils.hpp>
@@ -201,6 +202,9 @@ void Application::initToolbar(Glib::RefPtr<Gtk::Builder> builder)
     // Colorscheme
     ColorSchemeEditor::configure(
         *this, builder, "dialog-colorscheme", "tool-colorscheme");
+
+    DialogFractal::configure(
+        *this, builder, "dialog-fractal", "tool-fractal");
 }
 
 void Application::run(Glib::RefPtr<Gtk::Application> app)

@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_RAII_HELPERS_HPP
 
 #include <fractals/ui/fractal_widget.hpp>
+#include <sigc++/connection.h>
 
 namespace frac {
 
@@ -17,6 +18,16 @@ public:
 private:
     FractalWidget& d_widget;
     bool d_running;
+};
+
+class SignalBlock
+{
+public:
+    SignalBlock(sigc::connection& conn)
+    : d_conn(conn) { d_conn.block(); }
+    ~SignalBlock() { d_conn.unblock(); }
+private:
+    sigc::connection& d_conn;
 };
 
 } // close namespace frac

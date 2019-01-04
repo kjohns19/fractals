@@ -23,6 +23,7 @@ std::unique_ptr<Fractal> Mandelbrot::clone(const sf::Vector2u& size, const View&
 {
     std::unique_ptr<Fractal> fractal = std::make_unique<Mandelbrot>(size);
     fractal->setView(view);
+    fractal->setDrawMode(getDrawMode());
     return fractal;
 }
 
