@@ -12,7 +12,7 @@ ColorScheme::ColorScheme()
 
 void ColorScheme::add(double value, const sf::Color& color)
 {
-    d_colors.insert(ColorValue(value, color));
+    d_colors.insert({value, color});
 }
 
 int ColorScheme::getLoopCount() const
