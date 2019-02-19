@@ -7,7 +7,8 @@
 namespace frac {
 
 ColorScheme::ColorScheme()
-: d_loop_count(1) {}
+: d_loop_count(1)
+, d_offset(0) {}
 
 void ColorScheme::add(double value, const sf::Color& color)
 {
@@ -25,10 +26,21 @@ void ColorScheme::setLoopCount(int count)
     d_loop_count = count;
 }
 
+int ColorScheme::getOffset() const
+{
+    return d_offset;
+}
+void ColorScheme::setOffset(int offset)
+{
+    d_offset = offset;
+}
+
 sf::Color ColorScheme::getColor(double val) const
 {
     if (d_colors.empty())
         return sf::Color::Black;
+
+    val = std::fmod(val + d_offset/100.0/d_loop_count, 1.0);
 
     double value = val;
     if (d_loop_count != 1 && val != 1)

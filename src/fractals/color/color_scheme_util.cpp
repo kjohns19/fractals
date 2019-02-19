@@ -25,6 +25,7 @@ ColorScheme ColorSchemeUtil::loadFromJson(const std::string& jsonStr)
     auto j = nlohmann::json::parse(jsonStr);
 
     colorScheme.setLoopCount(j["repeat"]);
+    colorScheme.setOffset(j.value("offset", 0));
 
     auto& colors = j["colors"];
     for(auto& colorData: colors)
@@ -54,6 +55,7 @@ std::string ColorSchemeUtil::saveToJson(const ColorScheme& colorScheme)
 {
     nlohmann::json j;
     j["repeat"] = colorScheme.getLoopCount();
+    j["offset"] = colorScheme.getOffset();
 
     for(auto& colorData: colorScheme)
     {

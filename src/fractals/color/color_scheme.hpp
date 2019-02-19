@@ -45,9 +45,13 @@ public:
     int getLoopCount() const;
     void setLoopCount(int count);
 
+    int getOffset() const;
+    void setOffset(int offset);
+
 private:
     ColorMap d_colors;
     int d_loop_count;
+    int d_offset;
 };
 
 } // close namespace frac

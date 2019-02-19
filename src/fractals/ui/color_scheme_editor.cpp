@@ -82,7 +82,8 @@ void addRow(
 }
 
 void fillColorList(
-        Gtk::ListBox& box, Gtk::SpinButton& repeatSpinner,
+        Gtk::ListBox& box,
+        Gtk::SpinButton& repeatSpinner, Gtk::Scale& offsetEntry,
         SFMLWidget& preview, const ColorScheme& colorScheme)
 {
     for(auto widget: box.get_children())
@@ -92,10 +93,12 @@ void fillColorList(
         addRow(box, preview, pair.first, pair.second);
 
     repeatSpinner.set_value(colorScheme.getLoopCount());
+    offsetEntry.set_value(colorScheme.getOffset());
 }
 
 ColorScheme buildColorScheme(
-        Gtk::ListBox& box, Gtk::SpinButton& repeatSpinner)
+        Gtk::ListBox& box,
+        Gtk::SpinButton& repeatSpinner, Gtk::Scale& offsetEntry)
 {
     ColorScheme colorScheme;
 
@@ -117,6 +120,7 @@ ColorScheme buildColorScheme(
         colorScheme.add(position, color);
     });
     colorScheme.setLoopCount(repeatSpinner.get_value_as_int());
+    colorScheme.setOffset(offsetEntry.get_value());
     return colorScheme;
 }
 
@@ -134,6 +138,8 @@ void ColorSchemeEditor::configure(
         builder, idPrefix);
     auto& repeatSpinner = BU::getWidget<Gtk::SpinButton>(
         builder, idPrefix + "-repeat-spinner");
+    auto& offsetEntry = BU::getWidget<Gtk::Scale>(
+        builder, idPrefix + "-offset-entry");
 
     auto& listBox = BU::getWidget<Gtk::ListBox>(builder, idPrefix + "-list");
     listBox.set_sort_func([](Gtk::ListBoxRow* row1, Gtk::ListBoxRow* row2) {
@@ -149,11 +155,11 @@ void ColorSchemeEditor::configure(
     sf::Vector2u previewSize(300u, 100u);
     auto previewWidget = Gtk::manage(
         new SFMLWidget({previewSize.x, previewSize.y}));
-    previewWidget->onDraw(
-    [&listBox, &repeatSpinner, previewSize](SFMLWidget& widget) {
+    previewWidget->onDraw([&, previewSize](SFMLWidget& widget) {
         sf::RenderTarget& target = widget.window();
 
-        ColorScheme colorScheme = buildColorScheme(listBox, repeatSpinner);
+        ColorScheme colorScheme = buildColorScheme(
+            listBox, repeatSpinner, offsetEntry);
 
         sf::RectangleShape rect;
         rect.setSize(sf::Vector2f(1, previewSize.y));
@@ -168,22 +174,24 @@ void ColorSchemeEditor::configure(
     BU::getWidget<Gtk::Box>(builder, idPrefix + "-preview-area")
     .pack_start(*previewWidget, Gtk::PACK_SHRINK);
 
-    repeatSpinner.signal_value_changed().connect([previewWidget]() {
+    auto redraw = [previewWidget]() {
         previewWidget->invalidate();
-    });
+    };
+    repeatSpinner.signal_value_changed().connect(redraw);
+    offsetEntry.signal_value_changed().connect(redraw);
 
     auto& openDialog = BU::getWidget<Gtk::FileChooserDialog>(
         builder, idPrefix + "-open-filechooser");
     BU::getWidget<Gtk::Button>(builder, idPrefix + "-button-open")
-    .signal_clicked().connect(
-    [previewWidget, &listBox, &repeatSpinner, &openDialog]() {
+    .signal_clicked().connect([&, previewWidget]() {
         int result = openDialog.run();
         if (result == Gtk::RESPONSE_OK)
         {
             auto colorScheme = ColorSchemeUtil::loadFromFile(
                 openDialog.get_filename());
             fillColorList(
-                listBox, repeatSpinner, *previewWidget, colorScheme);
+                listBox, repeatSpinner, offsetEntry,
+                *previewWidget, colorScheme);
         }
         openDialog.hide();
     });
@@ -191,11 +199,12 @@ void ColorSchemeEditor::configure(
     auto& saveDialog = BU::getWidget<Gtk::FileChooserDialog>(
         builder, idPrefix + "-save-filechooser");
     BU::getWidget<Gtk::Button>(builder, idPrefix + "-button-save")
-    .signal_clicked().connect([&app, &listBox, &repeatSpinner, &saveDialog]() {
+    .signal_clicked().connect([&]() {
         int result = saveDialog.run();
         if (result == Gtk::RESPONSE_OK)
         {
-            auto colorScheme = buildColorScheme(listBox, repeatSpinner);
+            auto colorScheme = buildColorScheme(
+                listBox, repeatSpinner, offsetEntry);
             ColorSchemeUtil::saveToFile(
                 saveDialog.get_filename(), colorScheme);
         }
@@ -203,12 +212,12 @@ void ColorSchemeEditor::configure(
     });
 
     BU::getWidget<Gtk::ToolButton>(builder, toolId)
-    .signal_clicked().connect(
-    [&app, previewWidget, &colorDialog, &listBox, &repeatSpinner]() {
+    .signal_clicked().connect([&, previewWidget]() {
         PauseFractal pause(app.fractalWidget());
 
         fillColorList(
-            listBox, repeatSpinner, *previewWidget, app.colorScheme());
+            listBox, repeatSpinner, offsetEntry,
+            *previewWidget, app.colorScheme());
 
         int result;
         do
@@ -216,7 +225,8 @@ void ColorSchemeEditor::configure(
             result = colorDialog.run();
             if (result == Gtk::RESPONSE_APPLY || result == Gtk::RESPONSE_OK)
             {
-                app.colorScheme() = buildColorScheme(listBox, repeatSpinner);
+                app.colorScheme() = buildColorScheme(
+                    listBox, repeatSpinner, offsetEntry);
                 app.fractalWidget().redraw();
             }
         }
