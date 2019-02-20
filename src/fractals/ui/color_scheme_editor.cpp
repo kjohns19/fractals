@@ -21,6 +21,7 @@
 #include <gtkmm/toggletoolbutton.h>
 
 #include <map>
+#include <cmath>
 
 namespace frac {
 namespace {
@@ -36,7 +37,7 @@ void addRow(
 
     auto& positionEntry = BU::getWidget<Gtk::Scale>(
         builder, "entry-position");
-    positionEntry.set_value(static_cast<int>(position*100));
+    positionEntry.set_value(static_cast<int>(std::round(position*100)));
     positionEntry.signal_value_changed().connect([&box, &preview]() {
         preview.invalidate();
         box.invalidate_sort();
