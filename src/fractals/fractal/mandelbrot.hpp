@@ -27,6 +27,8 @@ public:
 
     using Fractal::clone;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
+
+    virtual long double getPower() const override { return 2; }
 private:
     virtual void resetPoint(long double x, long double y, Point& point) override;
     virtual void doIterate(
@@ -36,6 +38,8 @@ private:
             size_t startPoint,
             size_t numPoints,
             std::vector<size_t>& done) override;
+
+    double d_power;
 };
 
 } // close namespace frac

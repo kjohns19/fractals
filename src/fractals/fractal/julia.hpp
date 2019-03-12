@@ -3,6 +3,7 @@
 
 #include <fractals/fractal/fractal.hpp>
 
+#include <complex>
 #include <vector>
 
 namespace sf {
@@ -26,9 +27,9 @@ public:
     using Fractal::clone;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
 
-    long double getX() const { return d_x; }
-    long double getY() const { return d_y; }
-    long double getPower() const { return d_power; }
+    long double getX() const { return d_value.real(); }
+    long double getY() const { return d_value.imag(); }
+    virtual long double getPower() const override { return d_power; }
 
     void setValue(long double x, long double y, long double power);
 private:
@@ -40,8 +41,8 @@ private:
             size_t startPoint,
             size_t numPoints,
             std::vector<size_t>& done) override;
-    long double d_x;
-    long double d_y;
+
+    std::complex<long double> d_value;
     long double d_power;
 };
 

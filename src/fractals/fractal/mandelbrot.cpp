@@ -5,18 +5,20 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <complex>
+#include <cmath>
 #include <iostream>
 #include <thread>
 
 namespace frac {
 
 Mandelbrot::Mandelbrot(const sf::Vector2u& size)
-: Fractal(size) {}
+: Fractal(size)
+, d_power(2.0) {}
 
 void Mandelbrot::resetPoint(long double x, long double y, Point& point)
 {
-    point.x = 0;
-    point.y = 0;
+    point = {0, 0};
 }
 
 std::unique_ptr<Fractal> Mandelbrot::clone(const sf::Vector2u& size, const View& view) const
@@ -50,23 +52,22 @@ void Mandelbrot::doIterate(
 
         cx = cx * (index % size.x) / size.x + left;
         cy = cy * (index / size.x) / size.y + top;
-        long double newx, newy;
+        std::complex<long double> c(cx, cy);
+        std::complex<long double> next;
 
         for(int i = 0; i < count; i++)
         {
-            if (point.x*point.x + point.y*point.y < (1 << 16))
+            if (std::norm(point.pos) < (1 << 16))
             {
-                newx = point.x*point.x - point.y*point.y + cx;
-                newy = 2*point.x*point.y + cy;
-                if (point.x == newx && point.y == newy)
+                next = point.pos*point.pos + c;
+                if (point.pos == next)
                 {
                     point.value+=count-i;
                     point.remove = true;
                     done.push_back(index);
                     break;
                 }
-                point.x = newx;
-                point.y = newy;
+                point.pos = next;
                 point.value++;
             }
             else

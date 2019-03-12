@@ -138,7 +138,7 @@ void Fractal::draw(sf::RenderTarget& target, const ColorScheme& cs)
     bool fastDraw = getDrawMode();
 
     std::vector<sf::Color> transitionColors;
-    int transitionCount = 10;
+    int transitionCount = 100;
     if (!fastDraw)
     {
         transitionColors.resize(colors.size() * transitionCount);
@@ -161,6 +161,7 @@ void Fractal::draw(sf::RenderTarget& target, const ColorScheme& cs)
 
     if (d_iterations > 0)
     {
+        double logP = std::log(getPower());
         for(unsigned y = 0; y < d_size.y; y++)
             for(unsigned x = 0; x < d_size.x; x++)
             {
@@ -177,8 +178,9 @@ void Fractal::draw(sf::RenderTarget& target, const ColorScheme& cs)
                     else
                     {
                         double it = point.value;
-                        double zn = point.x*point.x + point.y*point.y;
-                        double nu = std::log2(std::log2(zn)) - 1;
+                        auto& pos = point.pos;
+                        double zn = std::norm(pos);
+                        double nu = std::log(std::log(zn)/2/logP)/logP - 1;
                         it += 1 - nu;
 
                         if (it < 0)
@@ -189,7 +191,7 @@ void Fractal::draw(sf::RenderTarget& target, const ColorScheme& cs)
                         {
                             double percent = it - (long) it;
                             int transitionIndex = (int)(percent * transitionCount);
-                            int base = (int)std::floor(it);
+                            int base = it;
                             vertices[index].color = transitionColors[base*transitionCount+transitionIndex];
                         }
                     }

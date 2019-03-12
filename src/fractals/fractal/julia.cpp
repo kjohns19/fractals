@@ -9,22 +9,20 @@ namespace frac {
 
 Julia::Julia(const sf::Vector2u& size, long double x, long double y, long double power)
 : Fractal(size)
-, d_x(x)
-, d_y(y)
+, d_value(x, y)
 , d_power(power) {}
 
 void Julia::resetPoint(long double x, long double y, Point& point)
 {
-    point.x = x;
-    point.y = y;
+    point.pos = {x, y};
 }
 
 void Julia::setValue(long double x, long double y, long double power)
 {
-    if (d_x != x || d_y != y || d_power != power)
+    std::complex<long double> value(x, y);
+    if (d_value != value || d_power != power)
     {
-        d_x = x;
-        d_y = y;
+        d_value = {x, y};
         d_power = power;
         int it = iterations();
         setView(getView());
@@ -34,7 +32,8 @@ void Julia::setValue(long double x, long double y, long double power)
 
 std::unique_ptr<Fractal> Julia::clone(const sf::Vector2u& size, const View& view) const
 {
-    std::unique_ptr<Fractal> fractal = std::make_unique<Julia>(size, d_x, d_y, d_power);
+    std::unique_ptr<Fractal> fractal = std::make_unique<Julia>(
+        size, d_value.real(), d_value.imag(), d_power);
     fractal->setView(view);
     fractal->setDrawMode(getDrawMode());
     return fractal;
@@ -52,25 +51,21 @@ void Julia::doIterate(
     {
         size_t index = valid[startPoint + j];
         auto& point = points[index];
-        double nx, ny;
+        std::complex<long double> next;
 
         for(int i = 0; i < count; i++)
         {
-            if (point.x*point.x + point.y*point.y < (1 << 16))
+            if (std::norm(point.pos) < (1 << 16))
             {
-                double powVal = std::pow(point.x*point.x + point.y*point.y, d_power/2);
-                double tanVal = d_power * std::atan2(point.y, point.x);
-                nx = powVal * std::cos(tanVal) + d_x;
-                ny = powVal * std::sin(tanVal) + d_y;
-                if (point.x == nx && point.y == ny)
+                next = std::pow(point.pos, d_power) + d_value;
+                if (next == point.pos)
                 {
                     point.value+=count-i;
                     point.remove = true;
                     done.push_back(index);
                     break;
                 }
-                point.x = nx;
-                point.y = ny;
+                point.pos = next;
                 point.value++;
             }
             else

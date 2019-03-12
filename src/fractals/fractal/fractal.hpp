@@ -6,6 +6,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <complex>
 #include <memory>
 #include <vector>
 
@@ -40,6 +41,8 @@ public:
 
     void reset();
 
+    virtual long double getPower() const = 0;
+
     void iterate(int count = 1);
 
     void setDrawMode(bool fast) { d_fastDraw = fast; }
@@ -51,7 +54,7 @@ public:
 protected:
     struct Point
     {
-        long double x, y;
+        std::complex<long double> pos;
         unsigned short value;
         bool remove;
     };
