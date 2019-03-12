@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    frac::View view(0, 0, 3, 2.5);
+    frac::View view(-0.5, 0.0, 3, 2.5);
     view.fit({wsize.x, wsize.y});
 
     auto fractal = std::make_unique<frac::Mandelbrot>(wsize);
