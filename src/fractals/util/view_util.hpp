@@ -1,21 +1,19 @@
 #ifndef INCLUDED_FRAK_VIEW_UTIL_HPP
 #define INCLUDED_FRAK_VIEW_UTIL_HPP
 
+#include <fractals/util/parse_util.hpp>
 #include <fractals/util/view.hpp>
+
+#include <nlohmann/json.hpp>
 
 #include <string>
 
 namespace frac {
 
-struct ViewUtil
+struct ViewUtil : ParseUtil::Helper<ViewUtil, View>
 {
-    ViewUtil() = delete;
-
-    static View loadFromFile(const std::string& filename);
-    static View loadFromJson(const std::string& jsonStr);
-
-    static void saveToFile(const std::string& filename, const View& view);
-    static std::string saveToJson(const View& view);
+    static View loadFromJson(const nlohmann::json& json);
+    static nlohmann::json saveToJson(const View& view);
 };
 
 } // close namespace frac

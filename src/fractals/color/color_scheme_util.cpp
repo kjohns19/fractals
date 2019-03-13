@@ -2,32 +2,16 @@
 
 #include <nlohmann/json.hpp>
 
-#include <fstream>
-#include <sstream>
-#include <string>
-
 namespace frac {
 
-ColorScheme ColorSchemeUtil::loadFromFile(const std::string& filename)
-{
-    // TODO error handling
-    std::ifstream in(filename);
-    std::string jsonStr(
-        std::istreambuf_iterator<char>{in},
-        std::istreambuf_iterator<char>{});
-    return loadFromJson(jsonStr);
-}
-
-ColorScheme ColorSchemeUtil::loadFromJson(const std::string& jsonStr)
+ColorScheme ColorSchemeUtil::loadFromJson(const nlohmann::json& json)
 {
     ColorScheme colorScheme;
 
-    auto j = nlohmann::json::parse(jsonStr);
+    colorScheme.setLoopCount(json["repeat"]);
+    colorScheme.setOffset(json.value("offset", 0));
 
-    colorScheme.setLoopCount(j["repeat"]);
-    colorScheme.setOffset(j.value("offset", 0));
-
-    auto& colors = j["colors"];
+    auto& colors = json["colors"];
     for(auto& colorData: colors)
     {
         double position = colorData["position"];
@@ -42,33 +26,22 @@ ColorScheme ColorSchemeUtil::loadFromJson(const std::string& jsonStr)
     return colorScheme;
 }
 
-void ColorSchemeUtil::saveToFile(
-        const std::string& filename, const ColorScheme& colorScheme)
+nlohmann::json ColorSchemeUtil::saveToJson(const ColorScheme& colorScheme)
 {
-    // TODO error handling
-    std::ofstream out(filename);
-    std::string j = saveToJson(colorScheme);
-    out << j;
-}
-
-std::string ColorSchemeUtil::saveToJson(const ColorScheme& colorScheme)
-{
-    nlohmann::json j;
-    j["repeat"] = colorScheme.getLoopCount();
-    j["offset"] = colorScheme.getOffset();
+    nlohmann::json json;
+    json["repeat"] = colorScheme.getLoopCount();
+    json["offset"] = colorScheme.getOffset();
 
     for(auto& colorData: colorScheme)
     {
         auto position = colorData.first;
         auto& color = colorData.second;
-        j["colors"].push_back({
+        json["colors"].push_back({
             {"position", position},
             {"values", { color.r, color.g, color.b }}
         });
     }
-    std::ostringstream ss;
-    ss << std::setw(4) << j;
-    return ss.str();
+    return json;
 }
 
 } // close namespace frac

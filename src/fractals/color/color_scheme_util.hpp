@@ -2,24 +2,16 @@
 #define INCLUDED_FRAC_COLOR_SCHEME_UTIL_HPP
 
 #include <fractals/color/color_scheme.hpp>
+#include <fractals/util/parse_util.hpp>
 
-#include <memory>
-#include <string>
+#include <nlohmann/json.hpp>
 
 namespace frac {
 
-struct ColorSchemeUtil
+struct ColorSchemeUtil : ParseUtil::Helper<ColorSchemeUtil, ColorScheme>
 {
-    ColorSchemeUtil() = delete;
-
-    static ColorScheme loadFromFile(
-            const std::string& filename);
-    static ColorScheme loadFromJson(
-            const std::string& jsonStr);
-
-    static void saveToFile(
-            const std::string& filename, const ColorScheme& colorScheme);
-    static std::string saveToJson(const ColorScheme& colorScheme);
+    static ColorScheme loadFromJson(const nlohmann::json& json);
+    static nlohmann::json saveToJson(const ColorScheme& colorScheme);
 };
 
 } // close namespace frac
