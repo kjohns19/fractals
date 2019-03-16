@@ -13,16 +13,16 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/dialog.h>
-#include <gtkmm/box.h>
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/toggletoolbutton.h>
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
 namespace frac {
 namespace {

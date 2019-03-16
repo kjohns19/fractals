@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_BUILDER_UTILS_HPP
 
 #include <gtkmm/builder.h>
+
 #include <exception>
 #include <string>
 

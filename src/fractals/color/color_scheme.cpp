@@ -1,8 +1,8 @@
 #include <fractals/color/color_scheme.hpp>
 
 #include <algorithm>
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 namespace frac {
 

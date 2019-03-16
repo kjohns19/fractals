@@ -1,8 +1,8 @@
 #ifndef INCLUDED_FRAC_FRACTAL_HPP
 #define INCLUDED_FRAC_FRACTAL_HPP
 
-#include <fractals/util/view.hpp>
 #include <fractals/util/thread_pool.hpp>
+#include <fractals/util/view.hpp>
 
 #include <SFML/System/Vector2.hpp>
 

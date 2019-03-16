@@ -10,8 +10,8 @@
 #include <gtkmm/combobox.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/notebook.h>
-#include <gtkmm/toolbutton.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/toolbutton.h>
 
 #include <iostream>
 

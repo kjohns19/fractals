@@ -1,4 +1,5 @@
 #include <fractals/ui/fractal_widget.hpp>
+
 #include <cassert>
 
 namespace frac {

@@ -1,15 +1,16 @@
 #include <fractals/fractal/fractal.hpp>
+
 #include <fractals/color/color_scheme.hpp>
 
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics.hpp>
 
-#include <numeric>
+#include <cmath>
 #include <future>
 #include <iostream>
-#include <cmath>
+#include <numeric>
 
 namespace frac {
 

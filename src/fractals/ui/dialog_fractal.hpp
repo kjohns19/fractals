@@ -2,7 +2,9 @@
 #define INCLUDED_FRAC_DIALOG_FRACTAL_HPP
 
 #include <fractals/ui/application.hpp>
+
 #include <gtkmm/builder.h>
+
 #include <string>
 
 namespace frac {

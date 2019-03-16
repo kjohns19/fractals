@@ -3,12 +3,12 @@
 
 #include <fractals/util/event_handler.hpp>
 
-#include <gtkmm/widget.h>
 #include <gdkmm/window.h>
+#include <gtkmm/widget.h>
 
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <sigc++/connection.h>
 

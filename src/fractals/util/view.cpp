@@ -1,6 +1,7 @@
 #include <fractals/util/view.hpp>
-#include <iostream>
+
 #include <cmath>
+#include <iostream>
 
 namespace frac {
 

@@ -1,9 +1,10 @@
 #include <fractals/ui/view_changer.hpp>
+
 #include <fractals/ui/application.hpp>
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include <iostream>

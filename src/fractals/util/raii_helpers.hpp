@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_RAII_HELPERS_HPP
 
 #include <fractals/ui/fractal_widget.hpp>
+
 #include <sigc++/connection.h>
 
 namespace frac {

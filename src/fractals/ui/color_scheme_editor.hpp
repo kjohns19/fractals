@@ -2,7 +2,9 @@
 #define INCLUDED_FRAC_COLOR_SCHEME_EDITOR_HPP
 
 #include <fractals/ui/application.hpp>
+
 #include <gtkmm/builder.h>
+
 #include <string>
 
 namespace frac {

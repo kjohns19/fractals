@@ -1,12 +1,12 @@
 #include <fractals/fractal/mandelbrot.hpp>
 
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics.hpp>
 
-#include <complex>
 #include <cmath>
+#include <complex>
 #include <iostream>
 #include <thread>
 

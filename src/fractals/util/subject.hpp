@@ -2,6 +2,7 @@
 #define INCLUDED_FRAC_SUBJECT_HPP
 
 #include <fractals/util/observer.hpp>
+
 #include <algorithm>
 #include <vector>
 

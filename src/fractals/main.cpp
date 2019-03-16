@@ -1,18 +1,18 @@
-#include <fractals/fractal/fractal.hpp>
-#include <fractals/fractal/mandelbrot.hpp>
-#include <fractals/fractal/julia.hpp>
-#include <fractals/ui/application.hpp>
 #include <fractals/color/color_scheme.hpp>
 #include <fractals/color/color_scheme_util.hpp>
+#include <fractals/fractal/fractal.hpp>
+#include <fractals/fractal/julia.hpp>
+#include <fractals/fractal/mandelbrot.hpp>
+#include <fractals/ui/application.hpp>
 #include <fractals/util/view.hpp>
 
 #include <SFML/Graphics.hpp>
 
-#include <iostream>
 #include <cmath>
-#include <sstream>
 #include <iomanip>
+#include <iostream>
 #include <memory>
+#include <sstream>
 #include <thread>
 
 int main(int argc, char* argv[])

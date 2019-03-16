@@ -1,6 +1,8 @@
 #include <fractals/ui/view_manager.hpp>
-#include <fractals/ui/application.hpp>
+
 #include <fractals/fractal/fractal.hpp>
+#include <fractals/ui/application.hpp>
+
 #include <cmath>
 #include <fstream>
 #include <iostream>
