@@ -65,12 +65,13 @@ void DialogFractal::configure(
 
     auto updateJulia = [&, preview, rebuildFractal, previewSize]() {
         bool fast = preview->fractal().getDrawMode();
-        preview->setFractal(std::make_unique<Julia>(
-            previewSize,
+        auto fractal = std::make_unique<Julia>(previewSize);
+        fractal->setValue(
             entryA.get_value(),
             entryB.get_value(),
-            entryEx.get_value()));
-        preview->fractal().setDrawMode(fast);
+            entryEx.get_value());
+        fractal->setDrawMode(fast);
+        preview->setFractal(std::move(fractal));
         rebuildFractal();
     };
 

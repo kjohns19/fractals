@@ -29,6 +29,8 @@ public:
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
 
     virtual long double getPower() const override { return 2; }
+
+    virtual std::string type() const override { return "Mandelbrot"; }
 private:
     virtual void resetPoint(long double x, long double y, Point& point) override;
     virtual void doIterate(

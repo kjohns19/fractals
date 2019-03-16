@@ -1,4 +1,6 @@
 #include <fractals/fractal/julia.hpp>
+
+#include <fractals/util/parse_util.hpp>
 #include <fractals/util/view.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -7,10 +9,10 @@
 
 namespace frac {
 
-Julia::Julia(const sf::Vector2u& size, long double x, long double y, long double power)
+Julia::Julia(const sf::Vector2u& size)
 : Fractal(size)
-, d_value(x, y)
-, d_power(power) {}
+, d_value(0, 0)
+, d_power(2) {}
 
 void Julia::resetPoint(long double x, long double y, Point& point)
 {
@@ -30,10 +32,27 @@ void Julia::setValue(long double x, long double y, long double power)
     }
 }
 
+nlohmann::json Julia::getValues() const
+{
+    return {
+        {"power", ParseUtil::write(d_power)},
+        {"x", ParseUtil::write(d_value.real())},
+        {"y", ParseUtil::write(d_value.imag())}
+    };
+}
+
+void Julia::setValues(const nlohmann::json& json)
+{
+    setValue(
+        ParseUtil::read<long double>(json["x"]),
+        ParseUtil::read<long double>(json["y"]),
+        ParseUtil::read<long double>(json["power"]));
+}
+
 std::unique_ptr<Fractal> Julia::clone(const sf::Vector2u& size, const View& view) const
 {
-    std::unique_ptr<Fractal> fractal = std::make_unique<Julia>(
-        size, d_value.real(), d_value.imag(), d_power);
+    auto fractal = std::make_unique<Julia>(size);
+    fractal->setValue(d_value.real(), d_value.imag(), d_power);
     fractal->setView(view);
     fractal->setDrawMode(getDrawMode());
     return fractal;

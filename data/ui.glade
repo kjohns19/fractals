@@ -63,7 +63,15 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkFileFilter" id="dialog-save-filefilter">
+  <object class="GtkFileFilter" id="dialog-load-save-filefilter">
+    <mime-types>
+      <mime-type>application/json</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.json</pattern>
+    </patterns>
+  </object>
+  <object class="GtkFileFilter" id="dialog-save-image-filefilter">
     <mime-types>
       <mime-type>image/png</mime-type>
       <mime-type>image/jpeg</mime-type>
@@ -76,19 +84,19 @@
       <pattern>*.bmp</pattern>
     </patterns>
   </object>
-  <object class="GtkAdjustment" id="dialog-save-height-adjustments">
+  <object class="GtkAdjustment" id="dialog-save-image-height-adjustments">
     <property name="lower">1</property>
     <property name="upper">100000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="dialog-save-iterations-adjustments">
+  <object class="GtkAdjustment" id="dialog-save-image-iterations-adjustments">
     <property name="lower">1</property>
     <property name="upper">100000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="dialog-save-width-adjustments">
+  <object class="GtkAdjustment" id="dialog-save-image-width-adjustments">
     <property name="lower">1</property>
     <property name="upper">100000</property>
     <property name="step_increment">1</property>
@@ -119,8 +127,26 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="file-save-image">
+                      <object class="GtkImageMenuItem" id="file-load">
+                        <property name="label">gtk-open</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="file-save">
                         <property name="label">gtk-save</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="file-save-image">
+                        <property name="label">gtk-orientation-landscape</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -1096,7 +1122,147 @@
       <action-widget response="-6">button5</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="dialog-save">
+  <object class="GtkFileChooserDialog" id="dialog-load-filechooser">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">window-main</property>
+    <property name="filter">dialog-load-save-filefilter</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button16">
+                <property name="label">gtk-open</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button17">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="dialog-load-filechooser-preview-area">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">button16</action-widget>
+      <action-widget response="-6">button17</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkFileChooserDialog" id="dialog-save-filechooser">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">window-main</property>
+    <property name="action">save</property>
+    <property name="do_overwrite_confirmation">True</property>
+    <property name="filter">dialog-load-save-filefilter</property>
+    <property name="preview_widget_active">False</property>
+    <property name="use_preview_label">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button18">
+                <property name="label">gtk-save</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button19">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">button18</action-widget>
+      <action-widget response="-6">button19</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkDialog" id="dialog-save-image">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Save Image</property>
     <property name="resizable">False</property>
@@ -1118,7 +1284,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="dialog-save-button">
+              <object class="GtkButton" id="dialog-save-image-button">
                 <property name="label">gtk-save</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -1196,12 +1362,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="dialog-save-entry-height">
+                  <object class="GtkSpinButton" id="dialog-save-image-entry-height">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0</property>
                     <property name="input_purpose">digits</property>
-                    <property name="adjustment">dialog-save-height-adjustments</property>
+                    <property name="adjustment">dialog-save-image-height-adjustments</property>
                     <property name="climb_rate">0.10000000000000001</property>
                   </object>
                   <packing>
@@ -1210,12 +1376,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="dialog-save-entry-width">
+                  <object class="GtkSpinButton" id="dialog-save-image-entry-width">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0</property>
                     <property name="input_purpose">digits</property>
-                    <property name="adjustment">dialog-save-width-adjustments</property>
+                    <property name="adjustment">dialog-save-image-width-adjustments</property>
                     <property name="climb_rate">0.10000000000000001</property>
                   </object>
                   <packing>
@@ -1224,11 +1390,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="dialog-save-entry-iterations">
+                  <object class="GtkSpinButton" id="dialog-save-image-entry-iterations">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="input_purpose">digits</property>
-                    <property name="adjustment">dialog-save-iterations-adjustments</property>
+                    <property name="adjustment">dialog-save-image-iterations-adjustments</property>
                     <property name="climb_rate">0.10000000000000001</property>
                   </object>
                   <packing>
@@ -1237,7 +1403,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="dialog-save-entry-filename">
+                  <object class="GtkEntry" id="dialog-save-image-entry-filename">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="editable">False</property>
@@ -1248,7 +1414,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="dialog-save-button-choose-file">
+                  <object class="GtkButton" id="dialog-save-image-button-choose-file">
                     <property name="label" translatable="yes">Select Filename</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -1267,7 +1433,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkProgressBar" id="dialog-save-progress-global">
+              <object class="GtkProgressBar" id="dialog-save-image-progress-global">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="show_text">True</property>
@@ -1279,7 +1445,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkProgressBar" id="dialog-save-progress-partial">
+              <object class="GtkProgressBar" id="dialog-save-image-progress-partial">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="show_text">True</property>
@@ -1300,19 +1466,19 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">dialog-save-button</action-widget>
+      <action-widget response="-5">dialog-save-image-button</action-widget>
       <action-widget response="-6">button6</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkFileChooserDialog" id="dialog-save-filechooser">
+  <object class="GtkFileChooserDialog" id="dialog-save-image-filechooser">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Choose filename</property>
     <property name="modal">True</property>
     <property name="icon_name">document-save</property>
     <property name="type_hint">dialog</property>
-    <property name="transient_for">dialog-save</property>
+    <property name="transient_for">dialog-save-image</property>
     <property name="action">save</property>
-    <property name="filter">dialog-save-filefilter</property>
+    <property name="filter">dialog-save-image-filefilter</property>
     <child>
       <placeholder/>
     </child>

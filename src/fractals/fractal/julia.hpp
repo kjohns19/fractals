@@ -22,7 +22,7 @@ class View;
 class Julia : public Fractal
 {
 public:
-    Julia(const sf::Vector2u& size, long double x, long double y, long double power);
+    Julia(const sf::Vector2u& size);
 
     using Fractal::clone;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
@@ -32,6 +32,11 @@ public:
     virtual long double getPower() const override { return d_power; }
 
     void setValue(long double x, long double y, long double power);
+
+    virtual nlohmann::json getValues() const override;
+    virtual void setValues(const nlohmann::json& json) override;
+
+    virtual std::string type() const override { return "Julia"; }
 private:
     virtual void resetPoint(long double x, long double y, Point& point) override;
     virtual void doIterate(

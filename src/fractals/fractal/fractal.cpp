@@ -42,6 +42,16 @@ void Fractal::setView(const View& view)
     reset();
 }
 
+nlohmann::json Fractal::getValues() const
+{
+    return {};
+}
+
+void Fractal::setValues(const nlohmann::json& json)
+{
+    // Nothing
+}
+
 void Fractal::reset()
 {
     d_valid.resize(d_size.x * d_size.y);

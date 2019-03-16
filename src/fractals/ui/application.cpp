@@ -4,6 +4,7 @@
 #include <fractals/fractal/fractal.hpp>
 #include <fractals/ui/color_scheme_editor.hpp>
 #include <fractals/ui/dialog_fractal.hpp>
+#include <fractals/ui/dialog_load_save.hpp>
 #include <fractals/ui/dialog_save_image.hpp>
 #include <fractals/ui/view_changer.hpp>
 #include <fractals/util/builder_utils.hpp>
@@ -101,7 +102,9 @@ void Application::initMenu(Glib::RefPtr<Gtk::Builder> builder)
 {
     using BU = BuilderUtils;
 
-    DialogSaveImage::configure(*this, builder, "dialog-save", "file-save-image");
+    DialogLoadSave::configure(
+        *this, builder, "dialog-load", "dialog-save", "file-load", "file-save");
+    DialogSaveImage::configure(*this, builder, "dialog-save-image", "file-save-image");
 
     BU::getWidget<Gtk::ImageMenuItem>(builder, "file-quit")
     .signal_activate().connect([this]() {

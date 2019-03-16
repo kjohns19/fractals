@@ -13,23 +13,21 @@ namespace frac {
 
 View ViewUtil::loadFromJson(const nlohmann::json& json)
 {
-    double x = ParseUtil::readDouble(json["x"]);
-    double y = ParseUtil::readDouble(json["y"]);
-    double width = ParseUtil::readDouble(json["width"]);
-    double height = ParseUtil::readDouble(json["height"]);
-    return View(x, y, width, height);
+    return View(
+        ParseUtil::read<long double>(json["x"]),
+        ParseUtil::read<long double>(json["y"]),
+        ParseUtil::read<long double>(json["width"]),
+        ParseUtil::read<long double>(json["height"]));
 }
 
 nlohmann::json ViewUtil::saveToJson(const View& view)
 {
-    nlohmann::json json;
-
-    json["x"] = ParseUtil::writeDouble(view.x);
-    json["y"] = ParseUtil::writeDouble(view.y);
-    json["width"] = ParseUtil::writeDouble(view.width);
-    json["height"] = ParseUtil::writeDouble(view.height);
-
-    return json;
+    return {
+        {"x", ParseUtil::write(view.x)},
+        {"y", ParseUtil::write(view.y)},
+        {"width", ParseUtil::write(view.width)},
+        {"height", ParseUtil::write(view.height)}
+    };
 }
 
 } // close namespace frac

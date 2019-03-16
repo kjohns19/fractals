@@ -6,6 +6,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <complex>
 #include <memory>
 #include <vector>
@@ -39,9 +41,14 @@ public:
     const View& getView() const { return d_view; }
     const sf::Vector2u& getSize() const { return d_size; }
 
+    virtual nlohmann::json getValues() const;
+    virtual void setValues(const nlohmann::json& json);
+
     void reset();
 
     virtual long double getPower() const = 0;
+
+    virtual std::string type() const = 0;
 
     void iterate(int count = 1);
 
