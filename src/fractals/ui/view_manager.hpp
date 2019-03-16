@@ -17,7 +17,6 @@ class ViewManager : public Subject<ViewManager&>
 {
 public:
     ViewManager(FractalWidget& widget, const View& view);
-    ~ViewManager();
 
     const View& getView();
     void setView(const View& view, int iterations = -1);
@@ -35,17 +34,12 @@ public:
     bool hasNextView() const;
     bool hasPreviousView() const;
 
-    std::map<std::string, std::pair<View, int> >& getSavedViews();
-    void saveViews() const;
 private:
     FractalWidget& d_widget;
 
     View d_view;
     std::vector<View> d_prev_views;
     std::vector<View> d_next_views;
-
-    std::map<std::string, std::pair<View, int> > d_saved_views;
-    bool d_loaded;
 };
 
 } // close namespace frac

@@ -15,13 +15,7 @@ void swap_views(std::vector<View>& to, std::vector<View>& from, View& view);
 
 ViewManager::ViewManager(FractalWidget& widget, const View& view)
 : d_widget(widget)
-, d_view(view)
-, d_loaded(false) {}
-
-ViewManager::~ViewManager()
-{
-    saveViews();
-}
+, d_view(view) {}
 
 const View& ViewManager::getView()
 {
@@ -102,68 +96,6 @@ void ViewManager::clearViews()
     d_prev_views.clear();
     d_next_views.clear();
     notifyObservers(*this);
-}
-
-std::map<std::string, std::pair<View, int> >& ViewManager::getSavedViews()
-{
-    if (!d_loaded)
-    {
-        d_loaded = true;
-        std::ifstream in("views.dat");
-        if (in)
-        {
-            size_t count;
-            size_t nameLength;
-            std::string name;
-            View view;
-            int iterations;
-            in.read(reinterpret_cast<char*>(&count), sizeof(count));
-            for(size_t i = 0; i < count; i++)
-            {
-                in.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
-                name.resize(nameLength, ' ');
-
-                in.read(&*name.begin(), nameLength);
-                in.read(reinterpret_cast<char*>(&view.x),   sizeof(view.x));
-                in.read(reinterpret_cast<char*>(&view.y),    sizeof(view.y));
-                in.read(reinterpret_cast<char*>(&view.width),  sizeof(view.width));
-                in.read(reinterpret_cast<char*>(&view.height), sizeof(view.height));
-                in.read(reinterpret_cast<char*>(&iterations), sizeof(int));
-
-                d_saved_views[name] = std::make_pair(view, iterations);
-            }
-        }
-    }
-    return d_saved_views;
-}
-
-void ViewManager::saveViews() const
-{
-    if (d_loaded)
-    {
-        std::ofstream out("views.dat");
-        if (out)
-        {
-            size_t size = d_saved_views.size();
-            out.write(reinterpret_cast<char*>(&size), sizeof(size));
-            for(auto& pair: d_saved_views)
-            {
-                const std::string& name = pair.first;
-                size_t nameLength = name.length();
-                out.write(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
-                out.write(name.c_str(), nameLength);
-
-                const View view = pair.second.first;
-                int iterations = pair.second.second;
-
-                out.write(reinterpret_cast<const char*>(&view.x),   sizeof(view.x));
-                out.write(reinterpret_cast<const char*>(&view.y),    sizeof(view.y));
-                out.write(reinterpret_cast<const char*>(&view.width),  sizeof(view.width));
-                out.write(reinterpret_cast<const char*>(&view.height), sizeof(view.height));
-                out.write(reinterpret_cast<const char*>(&iterations), sizeof(int));
-            }
-        }
-    }
 }
 
 namespace {
