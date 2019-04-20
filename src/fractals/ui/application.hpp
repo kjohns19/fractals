@@ -26,7 +26,6 @@ class Application
 public:
     Application(
         const sf::Vector2u& windowSize,
-        const View& view,
         std::unique_ptr<Fractal> fractal,
         ColorScheme colorScheme);
 

@@ -16,11 +16,10 @@ class FractalWidget;
 class ViewManager : public Subject<ViewManager&>
 {
 public:
-    ViewManager(FractalWidget& widget, const View& view);
+    ViewManager(FractalWidget& widget);
 
     const View& getView();
     void setView(const View& view, int iterations = -1);
-    void resetView(int iterations = -1);
     void nextView();
     void previousView();
     void firstView();
@@ -35,9 +34,12 @@ public:
     bool hasPreviousView() const;
 
 private:
+    void resetView(const View& view, int iterations = -1);
+    void swapViews(std::vector<View>& to, std::vector<View>& from);
+    void swapAll(std::vector<View>& to, std::vector<View>& from);
+
     FractalWidget& d_widget;
 
-    View d_view;
     std::vector<View> d_prev_views;
     std::vector<View> d_next_views;
 };
