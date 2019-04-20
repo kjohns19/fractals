@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     auto app = Gtk::Application::create(
         gtk_argc, gtk_argv, "com.github.kjohns19.fractals");
 
-    frac::Application application(wsize, view, std::move(fractal), colorScheme);
+    frac::Application application(wsize, std::move(fractal), colorScheme);
     application.run(app);
     return 0;
 }

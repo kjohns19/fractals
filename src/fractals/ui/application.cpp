@@ -54,13 +54,12 @@ struct ViewObserver: Observer<ViewManager&>
 
 Application::Application(
         const sf::Vector2u& windowSize,
-        const View& view,
         std::unique_ptr<Fractal> fractal,
         ColorScheme colorScheme)
 : d_windowSize(windowSize)
 , d_fractalWidget(Gtk::manage(
     new FractalWidget({windowSize.x, windowSize.y}, std::move(fractal))))
-, d_viewManager(*d_fractalWidget, view)
+, d_viewManager(*d_fractalWidget)
 , d_window(nullptr)
 {
     using BU = BuilderUtils;
