@@ -40,19 +40,25 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="dialog-fractal-entry-a-adjustments1">
+  <object class="GtkAdjustment" id="dialog-fractal-julia-entry-a-adjustments1">
     <property name="lower">-9999999</property>
     <property name="upper">9999999</property>
     <property name="step_increment">0.01</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkAdjustment" id="dialog-fractal-entry-b-adjustments">
+  <object class="GtkAdjustment" id="dialog-fractal-julia-entry-b-adjustments">
     <property name="lower">-9999999</property>
     <property name="upper">9999999</property>
     <property name="step_increment">0.01</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkAdjustment" id="dialog-fractal-entry-exponent-adjustments">
+  <object class="GtkAdjustment" id="dialog-fractal-julia-entry-exponent-adjustments">
+    <property name="lower">-9999</property>
+    <property name="upper">9999</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="dialog-fractal-mandelbrot-entry-exponent-adjustments1">
     <property name="lower">-9999</property>
     <property name="upper">9999</property>
     <property name="step_increment">0.01</property>
@@ -879,7 +885,43 @@
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="column_homogeneous">True</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Exponent</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="dialog-fractal-mandelbrot-entry-exponent">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="text" translatable="yes">2.00000</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">dialog-fractal-mandelbrot-entry-exponent-adjustments1</property>
+                            <property name="climb_rate">0.0099999997764825821</property>
+                            <property name="digits">5</property>
+                            <property name="value">2</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
@@ -931,11 +973,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="dialog-fractal-entry-exponent">
+                          <object class="GtkSpinButton" id="dialog-fractal-julia-entry-exponent">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="input_purpose">number</property>
-                            <property name="adjustment">dialog-fractal-entry-exponent-adjustments</property>
+                            <property name="adjustment">dialog-fractal-julia-entry-exponent-adjustments</property>
                             <property name="climb_rate">0.0099999997764825821</property>
                             <property name="digits">5</property>
                             <property name="value">2</property>
@@ -946,11 +988,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="dialog-fractal-entry-a">
+                          <object class="GtkSpinButton" id="dialog-fractal-julia-entry-a">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="input_purpose">number</property>
-                            <property name="adjustment">dialog-fractal-entry-a-adjustments1</property>
+                            <property name="adjustment">dialog-fractal-julia-entry-a-adjustments1</property>
                             <property name="climb_rate">0.0099999997764825821</property>
                             <property name="digits">5</property>
                             <property name="value">0.28000000000000003</property>
@@ -972,11 +1014,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="dialog-fractal-entry-b">
+                          <object class="GtkSpinButton" id="dialog-fractal-julia-entry-b">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="input_purpose">number</property>
-                            <property name="adjustment">dialog-fractal-entry-b-adjustments</property>
+                            <property name="adjustment">dialog-fractal-julia-entry-b-adjustments</property>
                             <property name="climb_rate">0.01</property>
                             <property name="digits">5</property>
                             <property name="value">0.01</property>

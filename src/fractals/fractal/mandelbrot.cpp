@@ -1,5 +1,7 @@
 #include <fractals/fractal/mandelbrot.hpp>
 
+#include <fractals/util/parse_util.hpp>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -23,10 +25,23 @@ void Mandelbrot::resetPoint(long double x, long double y, Point& point)
 
 std::unique_ptr<Fractal> Mandelbrot::clone(const sf::Vector2u& size, const View& view) const
 {
-    std::unique_ptr<Fractal> fractal = std::make_unique<Mandelbrot>(size);
+    std::unique_ptr<Mandelbrot> fractal = std::make_unique<Mandelbrot>(size);
+    fractal->setPower(getPower());
     fractal->setView(view);
     fractal->setDrawMode(getDrawMode());
     return fractal;
+}
+
+nlohmann::json Mandelbrot::getValues() const
+{
+    return {
+        {"power", ParseUtil::write(d_power)}
+    };
+}
+
+void Mandelbrot::setValues(const nlohmann::json& json)
+{
+    d_power = ParseUtil::read<long double>(json["power"]);
 }
 
 void Mandelbrot::doIterate(
@@ -59,7 +74,7 @@ void Mandelbrot::doIterate(
         {
             if (std::norm(point.pos) < (1 << 16))
             {
-                next = point.pos*point.pos + c;
+                next = std::pow(point.pos, d_power) + c;
                 if (point.pos == next)
                 {
                     point.value+=count-i;

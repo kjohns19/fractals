@@ -28,7 +28,11 @@ public:
     using Fractal::clone;
     virtual std::unique_ptr<Fractal> clone(const sf::Vector2u& size, const View& view) const;
 
-    virtual long double getPower() const override { return 2; }
+    void setPower(long double power) { d_power = power; }
+    virtual long double getPower() const override { return d_power; }
+
+    virtual nlohmann::json getValues() const override;
+    virtual void setValues(const nlohmann::json& json) override;
 
     virtual std::string type() const override { return "Mandelbrot"; }
 private:
@@ -41,7 +45,7 @@ private:
             size_t numPoints,
             std::vector<size_t>& done) override;
 
-    double d_power;
+    long double d_power;
 };
 
 } // close namespace frac

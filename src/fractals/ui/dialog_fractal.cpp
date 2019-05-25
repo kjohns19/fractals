@@ -43,12 +43,15 @@ void DialogFractal::configure(
     previewArea.pack_start(*preview, Gtk::PACK_SHRINK);
 
 
-    auto& entryEx = BU::getWidget<Gtk::SpinButton>(
-        builder, idPrefix + "-entry-exponent");
-    auto& entryA = BU::getWidget<Gtk::SpinButton>(
-        builder, idPrefix + "-entry-a");
-    auto& entryB = BU::getWidget<Gtk::SpinButton>(
-        builder, idPrefix + "-entry-b");
+    auto& juliaEntryEx = BU::getWidget<Gtk::SpinButton>(
+        builder, idPrefix + "-julia-entry-exponent");
+    auto& juliaEntryA = BU::getWidget<Gtk::SpinButton>(
+        builder, idPrefix + "-julia-entry-a");
+    auto& juliaEntryB = BU::getWidget<Gtk::SpinButton>(
+        builder, idPrefix + "-julia-entry-b");
+
+    auto& mandelbrotEntryEx = BU::getWidget<Gtk::SpinButton>(
+        builder, idPrefix + "-mandelbrot-entry-exponent");
 
     auto rebuildFractal = [preview, view]() {
         preview->fractal().setView(view);
@@ -58,26 +61,30 @@ void DialogFractal::configure(
 
     auto updateMandelbrot = [&, preview, rebuildFractal, previewSize]() {
         bool fast = preview->fractal().getDrawMode();
-        preview->setFractal(std::make_unique<Mandelbrot>(previewSize));
-        preview->fractal().setDrawMode(fast);
-        rebuildFractal();
-    };
-
-    auto updateJulia = [&, preview, rebuildFractal, previewSize]() {
-        bool fast = preview->fractal().getDrawMode();
-        auto fractal = std::make_unique<Julia>(previewSize);
-        fractal->setValue(
-            entryA.get_value(),
-            entryB.get_value(),
-            entryEx.get_value());
+        auto fractal = std::make_unique<Mandelbrot>(previewSize);
+        fractal->setPower(mandelbrotEntryEx.get_value());
         fractal->setDrawMode(fast);
         preview->setFractal(std::move(fractal));
         rebuildFractal();
     };
 
-    auto signalEx = entryEx.signal_changed().connect(updateJulia);
-    auto signalA = entryA.signal_changed().connect(updateJulia);
-    auto signalB = entryB.signal_changed().connect(updateJulia);
+    auto mandelbrotSignalEx = mandelbrotEntryEx.signal_changed().connect(updateMandelbrot);
+
+    auto updateJulia = [&, preview, rebuildFractal, previewSize]() {
+        bool fast = preview->fractal().getDrawMode();
+        auto fractal = std::make_unique<Julia>(previewSize);
+        fractal->setValue(
+            juliaEntryA.get_value(),
+            juliaEntryB.get_value(),
+            juliaEntryEx.get_value());
+        fractal->setDrawMode(fast);
+        preview->setFractal(std::move(fractal));
+        rebuildFractal();
+    };
+
+    auto juliaSignalEx = juliaEntryEx.signal_changed().connect(updateJulia);
+    auto juliaSignalA = juliaEntryA.signal_changed().connect(updateJulia);
+    auto juliaSignalB = juliaEntryB.signal_changed().connect(updateJulia);
 
     std::function<void()> updaters[] = {
         updateMandelbrot, updateJulia
@@ -98,22 +105,29 @@ void DialogFractal::configure(
 
     BU::getWidget<Gtk::ToolButton>(builder, toolId)
     .signal_clicked().connect(
-        [&app, &dialog, preview, rebuildFractal, previewSize,
-         &entryEx, &entryA, &entryB,
-         signalEx, signalA, signalB]() mutable {
+        [&, preview, rebuildFractal, previewSize,
+         mandelbrotSignalEx,
+         juliaSignalEx, juliaSignalA, juliaSignalB]() mutable {
         PauseFractal pause(app.fractalWidget());
 
         preview->setFractal(app.fractal().clone(previewSize));
         preview->colorScheme() = app.colorScheme();
         rebuildFractal();
 
+        Mandelbrot* mandelbrot = dynamic_cast<Mandelbrot*>(&app.fractal());
+        if (mandelbrot)
+        {
+            SignalBlock bEx(mandelbrotSignalEx);
+            mandelbrotEntryEx.set_value(mandelbrot->getPower());
+        }
+
         Julia* julia = dynamic_cast<Julia*>(&app.fractal());
         if (julia)
         {
-            SignalBlock bEx(signalEx), bA(signalA), bB(signalB);
-            entryEx.set_value(julia->getPower());
-            entryA.set_value(julia->getX());
-            entryB.set_value(julia->getY());
+            SignalBlock bEx(juliaSignalEx), bA(juliaSignalA), bB(juliaSignalB);
+            juliaEntryEx.set_value(julia->getPower());
+            juliaEntryA.set_value(julia->getX());
+            juliaEntryB.set_value(julia->getY());
         }
 
         int result;
