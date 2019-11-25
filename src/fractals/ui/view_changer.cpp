@@ -2,8 +2,10 @@
 
 #include <fractals/ui/application.hpp>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -33,6 +35,15 @@ void ViewChanger::drawBounds(sf::RenderTarget& target) const
     if (d_drawBounds)
     {
         target.draw(d_bounds);
+
+        sf::CircleShape center;
+        center.setOutlineColor(sf::Color::Yellow);
+        center.setFillColor(sf::Color::Yellow);
+        center.setPosition(d_bounds.getPosition() + d_bounds.getSize()/2.0f);
+        center.setOrigin({2.0f, 2.0f});
+        center.setRadius(2.0f);
+        target.draw(center);
+
         if (!d_drawMode)
         {
             sf::RectangleShape shape;
