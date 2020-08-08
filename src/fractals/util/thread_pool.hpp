@@ -75,7 +75,7 @@ std::future<std::result_of_t<Func(Args...)>> ThreadPool::apply(
     std::lock_guard<std::mutex> lock(d_mutex);
     d_tasks.push_back(std::move(task));
     d_condition.notify_one();
-    return std::move(future);
+    return future;
 }
 
 template<typename Func, typename InputIt, typename OutputIt>
