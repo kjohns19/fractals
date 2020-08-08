@@ -9,7 +9,7 @@ link_directories(${GTKMM_LIBRARY_DIRS})
 
 file(GLOB_RECURSE SRC_FILES_fractal src/*cpp)
 add_executable(fractal ${SRC_FILES_fractal})
-target_compile_options(fractal PRIVATE -std=c++14 -g -O3 -Wall -Werror)
+target_compile_options(fractal PRIVATE -std=c++17 -g -O3 -Wall -Werror)
 target_include_directories(fractal PRIVATE ${GTKMM_INCLUDE_DIRS} src)
 target_link_libraries(fractal sfml-system sfml-window sfml-graphics ${GTKMM_LIBRARIES} pthread)
 
